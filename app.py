@@ -4,9 +4,10 @@ from reporting import summarize_ride, print_ride_summary, build_fueling_plan
 from charts import plot_route_profile, plot_fueling_curves
 from presets import get_surface_crr, get_aero_cda
 from compare import compare_surfaces, compare_aero_positions
+from scenario import compare_scenarios
 
 
-USE_GPX = False
+USE_GPX = True
 GPX_PATH = "sample_routes/my_ride.gpx"
 
 RIDER_MASS_KG = 95
@@ -175,6 +176,57 @@ def print_comparisons(segments):
     print(aero_comparison.round(2).to_string(index=False))
 
 
+def print_rider_scenarios(segments):
+    crr = get_surface_crr(SURFACE)
+    cda = get_aero_cda(AERO_POSITION)
+
+    current_power_w = RIDER_MASS_KG * FITNESS_WKG
+    improved_power_w = current_power_w + 15
+
+    scenarios = [
+        {
+            "name": "Current",
+            "rider_mass_kg": RIDER_MASS_KG,
+            "fitness_wkg": FITNESS_WKG,
+        },
+        {
+            "name": "-5 kg",
+            "rider_mass_kg": RIDER_MASS_KG - 5,
+            "fitness_wkg": current_power_w / (RIDER_MASS_KG - 5),
+        },
+        {
+            "name": "+15 W",
+            "rider_mass_kg": RIDER_MASS_KG,
+            "fitness_wkg": improved_power_w / RIDER_MASS_KG,
+        },
+        {
+            "name": "-5 kg +15 W",
+            "rider_mass_kg": RIDER_MASS_KG - 5,
+            "fitness_wkg": improved_power_w / (RIDER_MASS_KG - 5),
+        },
+    ]
+
+    results = compare_scenarios(
+        segments_df=segments,
+        scenarios=scenarios,
+        bike_mass_kg=BIKE_MASS_KG,
+        temp_c=TEMP_C,
+        humidity_pct=HUMIDITY_PCT,
+        wind_kmh=WIND_KMH,
+        wind_mode=WIND_MODE,
+        chainring_teeth=CHAINRING_TEETH,
+        cassette_teeth=CASSETTE_TEETH,
+        cda=cda,
+        crr=crr,
+        bottle_sizes_ml=BOTTLE_SIZES_ML,
+    )
+
+    print("\n" + "=" * 60)
+    print("RIDER SCENARIOS")
+    print("=" * 60)
+    print(results.round(2).to_string(index=False))
+
+
 def export_charts(sim):
     route_chart = plot_route_profile(sim, output_path="route_profile.png")
     fueling_chart = plot_fueling_curves(sim, output_path="fueling_curves.png")
@@ -201,6 +253,7 @@ def main():
     print_reports(sim)
     export_charts(sim)
     print_comparisons(segments)
+    print_rider_scenarios(segments)
 
     return sim
 

@@ -102,14 +102,15 @@ def print_reports(sim):
     hardest = sim.sort_values(by="grade_pct", ascending=False).head(10)
 
     cols = [
-        "segment_id",
-        "start_km",
-        "end_km",
-        "grade_pct",
-        "speed_kmh",
-        "target_power_w",
-        "cadence_rpm",
-    ]
+    "segment_id",
+    "start_km",
+    "end_km",
+    "grade_pct",
+    "speed_kmh",
+    "target_power_w",
+    "selected_cog_teeth",
+    "cadence_rpm",
+]
 
     print(hardest[cols].round(1).to_string(index=False))
 

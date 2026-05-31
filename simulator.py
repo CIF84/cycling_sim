@@ -3,10 +3,6 @@ import pandas as pd
 
 from biology import estimate_segment_biology
 
-# ==========================================================
-# PHYSICS CONSTANTS
-# ==========================================================
-
 G = 9.81
 AIR_DENSITY = 1.225
 
@@ -15,11 +11,8 @@ DEFAULT_CRR = 0.005
 
 WHEEL_CIRCUMFERENCE = 2.11
 MIN_CADENCE_THRESHOLD = 70
+TARGET_CADENCE_RPM = 85
 
-
-# ==========================================================
-# SPEED SOLVER
-# ==========================================================
 
 def solve_speed_from_power(
     power_w,
@@ -60,10 +53,6 @@ def solve_speed_from_power(
     return (low + high) / 2
 
 
-# ==========================================================
-# CADENCE
-# ==========================================================
-
 def estimate_cadence_rpm(
     speed_kmh,
     chainring_teeth,
@@ -79,9 +68,46 @@ def estimate_cadence_rpm(
     return speed_m_per_min / development_m
 
 
-# ==========================================================
-# PACING MODEL
-# ==========================================================
+def choose_virtual_gear(
+    speed_kmh,
+    chainring_teeth=40,
+    cassette_teeth_options=None,
+    target_cadence_rpm=TARGET_CADENCE_RPM,
+):
+    """
+    Choose the cassette cog that gets cadence closest to target cadence.
+
+    This is a simple virtual shifting model.
+    It assumes one front chainring and a list of available rear cogs.
+    """
+
+    if cassette_teeth_options is None:
+        cassette_teeth_options = [10, 12, 14, 16, 18, 21, 24, 28, 32, 36, 42, 45]
+
+    gear_options = []
+
+    for cog in cassette_teeth_options:
+        cadence = estimate_cadence_rpm(
+            speed_kmh=speed_kmh,
+            chainring_teeth=chainring_teeth,
+            cassette_teeth=cog,
+        )
+
+        gear_options.append(
+            {
+                "selected_cog_teeth": cog,
+                "cadence_rpm": cadence,
+                "cadence_error": abs(cadence - target_cadence_rpm),
+            }
+        )
+
+    best = min(
+        gear_options,
+        key=lambda x: x["cadence_error"],
+    )
+
+    return best
+
 
 def assign_target_power(
     grade_pct,
@@ -102,10 +128,6 @@ def assign_target_power(
     return base_power_w * 0.45
 
 
-# ==========================================================
-# SEGMENT SIMULATION
-# ==========================================================
-
 def simulate_segment(
     distance_m,
     grade_pct,
@@ -115,6 +137,9 @@ def simulate_segment(
     temp_c=20,
     humidity_pct=50,
     wind_kmh=0.0,
+    chainring_teeth=40,
+    cassette_teeth_options=None,
+    target_cadence_rpm=TARGET_CADENCE_RPM,
     cda=DEFAULT_CDA,
     crr=DEFAULT_CRR,
 ):
@@ -137,6 +162,13 @@ def simulate_segment(
     speed_kmh = speed_ms * 3.6
     time_s = distance_m / speed_ms
 
+    gear = choose_virtual_gear(
+        speed_kmh=speed_kmh,
+        chainring_teeth=chainring_teeth,
+        cassette_teeth_options=cassette_teeth_options,
+        target_cadence_rpm=target_cadence_rpm,
+    )
+
     biology = estimate_segment_biology(
         power_w=target_power_w,
         time_s=time_s,
@@ -151,13 +183,11 @@ def simulate_segment(
         "speed_ms": speed_ms,
         "speed_kmh": speed_kmh,
         "time_s": time_s,
+        "selected_cog_teeth": gear["selected_cog_teeth"],
+        "cadence_rpm": gear["cadence_rpm"],
         **biology,
     }
 
-
-# ==========================================================
-# ROUTE SIMULATION
-# ==========================================================
 
 def simulate_route(
     segments_df,
@@ -168,13 +198,20 @@ def simulate_route(
     humidity_pct=50,
     wind_kmh=0.0,
     wind_mode="head",
-    chainring_teeth=34,
-    cassette_teeth=32,
+    chainring_teeth=40,
+    cassette_teeth=45,
+    cassette_teeth_options=None,
+    target_cadence_rpm=TARGET_CADENCE_RPM,
     cda=DEFAULT_CDA,
     crr=DEFAULT_CRR,
 ):
     if segments_df.empty:
         raise ValueError("segments_df is empty.")
+
+    if cassette_teeth_options is None:
+        cassette_teeth_options = [10, 12, 14, 16, 18, 21, 24, 28, 32, 36, 42, cassette_teeth]
+
+    cassette_teeth_options = sorted(set(cassette_teeth_options))
 
     base_power_w = rider_mass_kg * fitness_wkg
 
@@ -201,14 +238,11 @@ def simulate_route(
             temp_c=temp_c,
             humidity_pct=humidity_pct,
             wind_kmh=signed_wind_kmh,
+            chainring_teeth=chainring_teeth,
+            cassette_teeth_options=cassette_teeth_options,
+            target_cadence_rpm=target_cadence_rpm,
             cda=cda,
             crr=crr,
-        )
-
-        cadence_rpm = estimate_cadence_rpm(
-            speed_kmh=segment_result["speed_kmh"],
-            chainring_teeth=chainring_teeth,
-            cassette_teeth=cassette_teeth,
         )
 
         cumulative_time_s += segment_result["time_s"]
@@ -222,8 +256,7 @@ def simulate_route(
             {
                 **segment.to_dict(),
                 **segment_result,
-                "cadence_rpm": cadence_rpm,
-                "low_cadence_flag": cadence_rpm < MIN_CADENCE_THRESHOLD,
+                "low_cadence_flag": segment_result["cadence_rpm"] < MIN_CADENCE_THRESHOLD,
                 "cum_time_s": cumulative_time_s,
                 "cum_time_h": cumulative_time_s / 3600,
                 "cum_dist_m": cumulative_distance_m,
@@ -238,12 +271,7 @@ def simulate_route(
     return pd.DataFrame(rows)
 
 
-# ==========================================================
-# QUICK MANUAL TEST
-# ==========================================================
-
 if __name__ == "__main__":
-
     demo_segments = pd.DataFrame(
         [
             {

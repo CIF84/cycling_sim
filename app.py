@@ -5,6 +5,7 @@ from charts import plot_route_profile, plot_fueling_curves
 from presets import get_surface_crr, get_aero_cda
 from compare import compare_surfaces, compare_aero_positions
 from scenario import compare_scenarios
+from inverse import estimate_power_for_target_time
 
 
 USE_GPX = True
@@ -31,6 +32,8 @@ AERO_POSITION = "endurance_road"
 
 SEGMENT_LENGTH_M = 1000
 ELEVATION_SMOOTH_WINDOW = 7
+
+TARGET_TIME_H = 3.00
 
 
 def build_route():
@@ -227,6 +230,40 @@ def print_rider_scenarios(segments):
     print(results.round(2).to_string(index=False))
 
 
+def print_target_time_analysis(segments):
+    crr = get_surface_crr(SURFACE)
+    cda = get_aero_cda(AERO_POSITION)
+
+    result = estimate_power_for_target_time(
+        segments_df=segments,
+        rider_mass_kg=RIDER_MASS_KG,
+        bike_mass_kg=BIKE_MASS_KG,
+        target_time_h=TARGET_TIME_H,
+        temp_c=TEMP_C,
+        humidity_pct=HUMIDITY_PCT,
+        wind_kmh=WIND_KMH,
+        wind_mode=WIND_MODE,
+        chainring_teeth=CHAINRING_TEETH,
+        cassette_teeth=CASSETTE_TEETH,
+        cda=cda,
+        crr=crr,
+        bottle_sizes_ml=BOTTLE_SIZES_ML,
+    )
+
+    current_power_w = RIDER_MASS_KG * FITNESS_WKG
+
+    print("\n" + "=" * 60)
+    print("TARGET TIME ANALYSIS")
+    print("=" * 60)
+    print(f"Current power:       {current_power_w:.0f} W")
+    print(f"Current W/kg:        {FITNESS_WKG:.2f}")
+    print(f"Target time:         {TARGET_TIME_H:.2f} h")
+    print(f"Required power:      {result['required_power_w']:.0f} W")
+    print(f"Required W/kg:       {result['required_wkg']:.2f}")
+    print(f"Estimated time:      {result['estimated_time_h']:.2f} h")
+    print(f"Extra power needed:  {result['required_power_w'] - current_power_w:.0f} W")
+
+
 def export_charts(sim):
     route_chart = plot_route_profile(sim, output_path="route_profile.png")
     fueling_chart = plot_fueling_curves(sim, output_path="fueling_curves.png")
@@ -254,6 +291,7 @@ def main():
     export_charts(sim)
     print_comparisons(segments)
     print_rider_scenarios(segments)
+    print_target_time_analysis(segments)
 
     return sim
 

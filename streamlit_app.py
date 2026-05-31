@@ -343,37 +343,34 @@ for _, rec in recommendations.iterrows():
         st.write(rec["details"])
 
 # ==========================================================
-# PERFORMANCE ROI HERO
+# TIME SAVINGS
 # ==========================================================
 
-st.subheader("Performance ROI")
+st.subheader("Time Savings")
 
-roi_chart = roi.sort_values(
-    "time_saved_min",
-    ascending=True,
+roi_display = (
+    roi.sort_values(
+        "time_saved_min",
+        ascending=False,
+    )
+    .head(4)
 )
 
-st.bar_chart(
-    roi_chart,
-    x="change",
-    y="time_saved_min",
-)
+max_gain = roi_display["time_saved_min"].max()
 
-top_gain = roi.loc[
-    roi["time_saved_min"].idxmax()
+for _, row in roi_display.iterrows():
 
-]
+    progress_value = row["time_saved_min"] / max_gain
 
-st.success(
-    f"""
-Best modeled improvement:
+    st.markdown(
+        f"""
+### {row['change']}
 
-{top_gain['change']}
-
-Estimated gain:
-{top_gain['time_saved_min']:.1f} minutes
+**{row['time_saved_min']:.1f} min saved**
 """
-)
+    )
+
+    st.progress(progress_value)
 
 
 

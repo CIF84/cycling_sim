@@ -342,6 +342,40 @@ for _, rec in recommendations.iterrows():
     with st.expander("Show analysis"):
         st.write(rec["details"])
 
+# ==========================================================
+# PERFORMANCE ROI HERO
+# ==========================================================
+
+st.subheader("Performance ROI")
+
+roi_chart = roi.sort_values(
+    "time_saved_min",
+    ascending=True,
+)
+
+st.bar_chart(
+    roi_chart,
+    x="change",
+    y="time_saved_min",
+)
+
+top_gain = roi.loc[
+    roi["time_saved_min"].idxmax()
+
+]
+
+st.success(
+    f"""
+Best modeled improvement:
+
+{top_gain['change']}
+
+Estimated gain:
+{top_gain['time_saved_min']:.1f} minutes
+"""
+)
+
+
 
 tabs = st.tabs(
     [
@@ -536,39 +570,7 @@ with tabs[5]:
     )
 
 with tabs[6]:
-    st.subheader("Performance ROI")
-
-    roi = build_roi_table(
-        segments_df=segments,
-        rider_mass_kg=rider_mass_kg,
-        bike_mass_kg=bike_mass_kg,
-        fitness_wkg=fitness_wkg,
-        temp_c=temp_c,
-        humidity_pct=humidity_pct,
-        wind_kmh=wind_kmh,
-        wind_mode=wind_mode,
-        chainring_teeth=chainring_teeth,
-        cassette_teeth=cassette_teeth,
-        cda=cda,
-        crr=crr,
-        bottle_sizes_ml=bottle_sizes_ml,
-    )
-
-    roi_chart = roi.sort_values(
-        "time_saved_min",
-        ascending=True,
-    )
-
-    st.bar_chart(
-        roi_chart,
-        x="change",
-        y="time_saved_min",
-    )
-
-    st.dataframe(
-        roi,
-        use_container_width=True,
-    )
+    st.subheader("Performance ROI — Detailed Table")
 
     st.dataframe(
         roi,

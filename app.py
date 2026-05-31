@@ -3,6 +3,7 @@ from simulator import simulate_route
 from reporting import summarize_ride, print_ride_summary, build_fueling_plan
 from charts import plot_route_profile, plot_fueling_curves
 from presets import get_surface_crr, get_aero_cda
+from compare import compare_surfaces, compare_aero_positions
 
 
 USE_GPX = False
@@ -132,6 +133,48 @@ def print_reports(sim):
         )
 
 
+def print_comparisons(segments):
+    surface_comparison = compare_surfaces(
+        segments_df=segments,
+        rider_mass_kg=RIDER_MASS_KG,
+        bike_mass_kg=BIKE_MASS_KG,
+        fitness_wkg=FITNESS_WKG,
+        temp_c=TEMP_C,
+        humidity_pct=HUMIDITY_PCT,
+        wind_kmh=WIND_KMH,
+        wind_mode=WIND_MODE,
+        chainring_teeth=CHAINRING_TEETH,
+        cassette_teeth=CASSETTE_TEETH,
+        aero_key=AERO_POSITION,
+        bottle_sizes_ml=BOTTLE_SIZES_ML,
+    )
+
+    print("\n" + "=" * 60)
+    print("SURFACE COMPARISON")
+    print("=" * 60)
+    print(surface_comparison.round(2).to_string(index=False))
+
+    aero_comparison = compare_aero_positions(
+        segments_df=segments,
+        rider_mass_kg=RIDER_MASS_KG,
+        bike_mass_kg=BIKE_MASS_KG,
+        fitness_wkg=FITNESS_WKG,
+        temp_c=TEMP_C,
+        humidity_pct=HUMIDITY_PCT,
+        wind_kmh=WIND_KMH,
+        wind_mode=WIND_MODE,
+        chainring_teeth=CHAINRING_TEETH,
+        cassette_teeth=CASSETTE_TEETH,
+        surface_key=SURFACE,
+        bottle_sizes_ml=BOTTLE_SIZES_ML,
+    )
+
+    print("\n" + "=" * 60)
+    print("AERO COMPARISON")
+    print("=" * 60)
+    print(aero_comparison.round(2).to_string(index=False))
+
+
 def export_charts(sim):
     route_chart = plot_route_profile(sim, output_path="route_profile.png")
     fueling_chart = plot_fueling_curves(sim, output_path="fueling_curves.png")
@@ -157,6 +200,7 @@ def main():
 
     print_reports(sim)
     export_charts(sim)
+    print_comparisons(segments)
 
     return sim
 

@@ -6,6 +6,7 @@ from presets import get_surface_crr, get_aero_cda
 from compare import compare_surfaces, compare_aero_positions
 from scenario import compare_scenarios
 from inverse import estimate_power_for_target_time
+from roi import build_roi_table
 
 
 USE_GPX = True
@@ -264,6 +265,32 @@ def print_target_time_analysis(segments):
     print(f"Extra power needed:  {result['required_power_w'] - current_power_w:.0f} W")
 
 
+def print_performance_roi(segments):
+    crr = get_surface_crr(SURFACE)
+    cda = get_aero_cda(AERO_POSITION)
+
+    roi = build_roi_table(
+        segments_df=segments,
+        rider_mass_kg=RIDER_MASS_KG,
+        bike_mass_kg=BIKE_MASS_KG,
+        fitness_wkg=FITNESS_WKG,
+        temp_c=TEMP_C,
+        humidity_pct=HUMIDITY_PCT,
+        wind_kmh=WIND_KMH,
+        wind_mode=WIND_MODE,
+        chainring_teeth=CHAINRING_TEETH,
+        cassette_teeth=CASSETTE_TEETH,
+        cda=cda,
+        crr=crr,
+        bottle_sizes_ml=BOTTLE_SIZES_ML,
+    )
+
+    print("\n" + "=" * 60)
+    print("PERFORMANCE ROI")
+    print("=" * 60)
+    print(roi.round(2).to_string(index=False))
+
+
 def export_charts(sim):
     route_chart = plot_route_profile(sim, output_path="route_profile.png")
     fueling_chart = plot_fueling_curves(sim, output_path="fueling_curves.png")
@@ -292,6 +319,7 @@ def main():
     print_comparisons(segments)
     print_rider_scenarios(segments)
     print_target_time_analysis(segments)
+    print_performance_roi(segments)
 
     return sim
 

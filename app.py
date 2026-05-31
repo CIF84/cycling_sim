@@ -1,45 +1,71 @@
-from gpx_utils import load_gpx, build_segments, build_manual_route
+from gpx_utils import (
+    load_gpx,
+    build_segments,
+    build_manual_route,
+)
+
 from simulator import simulate_route
-from reporting import summarize_ride, print_ride_summary, build_fueling_plan
+
+from reporting import (
+    summarize_ride,
+    print_ride_summary,
+    build_fueling_plan,
+)
+
+from charts import (
+    plot_route_profile,
+    plot_fueling_curves,
+)
 
 
 # ==========================================================
-# USER CONFIG
+# USER CONFIGURATION
 # ==========================================================
 
 USE_GPX = False
 
 GPX_PATH = "sample_routes/my_ride.gpx"
 
-RIDER_MASS_KG = 90
+# Rider
+RIDER_MASS_KG = 95
 BIKE_MASS_KG = 9
+
+# Estimated sustainable fitness
 FITNESS_WKG = 3.0
 
+# Manual route mode
 DISTANCE_KM = 80
 ELEVATION_GAIN_M = 1200
 
+# Weather
 TEMP_C = 24
 HUMIDITY_PCT = 50
 
+# Wind
 WIND_KMH = 5
-WIND_MODE = "head"  # "head" or "tail"
+WIND_MODE = "head"  # head / tail
 
+# Bike
 CHAINRING_TEETH = 34
 CASSETTE_TEETH = 32
 
+# Hydration
 BOTTLE_SIZES_ML = [750, 750]
 
+# GPX processing
 SEGMENT_LENGTH_M = 1000
 ELEVATION_SMOOTH_WINDOW = 7
 
 
 # ==========================================================
-# APP RUNNER
+# BUILD ROUTE
 # ==========================================================
 
-def main():
+def build_route():
+
     if USE_GPX:
-        print(f"Loading GPX file: {GPX_PATH}")
+
+        print(f"\nLoading GPX file: {GPX_PATH}")
 
         gpx_df = load_gpx(GPX_PATH)
 
@@ -50,13 +76,23 @@ def main():
         )
 
     else:
-        print("Using manual route mode")
+
+        print("\nUsing manual route mode")
 
         segments = build_manual_route(
             distance_km=DISTANCE_KM,
             elevation_gain_m=ELEVATION_GAIN_M,
             segment_length_m=SEGMENT_LENGTH_M,
         )
+
+    return segments
+
+
+# ==========================================================
+# RUN SIMULATION
+# ==========================================================
+
+def run_simulation(segments):
 
     sim = simulate_route(
         segments_df=segments,
@@ -71,6 +107,15 @@ def main():
         cassette_teeth=CASSETTE_TEETH,
     )
 
+    return sim
+
+
+# ==========================================================
+# REPORTING
+# ==========================================================
+
+def print_reports(sim):
+
     summary = summarize_ride(
         sim_df=sim,
         rider_mass_kg=RIDER_MASS_KG,
@@ -84,58 +129,125 @@ def main():
         block_minutes=20,
     )
 
-    print("\nFUELING / HYDRATION PLAN")
+    print("\n")
+    print("=" * 60)
+    print("FUELING / HYDRATION PLAN")
     print("=" * 60)
 
     if fueling_plan.empty:
-        print("Ride is too short for the selected fueling block length.")
+        print("Ride too short for fueling blocks.")
     else:
-        print(fueling_plan.to_string(index=False))
+        print(
+            fueling_plan.to_string(index=False)
+        )
 
-    print("\nTOP 10 HARDEST SEGMENTS BY GRADE")
+    print("\n")
+    print("=" * 60)
+    print("TOP 10 HARDEST SEGMENTS")
     print("=" * 60)
 
     hardest = (
-        sim.sort_values("grade_pct", ascending=False)
+        sim.sort_values(
+            by="grade_pct",
+            ascending=False,
+        )
         .head(10)
-        [
-            [
-                "segment_id",
-                "start_km",
-                "end_km",
-                "grade_pct",
-                "speed_kmh",
-                "target_power_w",
-                "cadence_rpm",
-            ]
-        ]
     )
 
-    print(hardest.round(1).to_string(index=False))
+    cols = [
+        "segment_id",
+        "start_km",
+        "end_km",
+        "grade_pct",
+        "speed_kmh",
+        "target_power_w",
+        "cadence_rpm",
+    ]
 
-    print("\nLOW CADENCE SEGMENTS")
+    print(
+        hardest[cols]
+        .round(1)
+        .to_string(index=False)
+    )
+
+    print("\n")
+    print("=" * 60)
+    print("LOW CADENCE SEGMENTS")
     print("=" * 60)
 
-    low_cadence = sim[sim["low_cadence_flag"]]
+    low_cadence = sim[
+        sim["low_cadence_flag"]
+    ]
 
     if low_cadence.empty:
         print("No low cadence segments detected.")
     else:
+
+        cols = [
+            "segment_id",
+            "start_km",
+            "end_km",
+            "grade_pct",
+            "speed_kmh",
+            "cadence_rpm",
+        ]
+
         print(
-            low_cadence[
-                [
-                    "segment_id",
-                    "start_km",
-                    "end_km",
-                    "grade_pct",
-                    "speed_kmh",
-                    "cadence_rpm",
-                ]
-            ]
+            low_cadence[cols]
             .round(1)
             .to_string(index=False)
         )
 
 
+# ==========================================================
+# CHARTS
+# ==========================================================
+
+def export_charts(sim):
+
+    route_chart = plot_route_profile(
+        sim,
+        output_path="route_profile.png",
+    )
+
+    fueling_chart = plot_fueling_curves(
+        sim,
+        output_path="fueling_curves.png",
+    )
+
+    print("\n")
+    print("=" * 60)
+    print("CHARTS SAVED")
+    print("=" * 60)
+    print(route_chart)
+    print(fueling_chart)
+
+
+# ==========================================================
+# MAIN
+# ==========================================================
+
+def main():
+
+    segments = build_route()
+
+    print(
+        f"\nRoute contains {len(segments)} segments"
+    )
+
+    sim = run_simulation(segments)
+
+    print_reports(sim)
+
+    export_charts(sim)
+
+    return sim
+
+
+# ==========================================================
+# ENTRY POINT
+# ==========================================================
+
 if __name__ == "__main__":
-    main()
+
+    simulation = main()

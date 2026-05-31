@@ -7,6 +7,7 @@ from compare import compare_surfaces, compare_aero_positions
 from scenario import compare_scenarios
 from inverse import estimate_power_for_target_time
 from roi import build_roi_table
+from cassette import compare_cassettes
 
 
 USE_GPX = True
@@ -312,6 +313,28 @@ def print_performance_roi(segments):
     print("=" * 60)
     print(roi.round(2).to_string(index=False))
 
+def print_cassette_comparison(segments):
+    crr = get_surface_crr(SURFACE)
+    cda = get_aero_cda(AERO_POSITION)
+
+    comparison = compare_cassettes(
+        segments_df=segments,
+        rider_mass_kg=RIDER_MASS_KG,
+        bike_mass_kg=BIKE_MASS_KG,
+        fitness_wkg=FITNESS_WKG,
+        temp_c=TEMP_C,
+        humidity_pct=HUMIDITY_PCT,
+        wind_kmh=WIND_KMH,
+        wind_mode=WIND_MODE,
+        chainring_teeth=CHAINRING_TEETH,
+        cda=cda,
+        crr=crr,
+    )
+
+    print("\n" + "=" * 60)
+    print("CASSETTE COMPARISON")
+    print("=" * 60)
+    print(comparison.to_string(index=False))
 
 def export_charts(sim):
     route_chart = plot_route_profile(sim, output_path="route_profile.png")
@@ -343,6 +366,7 @@ def main():
     print_rider_scenarios(segments)
     print_target_time_analysis(segments)
     print_performance_roi(segments)
+    print_cassette_comparison(segments)
 
     return sim
 

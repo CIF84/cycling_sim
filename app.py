@@ -102,15 +102,15 @@ def print_reports(sim):
     hardest = sim.sort_values(by="grade_pct", ascending=False).head(10)
 
     cols = [
-    "segment_id",
-    "start_km",
-    "end_km",
-    "grade_pct",
-    "speed_kmh",
-    "target_power_w",
-    "selected_cog_teeth",
-    "cadence_rpm",
-]
+        "segment_id",
+        "start_km",
+        "end_km",
+        "grade_pct",
+        "speed_kmh",
+        "target_power_w",
+        "selected_cog_teeth",
+        "cadence_rpm",
+    ]
 
     print(hardest[cols].round(1).to_string(index=False))
 
@@ -131,12 +131,33 @@ def print_reports(sim):
                     "end_km",
                     "grade_pct",
                     "speed_kmh",
+                    "selected_cog_teeth",
                     "cadence_rpm",
                 ]
             ]
             .round(1)
             .to_string(index=False)
         )
+
+
+def print_gear_usage(sim):
+    gear_usage = (
+        sim.groupby("selected_cog_teeth")
+        .size()
+        .reset_index(name="segments")
+        .sort_values("selected_cog_teeth")
+    )
+
+    gear_usage["pct_of_route"] = (
+        gear_usage["segments"]
+        / gear_usage["segments"].sum()
+        * 100
+    )
+
+    print("\n" + "=" * 60)
+    print("GEAR USAGE")
+    print("=" * 60)
+    print(gear_usage.round(1).to_string(index=False))
 
 
 def print_comparisons(segments):
@@ -316,6 +337,7 @@ def main():
     sim = run_simulation(segments)
 
     print_reports(sim)
+    print_gear_usage(sim)
     export_charts(sim)
     print_comparisons(segments)
     print_rider_scenarios(segments)

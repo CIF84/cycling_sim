@@ -5,15 +5,22 @@ Bike Science Pro
 3. What's worth optimizing?
 
 Current Phase
-
+-------------
 Product Experience
 
 Current Milestone
-
+-----------------
 Homepage Polish
 
-Current Task
+Completed
+---------
+✓ Ride Summary redesign
+✓ Tooltips
+✓ Product onboarding
+✓ Model transparency
+✓ Scale of Influence v1
 
-Group Ride Summary into
-- How hard is this ride?
-- What should I bring?
+Next:
+□ Exportable HTML report
+□ Gather cyclist feedback
+□ Revisit benchmark grouping

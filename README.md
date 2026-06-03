@@ -1,96 +1,114 @@
 # Bike Science Pro
 
-Bike Science Pro is a science-based cycling decision engine that helps riders understand route difficulty, prepare effectively, and identify the most impactful performance improvements.
+## Mission
 
-The goal is not simply to simulate a ride, but to answer three fundamental questions every cyclist asks:
+Bike Science Pro helps cyclists answer three questions:
 
-## 1. How hard is this ride?
+### 1. How hard is this ride?
 
-Bike Science Pro estimates:
+Estimate ride difficulty using route elevation, rider fitness, weather, aerodynamics, surface conditions, gearing, and weight.
 
-- Ride duration
-- Average speed
-- Energy expenditure
-- Carbohydrate requirements
-- Hydration requirements
-- Sodium replacement
-- Route difficulty
+### 2. What should I do?
 
-Output:
+Convert simulation outputs into practical recommendations for fueling, hydration, pacing, and equipment.
 
-Ride Summary
+### 3. What's worth optimizing?
+
+Help riders focus on the changes that matter most using standardized benchmark scenarios and performance comparisons.
 
 ---
 
-## 2. What should I do?
+## Design Principles
 
-Bike Science Pro converts ride data into practical recommendations:
+### Form follows function
 
-- Fueling strategy
-- Hydration planning
-- Gearing assessment
-- Equipment considerations
-- Ride preparation guidance
+Every screen should help riders answer a question or make a decision.
 
-Output:
+### Show assumptions
 
-Ride Recommendations
+Be transparent about inputs, calculations, benchmark scenarios, and limitations.
 
----
+### Insights over data
 
-## 3. What's worth optimizing?
+Convert numbers into actionable recommendations whenever possible.
 
-Bike Science Pro quantifies the impact of potential improvements and helps riders focus on changes that matter most.
+### Focus on changes that matter most
 
-Examples:
-
-- Additional power
-- Aerodynamic improvements
-- Faster tires
-- Rider weight reduction
-- Bike weight reduction
-
-Output:
-
-Time Savings
-
----
-
-## Design Philosophy
-
-Bike Science Pro is designed to be:
-
-- Science-based
-- Practical
-- Easy to understand
-- Useful for both casual riders and performance-focused cyclists
-
-Every feature should help answer at least one of these questions:
-
-1. How hard is this ride?
-2. What should I do?
-3. What's worth optimizing?
-
-If a feature does not improve one of these answers, it probably does not belong in the product.
+Help riders prioritize improvements rather than simply display metrics.
 
 ---
 
 ## Current Features
 
-- GPX route analysis
-- Physics-based ride simulation
-- Power-to-speed modeling
-- Fueling and hydration planning
+### Route Simulation
+
+- GPX route import
+- Manual route creation
+- Elevation profile analysis
+- Segment-by-segment simulation
+
+### Physics Model
+
+- Rider and bike weight
+- Rider fitness (W/kg)
+- Aerodynamics (CdA)
+- Surface rolling resistance
+- Weather effects
+- Gearing and cadence modeling
+
+### Ride Analysis
+
+- Ride duration estimate
+- Average speed estimate
+- Energy expenditure
+- Hardest segment identification
 - Gear usage analysis
-- Cassette comparison
-- Surface comparison
-- Aerodynamics comparison
-- Target time calculator
-- Time Savings analysis
-- Interactive Streamlit dashboard
+
+### Fueling & Hydration
+
+- Calorie estimation
+- Carbohydrate requirements
+- Fluid requirements
+- Sodium replacement
+- Refill stop estimation
+- Ride fueling plan
+
+### Optimization & Benchmarking
+
+- Surface comparisons
+- Aerodynamic position comparisons
+- Cassette comparisons
+- Target time analysis
+- Performance ROI analysis
+- Time Savings benchmark scenarios
+
+### User Experience
+
+- Product onboarding cards
+- Explainability section
+- Ride recommendations
+- Tooltips and contextual guidance
 
 ---
 
-## Vision
+## Current Development Focus
 
-Create the simplest way for any cyclist—from first-time bike renters to experienced racers—to make better riding decisions using science instead of guesswork.
+### Phase: Product Experience
+
+Goal:
+
+Transform Bike Science Pro from a simulator into a decision-support tool.
+
+Current priorities:
+
+- Improve recommendation quality
+- Improve Time Savings interpretation
+- Add exportable ride reports
+- Gather feedback from real cyclists
+
+Future ideas:
+
+- Bike fitting
+- Weather integration
+- Equipment recommendations
+- Advanced comparison scenarios

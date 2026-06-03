@@ -462,10 +462,17 @@ for _, rec in recommendations.iterrows():
         st.write(rec["details"])
 
 # ==========================================================
-# TIME SAVINGS
+# SCALE OF INFLUENCE
 # ==========================================================
 
-st.subheader("Time Savings")
+st.subheader("Scale of Influence")
+st.caption(
+    "For this route, rider power and aerodynamics have the largest modeled influence on ride time."
+)
+
+st.caption(
+    "Results are based on standardized benchmark scenarios and should be treated as directional guidance."
+)
 
 roi_display = (
     roi.sort_values(
@@ -475,17 +482,37 @@ roi_display = (
     .head(4)
 )
 
+total_impact = roi_display["time_saved_min"].sum()
+
+roi_display["share_of_influence"] = (
+    roi_display["time_saved_min"] / total_impact * 100
+)
+
+
 max_gain = roi_display["time_saved_min"].max()
 
-for _, row in roi_display.iterrows():
+rank_icons = ["①", "②", "③", "④"]
+
+display_labels = {
+    "+20 W": "Rider Power (+20 W benchmark)",
+    "+10 W": "Rider Power (+10 W benchmark)",
+    "10% aero gain": "Aerodynamics (10% improvement)",
+    "Fast tires": "Rolling Resistance (faster tires)",
+    "-5 kg rider": "Body Weight (-5 kg benchmark)",
+    "-1 kg rider": "Body Weight (-1 kg benchmark)",
+    "-1 kg bike": "Bike Weight (-1 kg benchmark)",
+}
+
+for rank, (_, row) in enumerate(roi_display.iterrows()):
 
     progress_value = row["time_saved_min"] / max_gain
+    rank_icon = rank_icons[rank]
 
     st.markdown(
         f"""
-### {row['change']}
+### {rank_icon} {display_labels.get(row['change'], row['change'])}
 
-**{row['time_saved_min']:.1f} min saved**
+**Estimated impact:** {row['time_saved_min']:.1f} min saved
 """
     )
 

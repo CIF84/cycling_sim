@@ -299,22 +299,61 @@ recommendations = build_recommendations(
 # SUMMARY CARDS
 # ==========================================================
 
-st.subheader("Ride Summary")
+st.subheader("How hard is this ride?")
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Distance", f"{summary['distance_km']} km")
-col2.metric("Duration", f"{summary['duration_h']} h")
-col3.metric("Avg Speed", f"{summary['avg_speed_kmh']} km/h")
-col4.metric("Energy", f"{summary['energy_kcal']} kcal")
+col1.metric(
+    "🚴 Distance",
+    f"{summary['distance_km']} km",
+    help="Total route distance",
+)
+
+col2.metric(
+    "⏱ Duration",
+    f"{summary['duration_h']} h",
+    help="Estimated ride time",
+)
+
+col3.metric(
+    "⚡ Avg Speed",
+    f"{summary['avg_speed_kmh']} km/h",
+    help="Estimated average speed",
+)
+
+col4.metric(
+    "🔥 Calories",
+    f"{summary['energy_kcal']} kcal",
+    help="Estimated calories burned",
+)
+
+st.subheader("What should I bring?")
 
 col5, col6, col7, col8 = st.columns(4)
 
-col5.metric("Carbs", f"{summary['carbs_g']} g")
-col6.metric("Fluid Goal", f"{summary['fluid_goal_l']} L")
-col7.metric("Sodium", f"{summary['sodium_mg']} mg")
-col8.metric("Refill Stops", summary["refill_stops"])
+col5.metric(
+    "🍌 Carbs",
+    f"{summary['carbs_g']} g",
+    help="Estimated carbohydrate requirement",
+)
 
+col6.metric(
+    "🥤 Fluids",
+    f"{summary['fluid_goal_l']} L",
+    help="Recommended fluid intake",
+)
+
+col7.metric(
+    "🧂 Sodium",
+    f"{summary['sodium_mg']} mg",
+    help="Estimated sodium replacement",
+)
+
+col8.metric(
+    "🚰 Refills",
+    summary["refill_stops"],
+    help="Estimated bottle refill stops",
+)
 
 # ==========================================================
 # TABS

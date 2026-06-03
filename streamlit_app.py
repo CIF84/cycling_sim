@@ -18,10 +18,90 @@ st.set_page_config(
     layout="wide",
 )
 
-
 st.title("Bike Science Pro")
 st.caption("Cycling physics, fueling, gearing, and performance ROI simulator")
 
+# ==========================================================
+# PRODUCT ORIENTATION
+# ==========================================================
+
+card1, card2, card3, card4 = st.columns(4)
+
+with card1:
+    st.info(
+        """
+**What is it?**
+
+Physics-based cycling simulator.
+"""
+    )
+
+with card2:
+    st.info(
+        """
+**What does it consider?**
+
+Weight, fitness, aero, weather, elevation, surface, gearing.
+"""
+    )
+
+with card3:
+    st.info(
+        """
+**What does it calculate?**
+
+Ride time, calories, fueling, hydration.
+"""
+    )
+
+with card4:
+    st.info(
+        """
+**Can I trust it?**
+
+Transparent assumptions, calculations and route-specific estimates.
+"""
+    )
+
+with st.expander(
+    "How does Bike Science Pro work?",
+    expanded=False,
+):
+    st.markdown("""
+Bike Science Pro simulates your ride segment-by-segment using:
+
+- Rider and bike weight
+- Rider fitness (W/kg)
+- Aerodynamics (CdA)
+- Surface rolling resistance
+- Weather conditions
+- Route elevation profile
+- Gearing and cadence
+
+The simulator estimates:
+
+- Ride duration
+- Calories burned
+- Fueling requirements
+- Hydration needs
+
+Time Savings estimates how much faster this route could be completed 
+if one aspect of rider fitness, body weight, aerodynamics, or equipment improved. 
+
+To make comparisons consistent, the simulator uses several standardized 
+benchmark scenarios:
+
+- +10 W rider power
+- +20 W rider power
+- -5 kg rider weight
+- Improved aerodynamics
+- Faster rolling tires
+
+These benchmarks are intended to illustrate the relative impact of common improvements on this specific route rather than serve as
+personalized recommendations or performance targets.
+
+All estimates are route-specific and should be treated as directional guidance rather than guaranteed outcomes.
+""")
 
 # ==========================================================
 # SIDEBAR INPUTS

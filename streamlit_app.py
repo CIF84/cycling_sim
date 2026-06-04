@@ -376,6 +376,16 @@ recommendations = build_recommendations(
 )
 
 # ==========================================================
+# RIDE BRIEFING
+# ==========================================================
+
+st.divider()
+st.header("Ride Briefing")
+st.caption(
+    "Everything you need to prepare for this specific ride."
+)
+
+# ==========================================================
 # SUMMARY CARDS
 # ==========================================================
 
@@ -462,6 +472,16 @@ for _, rec in recommendations.iterrows():
         st.write(rec["details"])
 
 # ==========================================================
+# PERFORMANCE ANALYSIS
+# ==========================================================
+
+st.divider()
+st.header("Performance Analysis")
+st.caption(
+    "Route-specific insights showing which factors have the largest modeled influence on ride time."
+)
+
+# ==========================================================
 # SCALE OF INFLUENCE
 # ==========================================================
 
@@ -474,43 +494,74 @@ st.caption(
     "Results are based on standardized benchmark scenarios and should be treated as directional guidance."
 )
 
-roi_display = (
-    roi.sort_values(
-        "time_saved_min",
-        ascending=False,
-    )
-    .head(4)
-)
-
-total_impact = roi_display["time_saved_min"].sum()
-
-roi_display["share_of_influence"] = (
-    roi_display["time_saved_min"] / total_impact * 100
-)
-
-
-max_gain = roi_display["time_saved_min"].max()
-
-rank_icons = ["①", "②", "③", "④"]
-
-display_labels = {
-    "+20 W": "Rider Power (+20 W benchmark)",
-    "+10 W": "Rider Power (+10 W benchmark)",
-    "10% aero gain": "Aerodynamics (10% improvement)",
-    "Fast tires": "Rolling Resistance (faster tires)",
-    "-5 kg rider": "Body Weight (-5 kg benchmark)",
-    "-1 kg rider": "Body Weight (-1 kg benchmark)",
-    "-1 kg bike": "Bike Weight (-1 kg benchmark)",
+roi_categories = {
+    "+10 W": "Rider Power",
+    "+20 W": "Rider Power",
+    "10% aero gain": "Aerodynamics",
+    "Fast tires": "Rolling Resistance",
+    "-5 kg rider": "Body Weight",
+    "-1 kg rider": "Body Weight",
+    "-1 kg bike": "Bike Weight",
 }
 
-for rank, (_, row) in enumerate(roi_display.iterrows()):
+roi_grouped = roi.copy()
+
+roi_grouped["category"] = roi_grouped["change"].map(roi_categories)
+
+roi_grouped = (
+    roi_grouped
+    .dropna(subset=["category"])
+    .groupby("category", as_index=False)["time_saved_min"]
+    .max()
+    .sort_values("time_saved_min", ascending=False)
+)
+
+top = roi_grouped.iloc[0]
+second = roi_grouped.iloc[1]
+body_weight = roi_grouped[roi_grouped["category"] == "Body Weight"].iloc[0]
+bike_weight = roi_grouped[roi_grouped["category"] == "Bike Weight"].iloc[0]
+
+top_vs_second_pct = (
+    (top["time_saved_min"] / second["time_saved_min"] - 1) * 100
+)
+
+aero = roi_grouped[roi_grouped["category"] == "Aerodynamics"].iloc[0]
+
+aero_vs_body_pct = (
+    (aero["time_saved_min"] / body_weight["time_saved_min"] - 1) * 100
+)
+
+fitness_vs_bike_ratio = (
+    top["time_saved_min"] / bike_weight["time_saved_min"]
+)
+
+st.info(
+    f"""
+**Key Insights**
+
+On this route, **{top['category']}** and **{second['category']}** are the dominant performance factors.  
+Weight reduction helps, but bike weight has comparatively little influence on finishing time.
+
+- {top['category']} produces approximately **{top_vs_second_pct:.0f}% greater modeled impact** than {second['category']} ({top['time_saved_min']:.1f} vs {second['time_saved_min']:.1f} min saved).
+
+- Aerodynamics produces approximately **{aero_vs_body_pct:.0f}% greater modeled impact** than reducing 5 kg of body weight ({aero['time_saved_min']:.1f} vs {body_weight['time_saved_min']:.1f} min saved).
+
+- Improving rider fitness produces approximately **{fitness_vs_bike_ratio:.0f}× greater modeled gains** than reducing bike weight ({top['time_saved_min']:.1f} vs {bike_weight['time_saved_min']:.1f} min saved).
+"""
+)
+
+max_gain = roi_grouped["time_saved_min"].max()
+
+rank_icons = ["①", "②", "③", "④", "⑤"]
+
+for rank, (_, row) in enumerate(roi_grouped.iterrows()):
 
     progress_value = row["time_saved_min"] / max_gain
     rank_icon = rank_icons[rank]
 
     st.markdown(
         f"""
-### {rank_icon} {display_labels.get(row['change'], row['change'])}
+### {rank_icon} {row['category']}
 
 **Estimated impact:** {row['time_saved_min']:.1f} min saved
 """
@@ -518,7 +569,19 @@ for rank, (_, row) in enumerate(roi_display.iterrows()):
 
     st.progress(progress_value)
 
+# ==========================================================
+# DETAILED ANALYSIS
+# ==========================================================
 
+st.divider()
+st.header("Detailed Analysis")
+st.caption(
+    "Simulation data, route profile, fueling plan and advanced comparisons."
+)
+
+# ==========================================================
+# TABS
+# ==========================================================
 
 tabs = st.tabs(
     [

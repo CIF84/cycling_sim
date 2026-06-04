@@ -8,10 +8,6 @@ Current Phase
 -------------
 Product Experience
 
-Current Milestone
------------------
-Homepage Polish
-
 Completed
 ---------
 ✓ Ride Summary redesign
@@ -20,7 +16,16 @@ Completed
 ✓ Model transparency
 ✓ Scale of Influence v1
 
-Next:
+Next
+----
 □ Exportable HTML report
 □ Gather cyclist feedback
 □ Revisit benchmark grouping
+
+Future Ideas
+----
+□ Personalized Influence Mode
+  - Power slider (+W)
+  - Weight slider (-kg)
+  - Aero slider (%)
+  - Route-specific impact estimates

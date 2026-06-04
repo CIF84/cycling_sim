@@ -11,61 +11,6 @@ def build_recommendations(
 ):
     recommendations = []
 
-    best_roi = roi_table.sort_values(
-        "time_saved_min",
-        ascending=False,
-    ).iloc[0]
-
-    recommendations.append(
-        {
-            "type": "success",
-            "title": "🚀 Biggest time saver",
-            "summary": (
-                f"{best_roi['change']} is the strongest modeled improvement, "
-                f"saving approximately {best_roi['time_saved_min']:.1f} minutes."
-            ),
-            "details": (
-                f"Current sustained power estimate: {current_power_w:.0f} W\n\n"
-                f"Modeled improvement: {best_roi['change']}\n\n"
-                f"New estimated duration: {best_roi['new_duration_h']:.2f} h"
-            ),
-        }
-    )
-
-    aero_row = roi_table[roi_table["change"] == "10% aero gain"]
-    weight_row = roi_table[roi_table["change"] == "-5 kg rider"]
-
-    if not aero_row.empty and not weight_row.empty:
-        aero_gain = aero_row.iloc[0]["time_saved_min"]
-        weight_gain = weight_row.iloc[0]["time_saved_min"]
-
-        if aero_gain > weight_gain:
-            title = "💨 Aerodynamics matter more than weight loss"
-            summary = (
-                f"A 10% aero improvement saves about {aero_gain:.1f} minutes, "
-                f"while losing 5 kg saves about {weight_gain:.1f} minutes."
-            )
-        else:
-            title = "⚖️ Weight loss matters more than aero on this route"
-            summary = (
-                f"Losing 5 kg saves about {weight_gain:.1f} minutes, "
-                f"while a 10% aero improvement saves about {aero_gain:.1f} minutes."
-            )
-
-        recommendations.append(
-            {
-                "type": "info",
-                "title": title,
-                "summary": summary,
-                "details": (
-                    f"Aero scenario: CdA {current_cda:.3f} → {current_cda * 0.90:.3f}\n\n"
-                    f"Weight scenario: rider mass reduced by 5 kg\n\n"
-                    f"This comparison is route-specific. Aero usually matters more on faster/flatter routes; "
-                    f"weight usually matters more on steep climbing routes."
-                ),
-            }
-        )
-
     biggest_cog = gear_usage["selected_cog_teeth"].max()
     biggest_cog_row = gear_usage[
         gear_usage["selected_cog_teeth"] == biggest_cog

@@ -12,6 +12,7 @@ from inverse import estimate_power_for_target_time
 from roi import build_roi_table
 from cassette import compare_cassettes
 from recommendations import build_recommendations
+from optimization import estimate_custom_improvement
 
 st.set_page_config(
     page_title="Bike Science Pro",
@@ -265,7 +266,11 @@ bottle_capacity_ml = st.sidebar.number_input(
 bottle_sizes_ml = [bottle_capacity_ml]
 
 
-run_button = st.sidebar.button("Run simulation", type="primary")
+if "simulation_started" not in st.session_state:
+    st.session_state.simulation_started = False
+
+if st.sidebar.button("Run simulation", type="primary"):
+    st.session_state.simulation_started = True
 
 
 # ==========================================================
@@ -300,7 +305,7 @@ def build_route_from_inputs():
 # MAIN APP
 # ==========================================================
 
-if not run_button:
+if not st.session_state.simulation_started:
     st.info("Set parameters in the sidebar, then click **Run simulation**.")
     st.stop()
 
@@ -568,6 +573,120 @@ for rank, (_, row) in enumerate(roi_grouped.iterrows()):
     )
 
     st.progress(progress_value)
+
+# ==========================================================
+# OPTIMIZATION SANDBOX
+# ==========================================================
+
+st.divider()
+st.subheader("Performance Planner")
+st.caption(
+    "Adjust realistic improvements and see how they could affect your estimated ride time."
+)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    power_gain_w = st.slider(
+        "Power gain (W)",
+        min_value=0,
+        max_value=30,
+        value=10,
+        step=1,
+    )
+
+    weight_loss_kg = st.slider(
+        "Body weight reduction (kg)",
+        min_value=0.0,
+        max_value=10.0,
+        value=3.0,
+        step=0.5,
+    )
+
+with col2:
+    aero_gain_pct = st.slider(
+        "Aerodynamic improvement (%)",
+        min_value=0,
+        max_value=20,
+        value=5,
+        step=1,
+    )
+
+    bike_weight_loss_kg = st.slider(
+        "Bike weight reduction (kg)",
+        min_value=0.0,
+        max_value=2.0,
+        value=0.5,
+        step=0.1,
+    )
+
+custom_improvement = estimate_custom_improvement(
+    roi_table=roi,
+    power_gain_w=power_gain_w,
+    weight_loss_kg=weight_loss_kg,
+    aero_gain_pct=aero_gain_pct,
+    bike_weight_loss_kg=bike_weight_loss_kg,
+)
+
+current_duration_min = summary["duration_h"] * 60
+new_duration_min = current_duration_min - custom_improvement["total_saved_min"]
+new_duration_h = new_duration_min / 60
+
+pct_faster = (
+    custom_improvement["total_saved_min"]
+    / current_duration_min
+    * 100
+)
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric(
+    "Current duration",
+    f"{summary['duration_h']:.2f} h",
+)
+
+col2.metric(
+    "Estimated time saved",
+    f"{custom_improvement['total_saved_min']:.1f} min",
+)
+
+col3.metric(
+    "New estimated duration",
+    f"{new_duration_h:.2f} h",
+)
+
+col4.metric(
+    "Faster by",
+    f"{pct_faster:.1f}%",
+)
+
+st.markdown("#### Contribution Breakdown")
+
+breakdown_col1, breakdown_col2, breakdown_col3, breakdown_col4 = st.columns(4)
+
+breakdown_col1.metric(
+    "Rider Power",
+    f"{custom_improvement['power_saved_min']:.1f} min",
+)
+
+breakdown_col2.metric(
+    "Body Weight",
+    f"{custom_improvement['weight_saved_min']:.1f} min",
+)
+
+breakdown_col3.metric(
+    "Aerodynamics",
+    f"{custom_improvement['aero_saved_min']:.1f} min",
+)
+
+breakdown_col4.metric(
+    "Bike Weight",
+    f"{custom_improvement['bike_saved_min']:.1f} min",
+)
+
+st.caption(
+    "Estimates are based on linear interpolation from benchmark scenarios and should be treated as directional guidance."
+)
 
 # ==========================================================
 # DETAILED ANALYSIS

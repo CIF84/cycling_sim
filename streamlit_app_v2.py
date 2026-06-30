@@ -671,7 +671,7 @@ font-size: 0.95rem;
 }
 .top-cards {
 display: grid;
-grid-template-columns: repeat(3, 1fr);
+grid-template-columns: repeat(4, 1fr);
 gap: 14px;
 }
 .info-card {
@@ -680,7 +680,7 @@ border: 1px solid rgba(53,174,245,0.22);
 border-radius: 10px;
 padding: 14px;
 color: var(--accent);
-min-height: 76px;
+min-height: 68px;
 box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .info-card b {
@@ -751,6 +751,33 @@ color: #dcefff;
 .scenario-verdict b {
 color: #ffffff;
 }
+.decision-context {
+border: 1px solid rgba(53,174,245,0.28);
+border-radius: 10px;
+background: rgba(53,174,245,0.055);
+padding: 10px 12px;
+margin: 0.65rem 0 0.65rem 0;
+}
+.decision-context-title {
+font-size: 0.72rem;
+font-weight: 900;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--accent);
+margin-bottom: 0.25rem;
+}
+.decision-context-main {
+font-size: 0.98rem;
+font-weight: 900;
+color: #ffffff;
+margin-bottom: 0.25rem;
+}
+.decision-context-meta {
+font-size: 0.82rem;
+color: #d6d6d6;
+line-height: 1.4;
+}
+
 .diff-grid {
 display: grid;
 grid-template-columns: repeat(6, 1fr);
@@ -1328,9 +1355,10 @@ render_html(
 <h1>Bike Science Pro</h1>
 <p>Model scenarios. Compare outcomes. Make better decisions.</p>
 <div class="top-cards">
-<div class="info-card"><b>What is it?</b><br><br>A scenario engine for cyclists.</div>
-<div class="info-card"><b>How does it work?</b><br><br>Compare Ride A and Ride B across rider, bike, weather, surface and route setup.</div>
-<div class="info-card"><b>Can I trust it?</b><br><br>Physics-based estimates with transparent assumptions.</div>
+<div class="info-card"><b>What is it?</b><br><br>A physics-based decision cockpit for cyclists.</div>
+<div class="info-card"><b>Compare riders</b><br><br>Who is faster on the same route, and why?</div>
+<div class="info-card"><b>Compare setups</b><br><br>What changes if you alter weight, tires, position or fitness?</div>
+<div class="info-card"><b>Compare routes</b><br><br>Which ride better fits this rider and setup?</div>
 </div>
 </div>
 """
@@ -1542,7 +1570,7 @@ def build_performance_analysis(inputs: dict, summary: dict) -> list[dict]:
 
 
 def build_opportunity_engine(performance: list[dict]) -> list[dict]:
-    """Phase 8.1 Opportunity Engine.
+    """Phase 9.1 Opportunity Engine.
 
     Converts raw Scale of Influence bars into action-oriented improvement
     opportunities. Impact comes from real engine re-runs; effort, cost and
@@ -1710,14 +1738,14 @@ def render_opportunity_engine(performance: list[dict]) -> None:
 {cards_html}
 </div>
 
-<div class="opportunity-note">Phase 8.1 Opportunity Portfolio ranks levers by payoff vs effort, not modeled time alone. Impact still comes from real v1 engine re-runs.</div>
+<div class="opportunity-note">Phase 9.1 Opportunity Portfolio ranks levers by payoff vs effort, not modeled time alone. Impact still comes from real v1 engine re-runs.</div>
 """
     )
     render_upgrade_advisor(opportunities)
 
 
 def build_upgrade_advisor(opportunities: list[dict]) -> list[dict]:
-    """Phase 8.1 Upgrade Advisor.
+    """Phase 9.1 Upgrade Advisor.
 
     Converts ranked opportunities into human action cards. The modeled gain
     still comes from the real engine; difficulty/cost/time are practical
@@ -1854,7 +1882,7 @@ def render_upgrade_advisor(opportunities: list[dict]) -> None:
 <div class="upgrade-advisor-grid">
 {cards_html}
 </div>
-<div class="upgrade-note">Phase 8.1 translates modeled opportunities into concrete actions, while keeping Scale of Influence as the calculation source.</div>
+<div class="upgrade-note">Phase 9.1 translates modeled opportunities into concrete actions, while keeping Scale of Influence as the calculation source.</div>
 """
     )
 
@@ -2189,11 +2217,131 @@ def render_difference_card(label: str, item: dict) -> str:
 """
 
 
+
+
+def input_changed(inputs_a: dict, inputs_b: dict, key: str, tolerance: float = 0.0) -> bool:
+    """Compare two input values with optional numeric tolerance."""
+    value_a = inputs_a.get(key)
+    value_b = inputs_b.get(key)
+
+    if isinstance(value_a, (int, float)) and isinstance(value_b, (int, float)):
+        return abs(value_a - value_b) > tolerance
+
+    return value_a != value_b
+
+
+def detect_comparison_context(inputs_a: dict, inputs_b: dict) -> dict:
+    """Phase 9: infer comparison intent from scenario differences."""
+    route_a = inputs_a.get("route_description")
+    route_b = inputs_b.get("route_description")
+    same_route = route_a == route_b
+
+    rider_changed = any(
+        [
+            input_changed(inputs_a, inputs_b, "rider_mass"),
+            input_changed(inputs_a, inputs_b, "fitness", tolerance=0.01),
+            input_changed(inputs_a, inputs_b, "riding_style"),
+        ]
+    )
+
+    bike_changed = any(
+        [
+            input_changed(inputs_a, inputs_b, "bike_mass", tolerance=0.01),
+            input_changed(inputs_a, inputs_b, "tires"),
+            input_changed(inputs_a, inputs_b, "drivetrain"),
+        ]
+    )
+
+    conditions_changed = any(
+        [
+            input_changed(inputs_a, inputs_b, "temperature"),
+            input_changed(inputs_a, inputs_b, "humidity"),
+            input_changed(inputs_a, inputs_b, "wind"),
+            input_changed(inputs_a, inputs_b, "surface"),
+        ]
+    )
+
+    changed_groups = [
+        name
+        for name, changed in [
+            ("route", not same_route),
+            ("rider", rider_changed),
+            ("bike", bike_changed),
+            ("weather/surface", conditions_changed),
+        ]
+        if changed
+    ]
+
+    if not changed_groups:
+        mode = "Simulation baseline"
+        question = "What does this ride look like?"
+        focus = "Ride briefing, fueling, hydration and route character."
+    elif same_route and rider_changed and not bike_changed and not conditions_changed:
+        mode = "Rider comparison"
+        question = "How do rider attributes affect the same route?"
+        focus = "Performance gap, power-to-weight, fueling demand and rider suitability."
+    elif same_route and bike_changed and not rider_changed and not conditions_changed:
+        mode = "Setup comparison"
+        question = "Which bike or equipment setup performs better?"
+        focus = "Equipment impact, rolling resistance, bike mass and aerodynamic assumptions."
+    elif same_route and (rider_changed or bike_changed or conditions_changed):
+        mode = "What-if optimization"
+        question = "What changes if this rider or setup improves?"
+        focus = "Time saved, practical levers, and whether changes are worth pursuing."
+    elif not same_route and not rider_changed and not bike_changed:
+        mode = "Route suitability"
+        question = "Which route better fits this rider and setup?"
+        focus = "Route character, difficulty, fueling demand, and expected ride outcome."
+    elif not same_route and (rider_changed or bike_changed):
+        mode = "General scenario comparison"
+        question = "Which scenario performs better, and why?"
+        focus = "Outcome differences across route, rider and setup assumptions."
+    else:
+        mode = "Scenario comparison"
+        question = "What changed between Ride A and Ride B?"
+        focus = "Key deltas and the most likely drivers of the difference."
+
+    reason_bits = ["same route" if same_route else "different routes"]
+
+    if rider_changed:
+        reason_bits.append("rider changed")
+    if bike_changed:
+        reason_bits.append("bike/setup changed")
+    if conditions_changed:
+        reason_bits.append("weather/surface changed")
+    if len(reason_bits) == 1:
+        reason_bits.append("no major setup changes")
+
+    return {
+        "mode": mode,
+        "question": question,
+        "focus": focus,
+        "reason": " · ".join(reason_bits),
+        "changed_groups": changed_groups,
+    }
+
+
+def render_decision_context(inputs_a: dict, inputs_b: dict) -> str:
+    """Render compact context-aware explanation for the differences dock."""
+    context = detect_comparison_context(inputs_a, inputs_b)
+
+    return f"""
+<div class="decision-context">
+    <div class="decision-context-title">Decision Engine</div>
+    <div class="decision-context-main">{context['mode']}: {context['question']}</div>
+    <div class="decision-context-meta">
+        Detected from inputs: {context['reason']}.<br>
+        Analysis focus: {context['focus']}
+    </div>
+</div>
+"""
+
 def build_scenario_verdict(summary_a: dict, summary_b: dict, inputs_a: dict, inputs_b: dict) -> str:
     """Create a compact human-readable comparison of Ride B vs Ride A."""
     if not summary_a.get("ready", True) or not summary_b.get("ready", True):
         return "<b>Scenario comparison:</b> Select a route for Ride A and Ride B to compare outcomes. Upload GPX or explicitly choose the generated demo route."
 
+    context = detect_comparison_context(inputs_a, inputs_b)
     differences = calculate_ride_differences(summary_a, summary_b)
 
     duration_delta = differences["duration"]["delta"]
@@ -2239,10 +2387,9 @@ def build_scenario_verdict(summary_a: dict, summary_b: dict, inputs_a: dict, inp
     setup_phrase = "; ".join(setup_changes[:3]) if setup_changes else "same key setup assumptions"
 
     return (
-        f"<b>Scenario comparison:</b> {time_phrase}, {speed_phrase}, {demand_phrase}. "
-        f"Main setup change: {setup_phrase}."
+        f"<b>{context['mode']}:</b> {time_phrase}, {speed_phrase}, {demand_phrase}. "
+        f"Main change: {setup_phrase}."
     )
-
 
 def render_differences_panel(summary_a: dict, summary_b: dict, inputs_a: dict, inputs_b: dict) -> None:
     """Render the fixed bottom decision dock from normalized differences."""
@@ -2265,6 +2412,7 @@ def render_differences_panel(summary_a: dict, summary_b: dict, inputs_a: dict, i
 <div class="fixed-bottom">
 <h2>Differences</h2>
 <div class="bottom-caption">Compare Ride B against Ride A.</div>
+{render_decision_context(inputs_a, inputs_b)}
 <div class="scenario-verdict">{verdict}</div>
 <div class="diff-grid">
 {cards_html}

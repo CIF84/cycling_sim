@@ -1,0 +1,28 @@
+def build_scenario_inputs(
+    rider_mass,
+    fitness,
+    riding_style,
+    bike_mass,
+    tires,
+    drivetrain,
+    temperature,
+    humidity,
+    wind,
+    surface,
+    segments_df,
+    route_description,
+) -> dict:
+    return {
+        "rider_mass": rider_mass,
+        "fitness": fitness,
+        "riding_style": riding_style,
+        "bike_mass": bike_mass,
+        "tires": tires,
+        "drivetrain": drivetrain,
+        "temperature": temperature,
+        "humidity": humidity,
+        "wind": wind,
+        "surface": surface,
+        "segments_df": segments_df,
+        "route_description": route_description,
+    }

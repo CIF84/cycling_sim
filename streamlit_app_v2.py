@@ -10,6 +10,7 @@ from v2.decision_context import render_decision_context
 from v2.onboarding import render_onboarding_cards
 from v2.performance import configure_performance_engine
 from v2.performance import ride_performance_analysis
+from v2.scenario_model import build_scenario_inputs
 
 
 st.set_page_config(
@@ -1658,20 +1659,20 @@ def ride_panel(
             key=f"{label}_surface",
         )
 
-    inputs = {
-        "rider_mass": rider_mass,
-        "fitness": fitness,
-        "riding_style": riding_style,
-        "bike_mass": bike_mass,
-        "tires": tires,
-        "drivetrain": drivetrain,
-        "temperature": temperature,
-        "humidity": humidity,
-        "wind": wind,
-        "surface": surface,
-        "segments_df": segments_df,
-        "route_description": route_description,
-    }
+    inputs = build_scenario_inputs(
+        rider_mass=rider_mass,
+        fitness=fitness,
+        riding_style=riding_style,
+        bike_mass=bike_mass,
+        tires=tires,
+        drivetrain=drivetrain,
+        temperature=temperature,
+        humidity=humidity,
+        wind=wind,
+        surface=surface,
+        segments_df=segments_df,
+        route_description=route_description,
+    )
 
     summary = run_ride_engine(inputs)
 

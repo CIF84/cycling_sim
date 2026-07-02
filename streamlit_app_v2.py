@@ -7,6 +7,7 @@ import streamlit as st
 from v2.decision_context import build_scenario_verdict
 from v2.decision_context import calculate_ride_differences
 from v2.decision_context import render_decision_context
+from v2.onboarding import render_onboarding_cards
 
 
 st.set_page_config(
@@ -1364,16 +1365,11 @@ margin-bottom: 1rem;
 # ==========================================================
 
 render_html(
-    """
+    f"""
 <div class="fixed-top">
 <h1>Bike Science Pro</h1>
 <p>Model scenarios. Compare outcomes. Make better decisions.</p>
-<div class="top-cards">
-<div class="info-card"><b>What is it?</b><br><br>A physics-based decision cockpit for cyclists.</div>
-<div class="info-card"><b>Compare riders</b><br><br>Who is faster on the same route, and why?</div>
-<div class="info-card"><b>Compare setups</b><br><br>What changes if you alter weight, tires, position or fitness?</div>
-<div class="info-card"><b>Compare routes</b><br><br>Which ride better fits this rider and setup?</div>
-</div>
+{render_onboarding_cards()}
 </div>
 """
 )

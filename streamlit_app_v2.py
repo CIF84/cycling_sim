@@ -778,6 +778,16 @@ color: #d6d6d6;
 line-height: 1.4;
 }
 
+.questions-card{
+border:1px solid rgba(255,255,255,.12);
+border-radius:10px;
+padding:10px 12px;
+background:rgba(255,255,255,.025);
+margin:.65rem 0;
+}
+.questions-title{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.3rem;}
+.questions-list{color:#d6d6d6;font-size:.82rem;line-height:1.6;}
+
 .diff-grid {
 display: grid;
 grid-template-columns: repeat(6, 1fr);
@@ -2322,17 +2332,35 @@ def detect_comparison_context(inputs_a: dict, inputs_b: dict) -> dict:
 
 
 def render_decision_context(inputs_a: dict, inputs_b: dict) -> str:
-    """Render compact context-aware explanation for the differences dock."""
     context = detect_comparison_context(inputs_a, inputs_b)
-
+    narratives={
+"Simulation baseline":"You're exploring a single ride scenario. The analysis focuses on understanding the expected ride characteristics rather than comparing alternatives.",
+"Rider comparison":"You're comparing how different rider attributes perform on the same route. Focus on performance gaps and the reasons behind them.",
+"Setup comparison":"You're comparing equipment choices on the same route. The analysis emphasizes which setup changes are most influential.",
+"What-if optimization":"You're exploring whether changing your rider or bike setup is worthwhile. The focus is on practical improvements and their expected payoff.",
+"Route suitability":"You're comparing two routes for the same rider. The analysis focuses on which route better matches the rider and why.",
+"General scenario comparison":"You're comparing multiple aspects at once. The analysis explains the overall outcome before drilling into individual contributors.",
+"Scenario comparison":"You're comparing two ride scenarios and identifying the major drivers of the difference."
+}
+    qs={
+"Simulation baseline":["What should I expect?","How demanding is this ride?","What should I fuel?"],
+"Rider comparison":["Which rider is faster?","Why?","Which strengths matter most?"],
+"Setup comparison":["Which setup is faster?","Which change matters most?","Is it worth it?"],
+"What-if optimization":["What should I change first?","How much time can I save?","Where is the best ROI?"],
+"Route suitability":["Which route suits me better?","Why?","What trade-offs exist?"],
+"General scenario comparison":["Which scenario performs better?","What changed?","What should I look at first?"],
+"Scenario comparison":["What changed?","Why?","What should I do next?"]
+}
+    q=''.join(f"✓ {x}<br>" for x in qs.get(context["mode"],[]))
     return f"""
 <div class="decision-context">
-    <div class="decision-context-title">Decision Engine</div>
-    <div class="decision-context-main">{context['mode']}: {context['question']}</div>
-    <div class="decision-context-meta">
-        Detected from inputs: {context['reason']}.<br>
-        Analysis focus: {context['focus']}
-    </div>
+<div class="decision-context-title">Current Analysis</div>
+<div class="decision-context-main">{context['mode']}</div>
+<div class="decision-context-meta">{narratives.get(context['mode'],'')}<br><br><b>Detected from inputs:</b> {context['reason']}<br><b>Analysis focus:</b> {context['focus']}</div>
+</div>
+<div class="questions-card">
+<div class="questions-title">Questions answered</div>
+<div class="questions-list">{q}</div>
 </div>
 """
 

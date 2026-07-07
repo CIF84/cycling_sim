@@ -6,6 +6,7 @@ from v2.decision_context import render_decision_context
 from v2.engine_adapter import run_ride_engine
 from v2.onboarding import render_onboarding_cards
 from v2.performance import configure_performance_engine
+from v2.ride_briefing import ride_briefing
 from v2.ride_panel import ride_panel
 from v2.route_intelligence import render_route_intelligence
 from v2.route_service import resolve_route_segments
@@ -39,13 +40,6 @@ def render_html(html: str) -> None:
     """Render raw HTML without leading indentation so Streamlit does not treat it as code."""
     cleaned = "\n".join(line.strip() for line in html.strip().splitlines())
     st.markdown(cleaned, unsafe_allow_html=True)
-
-
-def format_duration(hours: float) -> str:
-    total_minutes = int(round(hours * 60))
-    h = total_minutes // 60
-    m = total_minutes % 60
-    return f"{h} h {m:02d} min"
 
 
 def signed_delta(value: float, unit: str, decimals: int = 1, lower_is_better: bool = False) -> str:
@@ -849,35 +843,6 @@ render_html(
 # CENTER — RIDE A / RIDE B
 # Navigation is intentionally static in this iteration. It serves as a layout placeholder.
 # ==========================================================
-
-
-def ride_briefing(summary: dict) -> None:
-    if not summary.get("ready", True):
-        render_html(
-            f"""
-<div class="route-intelligence-empty">
-<b>Ride Briefing</b><br>
-{summary.get('engine_mode', 'Upload GPX or choose demo route to calculate this ride.')}
-</div>
-"""
-        )
-        return
-
-    render_html(
-        f"""
-<div class="briefing-grid">
-<div class="briefing-card"><div class="briefing-label">Distance</div><div class="briefing-value">{summary['distance_km']:.1f} km</div></div>
-<div class="briefing-card"><div class="briefing-label">Duration</div><div class="briefing-value">{format_duration(summary['duration_h'])}</div></div>
-<div class="briefing-card"><div class="briefing-label">Avg speed</div><div class="briefing-value">{summary['speed_kmh']:.1f} km/h</div></div>
-<div class="briefing-card"><div class="briefing-label">Calories</div><div class="briefing-value">{summary['calories']:.0f} kcal</div></div>
-<div class="briefing-card"><div class="briefing-label">Carbs</div><div class="briefing-value">{summary['carbs_g']:.0f} g</div></div>
-<div class="briefing-card"><div class="briefing-label">Fluids</div><div class="briefing-value">{summary['fluid_goal_l']:.1f} L</div></div>
-<div class="briefing-card"><div class="briefing-label">Sodium</div><div class="briefing-value">{summary['sodium_mg']:.0f} mg</div></div>
-<div class="briefing-card"><div class="briefing-label">Refills</div><div class="briefing-value">{summary['refills']}</div></div>
-</div>
-<div class="briefing-note">Phase 6.1 route engine: {summary.get("engine_mode", "engine mode unknown")}.</div>
-"""
-    )
 
 
 def build_recommendations(inputs: dict, summary: dict) -> dict:

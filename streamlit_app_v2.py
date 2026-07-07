@@ -1,8 +1,6 @@
 import streamlit as st
 
-from v2.decision_context import build_scenario_verdict
-from v2.decision_context import calculate_ride_differences
-from v2.decision_context import render_decision_context
+from v2.comparison_panel import render_differences_panel
 from v2.engine_adapter import run_ride_engine
 from v2.onboarding import render_onboarding_cards
 from v2.performance import configure_performance_engine
@@ -42,23 +40,6 @@ def render_html(html: str) -> None:
     cleaned = "\n".join(line.strip() for line in html.strip().splitlines())
     st.markdown(cleaned, unsafe_allow_html=True)
 
-
-def signed_delta(value: float, unit: str, decimals: int = 1, lower_is_better: bool = False) -> str:
-    sign = "+" if value >= 0 else "−"
-    abs_value = abs(value)
-    if decimals == 0:
-        number = f"{abs_value:.0f}"
-    else:
-        number = f"{abs_value:.{decimals}f}"
-    return f"{sign}{number} {unit}"
-
-
-def delta_class(value: float, lower_is_better: bool = False) -> str:
-    if value == 0:
-        return "diff-neutral"
-    positive_is_good = value > 0
-    good = not positive_is_good if lower_is_better else positive_is_good
-    return "diff-positive" if good else "diff-negative"
 
 configure_performance_engine(render_html, run_ride_engine)
 
@@ -887,60 +868,6 @@ with ride_b:
         run_ride_engine=run_ride_engine,
         ride_briefing=ride_briefing,
         ride_recommendations=ride_recommendations,
-    )
-
-
-# ==========================================================
-# PHASE 4.1 — DIFFERENCES ADAPTER
-# Keep comparison logic isolated so Phase 4.2 can swap in real v1 outputs.
-# ==========================================================
-
-
-def render_difference_card(label: str, item: dict) -> str:
-    """Render one normalized difference card."""
-    return f"""
-<div class="diff-card">
-<div class="diff-label">{label}</div>
-<div class="diff-value">{item['value']}</div>
-<div class="{delta_class(item['delta'], lower_is_better=item['lower_is_better'])}">{'select route' if not item.get('unit') else signed_delta(item['delta'], item['unit'], item['decimals'], lower_is_better=item['lower_is_better'])}</div>
-</div>
-"""
-
-
-
-def render_differences_panel(summary_a: dict, summary_b: dict, inputs_a: dict, inputs_b: dict) -> None:
-    """Render the fixed bottom decision dock from normalized differences."""
-    differences = calculate_ride_differences(summary_a, summary_b)
-    verdict = build_scenario_verdict(summary_a, summary_b, inputs_a, inputs_b)
-
-    cards_html = "".join(
-        [
-            render_difference_card("Distance", differences["distance"]),
-            render_difference_card("Duration", differences["duration"]),
-            render_difference_card("Speed", differences["speed"]),
-            render_difference_card("Carbs", differences["carbs"]),
-            render_difference_card("Fluids", differences["fluids"]),
-            render_difference_card("Sodium", differences["sodium"]),
-        ]
-    )
-
-    render_html(
-        f"""
-<div class="fixed-bottom">
-<h2>Differences</h2>
-<div class="bottom-caption">Compare Ride B against Ride A.</div>
-{render_decision_context(inputs_a, inputs_b)}
-<div class="scenario-verdict">{verdict}</div>
-<div class="diff-grid">
-{cards_html}
-</div>
-<div class="bottom-tabs">
-<div class="bottom-tab active">Ride Briefing</div>
-<div class="bottom-tab">Recommendations</div>
-<div class="bottom-tab">Performance Analysis</div>
-</div>
-</div>
-"""
     )
 
 

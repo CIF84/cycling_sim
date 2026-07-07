@@ -186,6 +186,16 @@ Users should understand:
 
 A trustworthy decision engine explains its reasoning.
 
+# 11. Assign ownership before implementation
+
+Every meaningful responsibility should have a clear owner (module, component, or engine). 
+
+Once ownership is established, implementation becomes much easier to reason about, test, and evolve. 
+
+Architecture should answer “who owns this?” before answering “how is it implemented?”
+
+---
+
 ---
 
 ## Product philosophy

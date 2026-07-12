@@ -34,9 +34,9 @@ position: fixed;
 top: 0;
 left: 0;
 right: 0;
-z-index: 1000;
+z-index: 1100;
 background: var(--panel);
-padding: 38px 48px 18px 48px;
+padding: 28px 48px 18px 48px;
 border-bottom: 1px solid var(--border);
 box-shadow: 0 10px 28px rgba(0,0,0,0.38);
 }
@@ -50,26 +50,85 @@ letter-spacing: -0.025em;
 }
 .fixed-top p {
 margin-top: 0.45rem;
-margin-bottom: 0.9rem;
+margin-bottom: 0.65rem;
 color: var(--text-muted);
 font-size: 0.95rem;
 }
-.top-cards {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 14px;
-}
-.info-card {
-background: #17324a;
-border: 1px solid rgba(53,174,245,0.22);
-border-radius: 10px;
-padding: 14px;
+.decision-prompt {
+font-size: 0.82rem;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+font-weight: 800;
 color: var(--accent);
-min-height: 68px;
+margin-bottom: 0.65rem;
+}
+.decision-grid {
+display: grid;
+grid-template-columns: repeat(5, minmax(0, 1fr));
+gap: 12px;
+}
+.decision-entry {
+display: block;
+min-height: 74px;
+border-radius: 8px;
+border: 1px solid rgba(53,174,245,0.22);
+background: rgba(53,174,245,0.075);
+color: #ffffff;
+padding: 11px 12px;
+text-decoration: none;
 box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
-.info-card b {
-color: var(--accent);
+.decision-entry:hover {
+border-color: rgba(53,174,245,0.58);
+background: rgba(53,174,245,0.13);
+color: #ffffff;
+text-decoration: none;
+}
+.decision-entry.active {
+border-color: rgba(74,222,128,0.72);
+background: linear-gradient(90deg, rgba(74,222,128,0.2), rgba(53,174,245,0.12));
+color: #ffffff;
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 0 1px rgba(74,222,128,0.24);
+}
+.decision-entry-title {
+display: block;
+font-size: 0.93rem;
+font-weight: 900;
+line-height: 1.2;
+margin-bottom: 0.35rem;
+}
+.decision-entry-support {
+display: block;
+color: #cfd8e3;
+font-size: 0.78rem;
+line-height: 1.35;
+}
+.decision-entry.active .decision-entry-support {
+color: #e7fff1;
+}
+.decision-mode {
+margin-top: 0.65rem;
+color: #dcefff;
+font-size: 0.84rem;
+font-weight: 800;
+}
+
+@media (max-width: 980px) {
+.block-container {
+padding-top: 410px;
+padding-left: 28px;
+padding-right: 28px;
+}
+.fixed-top {
+padding-left: 28px;
+padding-right: 28px;
+}
+.decision-grid {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.fixed-left {
+display: none;
+}
 }
 
 .fixed-left {

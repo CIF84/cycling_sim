@@ -4,7 +4,7 @@ from v2.app_styles import inject_global_styles
 from v2.app_styles import render_html
 from v2.comparison_panel import render_differences_panel
 from v2.engine_adapter import run_ride_engine
-from v2.onboarding import render_onboarding_cards
+from v2.onboarding import render_decision_launchpad
 from v2.performance import configure_performance_engine
 from v2.recommendations_panel import ride_recommendations
 from v2.ride_briefing import ride_briefing
@@ -43,18 +43,10 @@ inject_global_styles()
 
 
 # ==========================================================
-# FIXED TOP — IDENTITY
+# FIXED TOP — DECISION LAUNCHPAD
 # ==========================================================
 
-render_html(
-    f"""
-<div class="fixed-top">
-<h1>Bike Science Pro</h1>
-<p>Model scenarios. Compare outcomes. Make better decisions.</p>
-{render_onboarding_cards()}
-</div>
-"""
-)
+selected_intent = render_decision_launchpad(render_html)
 
 
 # ==========================================================

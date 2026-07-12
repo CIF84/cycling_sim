@@ -19,7 +19,7 @@ GLOBAL_CSS = """
 
 .block-container {
 max-width: 100%;
-padding-top: 282px;
+padding-top: 324px;
 padding-left: 255px;
 padding-right: 48px;
 padding-bottom: 235px;
@@ -36,14 +36,14 @@ left: 0;
 right: 0;
 z-index: 1100;
 background: var(--panel);
-padding: 28px 48px 18px 48px;
+padding: 20px 48px 16px 255px;
 border-bottom: 1px solid var(--border);
 box-shadow: 0 10px 28px rgba(0,0,0,0.38);
 }
 .fixed-top h1 {
 margin: 0;
 padding: 0;
-font-size: 2.25rem;
+font-size: 2rem;
 line-height: 1.1;
 color: #ffffff;
 letter-spacing: -0.025em;
@@ -60,62 +60,194 @@ letter-spacing: 0.08em;
 text-transform: uppercase;
 font-weight: 800;
 color: var(--accent);
-margin-bottom: 0.65rem;
+margin-bottom: 0.55rem;
 }
 .decision-grid {
 display: grid;
 grid-template-columns: repeat(5, minmax(0, 1fr));
 gap: 12px;
+width: 100%;
 }
-.decision-entry {
-display: block;
-min-height: 74px;
+.decision-card {
+box-sizing: border-box;
+height: 136px;
 border-radius: 8px;
 border: 1px solid rgba(53,174,245,0.22);
 background: rgba(53,174,245,0.075);
 color: #ffffff;
-padding: 11px 12px;
-text-decoration: none;
+position: relative;
 box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
-.decision-entry:hover {
+.decision-card:hover {
 border-color: rgba(53,174,245,0.58);
 background: rgba(53,174,245,0.13);
+}
+.decision-card.active {
+border-color: rgba(74,222,128,0.86);
+background: linear-gradient(90deg, rgba(74,222,128,0.18), rgba(53,174,245,0.13));
+color: #ffffff;
+box-shadow: inset 4px 0 0 rgba(74,222,128,0.95), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.decision-entry {
+box-sizing: border-box;
+display: grid;
+grid-template-columns: 28px minmax(0, 1fr) 16px;
+align-items: center;
+gap: 10px;
+height: 100%;
+min-height: inherit;
+padding: 13px 12px;
 color: #ffffff;
 text-decoration: none;
 }
-.decision-entry.active {
-border-color: rgba(74,222,128,0.72);
-background: linear-gradient(90deg, rgba(74,222,128,0.2), rgba(53,174,245,0.12));
+.decision-entry:not(:has(.decision-entry-title)) {
+display: none;
+}
+.decision-entry:hover {
 color: #ffffff;
-box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 0 1px rgba(74,222,128,0.24);
+text-decoration: none;
+}
+.decision-icon {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 28px;
+height: 28px;
+border-radius: 7px;
+background: rgba(53,174,245,0.12);
+color: var(--accent);
+}
+.decision-icon svg {
+width: 18px;
+height: 18px;
+fill: none;
+stroke: currentColor;
+stroke-width: 1.9;
+stroke-linecap: round;
+stroke-linejoin: round;
+}
+.decision-entry-copy {
+display: block;
+min-width: 0;
+position: relative;
 }
 .decision-entry-title {
 display: block;
-font-size: 0.93rem;
+font-size: 0.98rem;
 font-weight: 900;
 line-height: 1.2;
-margin-bottom: 0.35rem;
+margin-bottom: 0.3rem;
 }
 .decision-entry-support {
 display: block;
 color: #cfd8e3;
-font-size: 0.78rem;
+font-size: 0.76rem;
 line-height: 1.35;
 }
-.decision-entry.active .decision-entry-support {
+.decision-card.active .decision-entry-support {
 color: #e7fff1;
 }
+.decision-card.active .decision-entry-title {
+color: #ffffff;
+padding-right: 0;
+}
+.decision-entry-marker {
+position: absolute;
+top: -3px;
+right: 0;
+border: 1px solid rgba(74,222,128,0.55);
+border-radius: 999px;
+padding: 2px 6px;
+color: #dfffea;
+font-size: 0.58rem;
+font-weight: 900;
+letter-spacing: 0.05em;
+text-transform: uppercase;
+}
+.decision-card.active .decision-entry-copy {
+padding-top: 0.7rem;
+}
+.decision-arrow {
+color: rgba(207,216,227,0.62);
+font-size: 1rem;
+font-weight: 900;
+line-height: 1;
+text-align: right;
+}
+.decision-card.active .decision-arrow {
+color: #dfffea;
+}
+.decision-mode-row {
+display: flex;
+align-items: center;
+gap: 14px;
+margin-top: 0.55rem;
+flex-wrap: wrap;
+}
 .decision-mode {
-margin-top: 0.65rem;
+border: 1px solid rgba(53,174,245,0.28);
+border-radius: 8px;
+background: rgba(53,174,245,0.075);
+padding: 6px 9px;
 color: #dcefff;
 font-size: 0.84rem;
 font-weight: 800;
 }
+.decision-mode span {
+color: var(--accent);
+text-transform: uppercase;
+letter-spacing: 0.06em;
+font-size: 0.72rem;
+}
+.decision-general-link {
+color: #cfd8e3;
+font-size: 0.82rem;
+font-weight: 800;
+text-decoration: none;
+border-bottom: 1px solid rgba(207,216,227,0.36);
+}
+.decision-general-link:hover {
+color: #ffffff;
+border-bottom-color: var(--accent);
+text-decoration: none;
+}
+
+@media (max-width: 1180px) and (min-width: 981px) {
+.decision-grid {
+grid-template-columns: repeat(5, minmax(0, 1fr));
+gap: 9px;
+}
+.decision-card {
+height: 140px;
+}
+.decision-entry {
+grid-template-columns: 24px minmax(0, 1fr) 12px;
+gap: 7px;
+padding: 11px 9px;
+}
+.decision-icon {
+width: 24px;
+height: 24px;
+}
+.decision-icon svg {
+width: 16px;
+height: 16px;
+}
+.decision-entry-title {
+font-size: 0.9rem;
+}
+.decision-entry-support {
+font-size: 0.7rem;
+line-height: 1.32;
+}
+.block-container {
+padding-top: 332px;
+}
+}
 
 @media (max-width: 980px) {
 .block-container {
-padding-top: 410px;
+padding-top: 730px;
 padding-left: 28px;
 padding-right: 28px;
 }
@@ -124,7 +256,16 @@ padding-left: 28px;
 padding-right: 28px;
 }
 .decision-grid {
-grid-template-columns: repeat(2, minmax(0, 1fr));
+grid-template-columns: 1fr;
+}
+.decision-card {
+height: 97px;
+}
+.decision-entry-title {
+font-size: 1.02rem;
+}
+.decision-entry-support {
+font-size: 0.8rem;
 }
 .fixed-left {
 display: none;
@@ -133,7 +274,7 @@ display: none;
 
 .fixed-left {
 position: fixed;
-top: 238px;
+top: 284px;
 left: 0;
 bottom: 190px;
 width: 210px;
@@ -144,6 +285,11 @@ box-shadow: 10px 0 24px rgba(0,0,0,0.22);
 padding: 24px 18px 24px 48px;
 white-space: nowrap;
 overflow: hidden;
+}
+@media (max-width: 1180px) and (min-width: 981px) {
+.fixed-left {
+top: 292px;
+}
 }
 .fixed-left h3 {
 margin-top: 0;

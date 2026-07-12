@@ -11,6 +11,7 @@ from v2.ride_briefing import ride_briefing
 from v2.ride_panel import ride_panel
 from v2.route_intelligence import render_route_intelligence
 from v2.route_service import resolve_route_segments
+from v2.workspace_guidance import render_workspace_guidance
 
 
 st.set_page_config(
@@ -73,6 +74,7 @@ render_html(
 # Navigation is intentionally static in this iteration. It serves as a layout placeholder.
 # ==========================================================
 
+render_workspace_guidance(selected_intent, render_html)
 
 ride_a, ride_b = st.columns(2, gap="large")
 

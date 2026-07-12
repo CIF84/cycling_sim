@@ -78,8 +78,11 @@ def _segments_from_gpx_bytes(file_bytes: bytes) -> pd.DataFrame:
 
 def resolve_route_segments(
     route_mode: str,
-    uploaded_file,
+    uploaded_file=None,
     fallback_segments: pd.DataFrame | None = None,
+    *,
+    uploaded_bytes: bytes | None = None,
+    uploaded_filename: str | None = None,
 ) -> tuple[pd.DataFrame | None, str]:
     """Resolve selected route without silently falling back to demo data."""
     if route_mode == "Same as Ride A":
@@ -88,12 +91,18 @@ def resolve_route_segments(
         return None, "waiting for Ride A route"
 
     if route_mode == "Upload GPX":
-        if uploaded_file is None:
+        if uploaded_bytes is None and uploaded_file is not None:
+            uploaded_bytes = uploaded_file.getvalue()
+            uploaded_filename = uploaded_file.name
+
+        if uploaded_bytes is None:
             return None, "no GPX uploaded"
+
+        filename = uploaded_filename or "uploaded route"
         try:
-            return _segments_from_gpx_bytes(uploaded_file.getvalue()), f"uploaded GPX: {uploaded_file.name}"
+            return _segments_from_gpx_bytes(uploaded_bytes), f"uploaded GPX: {filename}"
         except Exception as exc:
-            ENGINE_DIAGNOSTICS.append(f"GPX upload failed for {getattr(uploaded_file, 'name', 'unknown file')}: {exc}")
+            ENGINE_DIAGNOSTICS.append(f"GPX upload failed for {filename}: {exc}")
             return None, f"GPX upload failed: {exc}"
 
     if route_mode == "Generated demo route":

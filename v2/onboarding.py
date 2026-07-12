@@ -62,8 +62,16 @@ def _current_intent() -> str:
     return intent
 
 
-def _select_intent(intent: str) -> None:
+def set_intent(intent: str) -> None:
+    if intent not in INTENT_LABELS:
+        intent = "general"
+
     st.session_state[INTENT_SESSION_KEY] = intent
+    st.query_params["intent"] = intent
+
+
+def clear_intent() -> None:
+    set_intent("general")
 
 
 def _intent_from_query_params() -> str | None:
@@ -75,41 +83,76 @@ def _intent_from_query_params() -> str | None:
     return None
 
 
+def _raw_intent_query_param() -> str | None:
+    intent = st.query_params.get("intent")
+    if isinstance(intent, list):
+        return intent[0] if intent else None
+    return intent
+
+
 def render_decision_launchpad(render_html) -> str:
     if INTENT_SESSION_KEY not in st.session_state:
-        st.session_state[INTENT_SESSION_KEY] = "general"
-
-    query_intent = _intent_from_query_params()
-    if query_intent:
-        _select_intent(query_intent)
+        st.session_state[INTENT_SESSION_KEY] = _intent_from_query_params() or "general"
+        st.query_params["intent"] = st.session_state[INTENT_SESSION_KEY]
 
     selected_intent = _current_intent()
-
-    entry_markup = []
-    for intent, label, supporting_text, icon_name in LAUNCHPAD_ENTRIES:
-        active_class = " active" if selected_intent == intent else ""
-        selected_marker = '<span class="decision-entry-marker">Selected</span>' if selected_intent == intent else ""
-        entry_markup.append(
-            f'<div class="decision-card{active_class}"><a class="decision-entry" href="?intent={escape(intent)}" target="_self"><span class="decision-icon">{ICON_SVGS[icon_name]}</span><span class="decision-entry-copy">{selected_marker}<span class="decision-entry-title">{escape(label)}</span><span class="decision-entry-support">{escape(supporting_text)}</span></span><span class="decision-arrow" aria-hidden="true">→</span></a></div>'
-        )
+    if _raw_intent_query_param() != selected_intent:
+        st.query_params["intent"] = selected_intent
 
     mode_label = INTENT_LABELS.get(selected_intent, INTENT_LABELS["general"])
 
-    render_html(
-        f"""
-<div class="fixed-top">
+    with st.container(key="decision_launchpad_fixed"):
+        render_html(
+            """
+<div class="decision-shell">
 <h1>Bike Science Pro</h1>
 <p>Software that helps cyclists ask better questions—and then gives them evidence-based answers.</p>
 <div class="decision-prompt">Have some of these on your mind?</div>
-<div class="decision-grid">
-{''.join(entry_markup)}
 </div>
-<div class="decision-mode-row">
-<div class="decision-mode"><span>Exploring:</span> {escape(mode_label)}</div>
-<a class="decision-general-link" href="?intent=general" target="_self">General exploration</a>
+"""
+        )
+
+        card_columns = st.columns(5, gap="small")
+        for column, (intent, label, supporting_text, icon_name) in zip(card_columns, LAUNCHPAD_ENTRIES):
+            with column:
+                with st.container(key=f"decision_card_{intent}"):
+                    active_class = " active" if selected_intent == intent else ""
+                    selected_marker = (
+                        '<span class="decision-entry-marker">Selected</span>' if selected_intent == intent else ""
+                    )
+                    render_html(
+                        f"""
+<div class="decision-card{active_class}">
+<div class="decision-entry">
+<span class="decision-icon">{ICON_SVGS[icon_name]}</span>
+<span class="decision-entry-copy">{selected_marker}<span class="decision-entry-title">{escape(label)}</span><span class="decision-entry-support">{escape(supporting_text)}</span></span>
+<span class="decision-arrow" aria-hidden="true">→</span>
 </div>
 </div>
 """
-    )
+                    )
+                    st.button(
+                        label,
+                        key=f"decision_intent_{intent}",
+                        help=supporting_text,
+                        on_click=set_intent,
+                        args=(intent,),
+                        use_container_width=True,
+                    )
+
+        mode_col, reset_col = st.columns([1, 4], gap="small", vertical_alignment="center")
+        with mode_col:
+            render_html(
+                f"""
+<div class="decision-mode"><span>Exploring:</span> {escape(mode_label)}</div>
+"""
+            )
+        with reset_col:
+            st.button(
+                "General exploration",
+                key="decision_intent_general",
+                on_click=clear_intent,
+                type="tertiary",
+            )
 
     return selected_intent

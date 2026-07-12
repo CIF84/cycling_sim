@@ -29,7 +29,8 @@ header[data-testid="stHeader"] {
 background: transparent;
 }
 
-.fixed-top {
+.fixed-top,
+.st-key-decision_launchpad_fixed {
 position: fixed;
 top: 0;
 left: 0;
@@ -40,7 +41,8 @@ padding: 20px 48px 16px 255px;
 border-bottom: 1px solid var(--border);
 box-shadow: 0 10px 28px rgba(0,0,0,0.38);
 }
-.fixed-top h1 {
+.fixed-top h1,
+.st-key-decision_launchpad_fixed h1 {
 margin: 0;
 padding: 0;
 font-size: 2rem;
@@ -48,11 +50,15 @@ line-height: 1.1;
 color: #ffffff;
 letter-spacing: -0.025em;
 }
-.fixed-top p {
+.fixed-top p,
+.st-key-decision_launchpad_fixed p {
 margin-top: 0.45rem;
 margin-bottom: 0.65rem;
 color: var(--text-muted);
 font-size: 0.95rem;
+}
+.decision-shell p {
+margin-bottom: 0.65rem;
 }
 .decision-prompt {
 font-size: 0.82rem;
@@ -61,6 +67,12 @@ text-transform: uppercase;
 font-weight: 800;
 color: var(--accent);
 margin-bottom: 0.55rem;
+}
+.st-key-decision_launchpad_fixed [data-testid="stHorizontalBlock"] {
+width: 100%;
+}
+.st-key-decision_launchpad_fixed [data-testid="column"] {
+min-width: 0;
 }
 .decision-grid {
 display: grid;
@@ -106,6 +118,49 @@ display: none;
 .decision-entry:hover {
 color: #ffffff;
 text-decoration: none;
+}
+div[class*="st-key-decision_card_"] {
+position: relative;
+height: 136px;
+}
+div[class*="st-key-decision_card_"] div[class*="st-key-decision_intent_"] {
+position: absolute;
+inset: 0;
+z-index: 4;
+height: 100%;
+width: 100%;
+}
+div[class*="st-key-decision_card_"] .stButton {
+position: static;
+height: 100%;
+}
+div[class*="st-key-decision_card_"] .stButton button {
+width: 100%;
+height: 136px;
+padding: 0;
+border: 0;
+border-radius: 8px;
+background: transparent;
+color: transparent;
+box-shadow: none;
+}
+div[class*="st-key-decision_card_"] .stButton button [data-testid="stMarkdownContainer"],
+div[class*="st-key-decision_card_"] .stButton button [data-testid="stMarkdownContainer"] p {
+color: transparent;
+font-size: 0;
+line-height: 0;
+margin: 0;
+}
+div[class*="st-key-decision_card_"] .stButton button:hover {
+border: 0;
+background: transparent;
+color: transparent;
+box-shadow: none;
+}
+div[class*="st-key-decision_card_"] .stButton button:focus-visible {
+outline: 2px solid rgba(255,255,255,0.86);
+outline-offset: -4px;
+box-shadow: none;
 }
 .decision-icon {
 display: flex;
@@ -211,6 +266,23 @@ color: #ffffff;
 border-bottom-color: var(--accent);
 text-decoration: none;
 }
+.st-key-decision_intent_general button {
+color: #cfd8e3;
+font-size: 0.82rem;
+font-weight: 800;
+text-decoration: none;
+border: 0;
+border-bottom: 1px solid rgba(207,216,227,0.36);
+border-radius: 0;
+padding: 4px 2px;
+min-height: 30px;
+background: transparent;
+}
+.st-key-decision_intent_general button:hover {
+color: #ffffff;
+border-bottom-color: var(--accent);
+background: transparent;
+}
 
 @media (max-width: 1180px) and (min-width: 981px) {
 .decision-grid {
@@ -218,6 +290,12 @@ grid-template-columns: repeat(5, minmax(0, 1fr));
 gap: 9px;
 }
 .decision-card {
+height: 140px;
+}
+div[class*="st-key-decision_card_"] {
+height: 140px;
+}
+div[class*="st-key-decision_card_"] .stButton button {
 height: 140px;
 }
 .decision-entry {
@@ -255,10 +333,20 @@ padding-right: 28px;
 padding-left: 28px;
 padding-right: 28px;
 }
+.st-key-decision_launchpad_fixed {
+padding-left: 28px;
+padding-right: 28px;
+}
 .decision-grid {
 grid-template-columns: 1fr;
 }
 .decision-card {
+height: 97px;
+}
+div[class*="st-key-decision_card_"] {
+height: 97px;
+}
+div[class*="st-key-decision_card_"] .stButton button {
 height: 97px;
 }
 .decision-entry-title {

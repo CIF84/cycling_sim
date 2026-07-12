@@ -94,6 +94,7 @@ with ride_a:
         run_ride_engine=run_ride_engine,
         ride_briefing=ride_briefing,
         ride_recommendations=ride_recommendations,
+        selected_intent=selected_intent,
     )
 
 with ride_b:
@@ -115,6 +116,7 @@ with ride_b:
         run_ride_engine=run_ride_engine,
         ride_briefing=ride_briefing,
         ride_recommendations=ride_recommendations,
+        selected_intent=selected_intent,
     )
 
 

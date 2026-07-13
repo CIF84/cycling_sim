@@ -24,3 +24,39 @@ Simulation engines
 Decision / insight engines
 ↓
 User experience
+
+---
+
+# Ownership
+
+Responsibility
+↓
+Owner
+
+Application orchestration
+↓
+streamlit_app_v2.py
+
+Ride input UI
+↓
+ride_panel.py
+
+Scenario assembly
+↓
+scenario_model.py
+
+Engine orchestration
+↓
+engine_adapter.py
+
+Performance analysis
+↓
+performance.py
+
+Decision interpretation
+↓
+decision_context.py
+
+Styling
+↓
+styles.py

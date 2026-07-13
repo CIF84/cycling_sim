@@ -62,3 +62,14 @@ Move only:
 - [function / class / responsibility]
 
 Requirements
+
+---
+
+# Architecture Specification
+
+* Goal
+* Purpose
+* Ownership
+* Scope
+* Non-goals
+* Verification

@@ -389,8 +389,9 @@ def render_upgrade_advisor(opportunities: list[dict]) -> None:
 """
     )
 
-def ride_performance_analysis(inputs: dict, summary: dict) -> None:
-    performance = build_performance_analysis(inputs, summary)
+def ride_performance_analysis(inputs: dict, summary: dict, performance: list[dict] | None = None) -> None:
+    if performance is None:
+        performance = build_performance_analysis(inputs, summary)
     performance = sorted(performance, key=lambda item: item["value"], reverse=True)
     max_value = max(item["value"] for item in performance) if performance else 1
     top = performance[0]

@@ -3,7 +3,6 @@ from collections.abc import Callable
 import pandas as pd
 import streamlit as st
 
-from v2.performance import ride_performance_analysis
 from v2.scenario_model import build_scenario_inputs
 
 
@@ -82,8 +81,6 @@ def ride_panel(
     resolve_route_segments: Callable,
     render_route_intelligence: Callable[[pd.DataFrame | None, str], None],
     run_ride_engine: Callable[[dict], dict],
-    ride_briefing: Callable[[dict], None],
-    ride_recommendations: Callable[[dict, dict], None],
     selected_intent: str = "general",
 ) -> tuple[dict, dict, pd.DataFrame]:
     section_defaults = get_section_defaults(selected_intent)
@@ -240,24 +237,5 @@ def ride_panel(
     )
 
     summary = run_ride_engine(inputs)
-
-    render_html('<div class="section-divider"></div>')
-
-    with st.container(border=True):
-        render_html(
-            '''
-<div class="zone-title-row">
-<div class="outcome-zone-marker">Outcome Zone</div>
-</div>
-<div class="zone-subtitle">Read the modeled consequences for this ride setup. <span style="color:#35aef5;">Engine adapter active</span></div>
-'''
-        )
-        st.subheader("Ride Comparison")
-        st.markdown("#### Ride Briefing")
-        ride_briefing(summary)
-        st.markdown("#### Recommendations")
-        ride_recommendations(inputs, summary)
-        st.markdown("#### Performance Analysis")
-        ride_performance_analysis(inputs, summary)
 
     return inputs, summary, segments_df

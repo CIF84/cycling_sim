@@ -1097,6 +1097,187 @@ font-size: 0.82rem;
 margin-bottom: 1rem;
 }
 
+/* Phase 12.4 — comparison becomes a document-flow decision workspace. */
+.block-container {
+padding-bottom: 80px;
+}
+
+.fixed-left {
+bottom: 0;
+}
+
+.decision-workspace {
+margin-top: 28px;
+padding-top: 24px;
+border-top: 1px solid var(--border);
+}
+
+.investigation-step,
+.workspace-layer-label {
+font-size: 0.72rem;
+font-weight: 900;
+letter-spacing: 0.11em;
+text-transform: uppercase;
+color: var(--accent);
+}
+
+.investigation-question {
+font-size: 1.15rem;
+font-weight: 850;
+line-height: 1.35;
+color: #ffffff;
+margin: 0.3rem 0 1rem;
+}
+
+.decision-summary-card {
+border: 1px solid rgba(53,174,245,0.5);
+border-radius: 14px;
+background: linear-gradient(135deg, rgba(53,174,245,0.16), rgba(17,24,39,0.86));
+box-shadow: inset 4px 0 0 var(--accent), 0 14px 34px rgba(0,0,0,0.2);
+padding: 22px 24px;
+}
+
+.decision-summary-verdict {
+font-size: 1.28rem;
+line-height: 1.48;
+color: #eef8ff;
+margin-top: 0.35rem;
+max-width: 1050px;
+}
+
+.decision-summary-verdict b {
+color: #ffffff;
+}
+
+.evidence-section {
+margin-top: 24px;
+}
+
+.evidence-focus {
+font-size: 0.9rem;
+font-weight: 800;
+color: #ffffff;
+margin: 0.35rem 0 0.75rem;
+}
+
+.decision-workspace .diff-grid {
+grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+gap: 12px;
+margin: 0;
+}
+
+.decision-workspace .diff-card {
+min-height: 112px;
+padding: 12px 14px;
+transition: border-color 120ms ease, background 120ms ease;
+}
+
+.decision-workspace .diff-card.evidence-primary {
+border-color: rgba(74,222,128,0.55);
+background: linear-gradient(145deg, rgba(74,222,128,0.12), rgba(53,174,245,0.05));
+box-shadow: inset 0 3px 0 rgba(74,222,128,0.75);
+}
+
+.decision-workspace .diff-card.evidence-balanced {
+border-color: rgba(53,174,245,0.34);
+background: rgba(53,174,245,0.055);
+}
+
+.decision-workspace .diff-card.evidence-secondary {
+opacity: 0.82;
+}
+
+.evidence-rank {
+font-size: 0.64rem;
+font-weight: 900;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--text-muted);
+margin-bottom: 0.45rem;
+}
+
+.evidence-primary .evidence-rank {
+color: var(--success);
+}
+
+.evidence-balanced .evidence-rank {
+color: var(--accent);
+}
+
+.modeled-gain-card {
+grid-column: span 2;
+}
+
+.next-action-card {
+border: 1px solid rgba(74,222,128,0.48);
+border-radius: 12px;
+background: linear-gradient(110deg, rgba(74,222,128,0.12), rgba(17,24,39,0.72));
+padding: 18px 20px;
+margin-top: 24px;
+}
+
+.next-action-card .workspace-layer-label {
+color: var(--success);
+}
+
+.next-action-question {
+font-size: 0.82rem;
+color: #bfeecf;
+margin-top: 0.5rem;
+}
+
+.next-action-copy {
+font-size: 1.16rem;
+font-weight: 900;
+line-height: 1.4;
+color: #ffffff;
+margin-top: 0.2rem;
+}
+
+.next-action-source {
+font-size: 0.74rem;
+color: var(--text-muted);
+margin-top: 0.55rem;
+}
+
+@media (max-width: 980px) {
+.block-container {
+padding-bottom: 48px;
+}
+.st-key-decision_launchpad_fixed {
+position: absolute;
+}
+.decision-workspace {
+margin-top: 22px;
+padding-top: 20px;
+}
+.decision-summary-card {
+padding: 18px;
+}
+.decision-summary-verdict {
+font-size: 1.08rem;
+}
+.decision-workspace .diff-grid {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 9px;
+}
+.modeled-gain-card {
+grid-column: span 2;
+}
+}
+
+@media (max-width: 560px) {
+.decision-workspace .diff-grid {
+grid-template-columns: 1fr;
+}
+.modeled-gain-card {
+grid-column: span 1;
+}
+.next-action-card {
+padding: 16px;
+}
+}
+
 </style>
 """
 

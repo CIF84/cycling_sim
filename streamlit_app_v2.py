@@ -6,8 +6,6 @@ from v2.comparison_panel import render_differences_panel
 from v2.engine_adapter import run_ride_engine
 from v2.onboarding import render_decision_launchpad
 from v2.performance import configure_performance_engine
-from v2.recommendations_panel import ride_recommendations
-from v2.ride_briefing import ride_briefing
 from v2.ride_panel import ride_panel
 from v2.route_intelligence import render_route_intelligence
 from v2.route_service import resolve_route_segments
@@ -94,8 +92,6 @@ with ride_a:
         resolve_route_segments=resolve_route_segments,
         render_route_intelligence=render_route_intelligence,
         run_ride_engine=run_ride_engine,
-        ride_briefing=ride_briefing,
-        ride_recommendations=ride_recommendations,
         selected_intent=selected_intent,
     )
 
@@ -116,10 +112,8 @@ with ride_b:
         resolve_route_segments=resolve_route_segments,
         render_route_intelligence=render_route_intelligence,
         run_ride_engine=run_ride_engine,
-        ride_briefing=ride_briefing,
-        ride_recommendations=ride_recommendations,
         selected_intent=selected_intent,
     )
 
 
-render_differences_panel(summary_a, summary_b, inputs_a, inputs_b)
+render_differences_panel(summary_a, summary_b, inputs_a, inputs_b, selected_intent)

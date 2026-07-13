@@ -1099,11 +1099,11 @@ margin-bottom: 1rem;
 
 /* Phase 12.4 — comparison becomes a document-flow decision workspace. */
 .block-container {
-padding-bottom: 80px;
+padding-bottom: 142px;
 }
 
 .fixed-left {
-bottom: 0;
+bottom: 104px;
 }
 
 .decision-workspace {
@@ -1240,9 +1240,152 @@ color: var(--text-muted);
 margin-top: 0.55rem;
 }
 
+/* Live Decision Bar — persistent experiment feedback using existing outputs. */
+.live-decision-bar {
+position: fixed;
+left: 235px;
+right: 48px;
+bottom: max(12px, env(safe-area-inset-bottom));
+z-index: 1050;
+display: flex;
+align-items: stretch;
+gap: 0;
+min-height: 76px;
+border: 1px solid rgba(53,174,245,0.42);
+border-radius: 12px;
+background: rgba(11,17,27,0.97);
+box-shadow: 0 -8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+backdrop-filter: blur(14px);
+overflow: hidden;
+}
+
+.live-decision-identity {
+display: flex;
+flex-direction: column;
+justify-content: center;
+flex: 0 0 auto;
+padding: 11px 14px;
+border-right: 1px solid rgba(255,255,255,0.1);
+background: rgba(53,174,245,0.08);
+}
+
+.live-decision-identity span {
+color: var(--success);
+font-size: 0.64rem;
+font-weight: 950;
+letter-spacing: 0.13em;
+text-transform: uppercase;
+}
+
+.live-decision-identity strong {
+color: #ffffff;
+font-size: 0.78rem;
+line-height: 1.2;
+white-space: nowrap;
+}
+
+.live-decision-signals {
+display: flex;
+align-items: stretch;
+min-width: 0;
+overflow-x: auto;
+scrollbar-width: thin;
+}
+
+.live-decision-signal {
+display: flex;
+flex: 0 0 auto;
+flex-direction: column;
+justify-content: center;
+min-width: 112px;
+max-width: 210px;
+padding: 10px 14px;
+border-right: 1px solid rgba(255,255,255,0.075);
+}
+
+.live-decision-outcome {
+min-width: 210px;
+background: linear-gradient(90deg, rgba(74,222,128,0.1), rgba(53,174,245,0.055));
+}
+
+.live-decision-label {
+color: var(--text-muted);
+font-size: 0.62rem;
+font-weight: 850;
+letter-spacing: 0.055em;
+line-height: 1.2;
+text-transform: uppercase;
+white-space: nowrap;
+}
+
+.live-decision-value {
+color: #ffffff;
+font-size: 0.84rem;
+font-weight: 850;
+line-height: 1.25;
+margin-top: 4px;
+white-space: nowrap;
+}
+
+.live-decision-outcome .live-decision-value {
+color: #e5ffed;
+font-size: 0.94rem;
+}
+
+.live-decision-link {
+display: flex;
+align-items: center;
+justify-content: center;
+flex: 0 0 auto;
+padding: 10px 13px;
+color: #b8e6ff;
+font-size: 0.7rem;
+font-weight: 850;
+line-height: 1.25;
+text-align: center;
+text-decoration: none;
+white-space: nowrap;
+}
+
+.live-decision-link:hover {
+background: rgba(53,174,245,0.1);
+color: #ffffff;
+text-decoration: none;
+}
+
+.live-decision-empty {
+display: flex;
+align-items: center;
+flex: 1 1 auto;
+padding: 10px 18px;
+color: #d4dbe5;
+font-size: 0.88rem;
+font-weight: 750;
+}
+
+.live-decision-bar.is-inactive {
+border-color: rgba(255,255,255,0.2);
+}
+
+.live-decision-bar.is-inactive .live-decision-identity span {
+color: var(--text-muted);
+}
+
+.experiment-workspace-heading {
+margin: 30px 0 14px;
+padding-top: 22px;
+border-top: 1px solid var(--border);
+}
+
+.experiment-workspace-copy {
+margin-top: 0.35rem;
+color: var(--text-muted);
+font-size: 0.86rem;
+}
+
 @media (max-width: 980px) {
 .block-container {
-padding-bottom: 48px;
+padding-bottom: 132px;
 }
 .st-key-decision_launchpad_fixed {
 position: absolute;
@@ -1264,6 +1407,28 @@ gap: 9px;
 .modeled-gain-card {
 grid-column: span 2;
 }
+.live-decision-bar {
+left: 14px;
+right: 14px;
+bottom: max(10px, env(safe-area-inset-bottom));
+min-height: 70px;
+}
+.live-decision-identity {
+padding: 9px 11px;
+}
+.live-decision-identity strong {
+display: none;
+}
+.live-decision-outcome {
+min-width: 190px;
+}
+.live-decision-signal {
+min-width: 104px;
+padding: 9px 11px;
+}
+.live-decision-link {
+padding: 8px 10px;
+}
 }
 
 @media (max-width: 560px) {
@@ -1275,6 +1440,24 @@ grid-column: span 1;
 }
 .next-action-card {
 padding: 16px;
+}
+.live-decision-bar {
+left: 8px;
+right: 8px;
+}
+.live-decision-identity {
+padding: 8px;
+}
+.live-decision-outcome {
+min-width: 176px;
+}
+.live-decision-link {
+font-size: 0;
+padding: 8px 9px;
+}
+.live-decision-link::after {
+content: "↑";
+font-size: 0.9rem;
 }
 }
 

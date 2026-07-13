@@ -2,9 +2,11 @@ import streamlit as st
 
 from v2.app_styles import inject_global_styles
 from v2.app_styles import render_html
-from v2.comparison_panel import render_differences_panel
+from v2.comparison_panel import render_decision_workspace
+from v2.comparison_panel import render_live_decision_bar
 from v2.engine_adapter import run_ride_engine
 from v2.onboarding import render_decision_launchpad
+from v2.performance import build_performance_analysis
 from v2.performance import configure_performance_engine
 from v2.ride_panel import ride_panel
 from v2.route_intelligence import render_route_intelligence
@@ -74,6 +76,20 @@ render_html(
 
 render_workspace_guidance(selected_intent, render_html)
 
+# Results are computed by the existing ride panels below. Filling this earlier
+# container afterward keeps every widget in its original order and places the
+# interpretation layer ahead of the long experiment controls.
+decision_workspace_slot = st.empty()
+
+render_html(
+    """
+<section class="experiment-workspace-heading" aria-label="Experiment configuration">
+<div class="workspace-layer-label">Experiment Configuration</div>
+<div class="experiment-workspace-copy">Adjust Ride A and Ride B assumptions. The live bar updates on every change.</div>
+</section>
+"""
+)
+
 ride_a, ride_b = st.columns(2, gap="large")
 
 with ride_a:
@@ -116,4 +132,23 @@ with ride_b:
     )
 
 
-render_differences_panel(summary_a, summary_b, inputs_a, inputs_b, selected_intent)
+performance_b = build_performance_analysis(inputs_b, summary_b)
+
+with decision_workspace_slot.container():
+    render_decision_workspace(
+        summary_a,
+        summary_b,
+        inputs_a,
+        inputs_b,
+        selected_intent,
+        performance_b=performance_b,
+    )
+
+render_live_decision_bar(
+    summary_a,
+    summary_b,
+    inputs_a,
+    inputs_b,
+    selected_intent,
+    performance_b=performance_b,
+)

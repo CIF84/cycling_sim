@@ -49,6 +49,8 @@ EVIDENCE_FOCUS_BY_INTENT = {
     "hack_ride": "Largest realistic improvement evidence",
 }
 
+EQUIPMENT_OPPORTUNITY_LABELS = {"Aerodynamics", "Rolling Resistance", "Bike Weight"}
+
 
 def _render_html(html: str) -> None:
     """Render raw HTML without leading indentation so Streamlit does not treat it as code."""
@@ -102,6 +104,180 @@ def _render_modeled_gain_card(performance: list[dict]) -> str:
 """
 
 
+def _format_live_duration(hours: float) -> str:
+    total_minutes = int(round(hours * 60))
+    hours_part, minutes_part = divmod(total_minutes, 60)
+    return f"{hours_part} h {minutes_part:02d} min"
+
+
+def _live_outcome(differences: dict) -> str:
+    duration_delta = differences["duration"]["delta"]
+    if duration_delta < -0.05:
+        return f"Ride B faster by {abs(duration_delta):.1f} min"
+    if duration_delta > 0.05:
+        return f"Ride A faster by {duration_delta:.1f} min"
+    return "Ride A and Ride B effectively tied"
+
+
+def _changed_input_signal(inputs_a: dict, inputs_b: dict, keys: tuple[str, ...]) -> str | None:
+    labels = {
+        "rider_mass": "Mass",
+        "fitness": "Fitness",
+        "riding_style": "Position",
+        "bike_mass": "Bike mass",
+        "tires": "Tires",
+        "drivetrain": "Drivetrain",
+    }
+    units = {"rider_mass": " kg", "fitness": " W/kg", "bike_mass": " kg"}
+    for key in keys:
+        value_a = inputs_a.get(key)
+        value_b = inputs_b.get(key)
+        if value_a == value_b:
+            continue
+        if isinstance(value_a, float) or isinstance(value_b, float):
+            change = f"{float(value_a):.1f} → {float(value_b):.1f}{units.get(key, '')}"
+        else:
+            change = f"{value_a} → {value_b}{units.get(key, '')}"
+        return f"{labels[key]} {change}"
+    return None
+
+
+def _live_signal(label: str, value: str, modifier: str = "") -> str:
+    modifier_class = f" {modifier}" if modifier else ""
+    return f"""
+<div class="live-decision-signal{modifier_class}">
+<div class="live-decision-label">{escape(label)}</div>
+<div class="live-decision-value">{escape(value)}</div>
+</div>
+"""
+
+
+def _live_signals_by_intent(
+    selected_intent: str,
+    summary_b: dict,
+    inputs_a: dict,
+    inputs_b: dict,
+    performance_b: list[dict],
+) -> list[tuple[str, str]]:
+    duration = _format_live_duration(summary_b["duration_h"])
+    speed = f"{summary_b['speed_kmh']:.1f} km/h"
+    carbs = f"{summary_b['carbs_g']:.0f} g"
+    fluids = f"{summary_b['fluid_goal_l']:.1f} L"
+    sodium = f"{summary_b['sodium_mg']:.0f} mg"
+
+    ranked_performance = sorted(performance_b, key=lambda item: item["value"], reverse=True)
+    top_performance = ranked_performance[0] if ranked_performance else None
+    opportunities = build_opportunity_engine(performance_b)
+
+    if selected_intent == "compare_riders":
+        signals = [("Ride B duration", duration), ("Ride B speed", speed)]
+        rider_change = _changed_input_signal(
+            inputs_a, inputs_b, ("fitness", "rider_mass", "riding_style")
+        )
+        if rider_change:
+            signals.append(("Main rider difference", rider_change))
+        return signals
+
+    if selected_intent == "compare_setups":
+        signals = [("Ride B speed", speed)]
+        equipment_performance = [
+            item for item in ranked_performance if item["label"] in EQUIPMENT_OPPORTUNITY_LABELS
+        ]
+        if equipment_performance:
+            top = equipment_performance[0]
+            signals.append(("Strongest contributor", f"{top['label']} · {top['value']:.1f} min"))
+        equipment_opportunities = [
+            item for item in opportunities if item["label"] in EQUIPMENT_OPPORTUNITY_LABELS
+        ]
+        if equipment_opportunities:
+            top = equipment_opportunities[0]
+            signals.append(("Best opportunity", f"{top['label']} · {top['roi_label']} ROI"))
+        return signals
+
+    if selected_intent == "compare_routes":
+        return [
+            ("Ride B duration", duration),
+            ("Ride B distance", f"{summary_b['distance_km']:.1f} km"),
+            ("Fueling demand", f"{carbs} carbs · {fluids} fluids"),
+        ]
+
+    if selected_intent == "plan_fueling":
+        return [
+            ("Carbs", carbs),
+            ("Fluids", fluids),
+            ("Sodium", sodium),
+            ("Duration", duration),
+            ("Refills", str(summary_b["refills"])),
+        ]
+
+    if selected_intent == "hack_ride":
+        signals = []
+        if top_performance:
+            signals.append(
+                ("Biggest modeled gain", f"{top_performance['label']} · {top_performance['value']:.1f} min")
+            )
+        if opportunities:
+            top = opportunities[0]
+            signals.extend(
+                [
+                    ("Strongest opportunity", top["label"]),
+                    ("Payoff", top["payoff"]),
+                    ("Effort", top["effort"]),
+                    ("ROI", top["roi_label"]),
+                ]
+            )
+        return signals
+
+    return [
+        ("Ride B duration", duration),
+        ("Ride B speed", speed),
+        ("Carbs", carbs),
+        ("Fluids", fluids),
+        ("Sodium", sodium),
+    ]
+
+
+def render_live_decision_bar(
+    summary_a: dict,
+    summary_b: dict,
+    inputs_a: dict,
+    inputs_b: dict,
+    selected_intent: str,
+    performance_b: list[dict] | None = None,
+) -> None:
+    """Render persistent, mode-aware feedback from existing comparison outputs."""
+    if not summary_a.get("ready", True) or not summary_b.get("ready", True):
+        _render_html(
+            """
+<aside class="live-decision-bar is-inactive" aria-label="Live Decision Bar" aria-live="polite">
+<div class="live-decision-identity"><span>Live</span><strong>Decision Bar</strong></div>
+<div class="live-decision-empty">Select valid routes to activate live comparison.</div>
+<a class="live-decision-link" href="#decision-workspace" aria-label="View full decision">View full decision</a>
+</aside>
+"""
+        )
+        return
+
+    differences = calculate_ride_differences(summary_a, summary_b)
+    if performance_b is None:
+        performance_b = build_performance_analysis(inputs_b, summary_b)
+    signals = _live_signals_by_intent(
+        selected_intent, summary_b, inputs_a, inputs_b, performance_b
+    )[:6]
+    signal_html = "".join(_live_signal(label, value) for label, value in signals)
+
+    _render_html(
+        f"""
+<aside class="live-decision-bar" aria-label="Live Decision Bar" aria-live="polite">
+<div class="live-decision-identity"><span>Live</span><strong>Decision Bar</strong></div>
+{_live_signal('Outcome', _live_outcome(differences), 'live-decision-outcome')}
+<div class="live-decision-signals">{signal_html}</div>
+<a class="live-decision-link" href="#decision-workspace" aria-label="View full decision">Full decision ↑</a>
+</aside>
+"""
+    )
+
+
 def _next_action(selected_intent: str, inputs_b: dict, summary_b: dict, performance_b: list[dict]) -> tuple[str, str]:
     """Select an already-generated recommendation for the prominent next-action slot."""
     if selected_intent == "hack_ride":
@@ -143,18 +319,20 @@ def _render_deep_analysis(
                 ride_performance_analysis(inputs, summary, performance=performance)
 
 
-def render_differences_panel(
+def render_decision_workspace(
     summary_a: dict,
     summary_b: dict,
     inputs_a: dict,
     inputs_b: dict,
     selected_intent: str = "general",
+    performance_b: list[dict] | None = None,
 ) -> None:
     """Render the Question → Evidence → Conclusion → Next Experiment workspace."""
     differences = calculate_ride_differences(summary_a, summary_b)
     verdict = build_scenario_verdict(summary_a, summary_b, inputs_a, inputs_b)
     guidance = get_workspace_guidance(selected_intent)
-    performance_b = build_performance_analysis(inputs_b, summary_b)
+    if performance_b is None:
+        performance_b = build_performance_analysis(inputs_b, summary_b)
 
     order = EVIDENCE_ORDER_BY_INTENT.get(selected_intent, EVIDENCE_ORDER_BY_INTENT["general"])
     primary_keys = PRIMARY_EVIDENCE_BY_INTENT.get(selected_intent, set())
@@ -182,7 +360,7 @@ def render_differences_panel(
 
     _render_html(
         f"""
-<section class="decision-workspace" aria-label="Decision workspace">
+<section id="decision-workspace" class="decision-workspace" aria-label="Decision workspace">
 <div class="investigation-step">Question</div>
 <div class="investigation-question">{escape(guidance['question'])}</div>
 
@@ -208,3 +386,14 @@ def render_differences_panel(
     )
 
     _render_deep_analysis(inputs_a, summary_a, inputs_b, summary_b, performance_b)
+
+
+def render_differences_panel(
+    summary_a: dict,
+    summary_b: dict,
+    inputs_a: dict,
+    inputs_b: dict,
+    selected_intent: str = "general",
+) -> None:
+    """Backward-compatible name for the Phase 12.4 Decision Workspace."""
+    render_decision_workspace(summary_a, summary_b, inputs_a, inputs_b, selected_intent)

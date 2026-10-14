@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import path from "node:path";
+import { readFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 const fixture = (name: string) => path.resolve("e2e/fixtures", name);
 const ready = async (page: any) =>
@@ -27,6 +28,19 @@ test("demo, inputs, gearing, wind, comparisons, keyboard chart and local downloa
   await expect(
     page.getByRole("heading", { name: "Small changes. This route." }),
   ).toBeVisible();
+  const bars = await page
+    .locator(".saving-bar > span")
+    .evaluateAll((elements) =>
+      elements.map(
+        (el) =>
+          el.getBoundingClientRect().width /
+          el.parentElement!.getBoundingClientRect().width,
+      ),
+    );
+  expect(bars).toHaveLength(4);
+  expect(bars.every((width) => width > 0 && width <= 1.001)).toBe(true);
+  expect(bars[0]).toBeGreaterThan(bars[1]);
+  expect(bars[1]).toBeGreaterThan(bars[2]);
   await page.getByLabel("Sustainable power", { exact: true }).fill("220");
   await ready(page);
   await expect(page.getByTestId("moving-time")).toHaveText("1 h 17 min");
@@ -176,4 +190,101 @@ test("larger import keeps inputs responsive and superseded jobs do not win", asy
   ).toBeVisible();
   await expect(page.getByText("230 → 253 W", { exact: true })).toBeVisible();
   await expect(page.getByText(/20,000 source points/)).toBeVisible();
+});
+
+test("profile grade stays on the section under the cursor", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await ready(page);
+  const lat = (meters: number) => meters / ((6371000 * Math.PI) / 180);
+  await page.locator("#gpx-file").setInputFiles({
+    name: "flat-then-climb.gpx",
+    mimeType: "application/gpx+xml",
+    buffer: Buffer.from(
+      `<gpx><trk><trkseg><trkpt lat="0" lon="0"><ele>100</ele></trkpt><trkpt lat="${lat(100)}" lon="0"><ele>100</ele></trkpt><trkpt lat="${lat(220)}" lon="0"><ele>112</ele></trkpt></trkseg></trk></gpx>`,
+    ),
+  });
+  await page
+    .getByLabel("Elevation smoothing", { exact: false })
+    .selectOption("0");
+  await ready(page);
+  const slider = page.getByLabel("Inspect route distance");
+  await slider.focus();
+  await slider.press("Home");
+  for (let i = 0; i < 4; i++) await slider.press("PageUp");
+  await expect(slider).toHaveValue("400");
+  await expect(page.locator(".chart-readout")).toHaveText(/\s0\.0% grade/);
+});
+
+test("valid coasting briefing survives an unavailable comparison and exports its explanation", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+  await ready(page);
+  await page.locator("#gpx-file").setInputFiles({
+    name: "flat-coasting.gpx",
+    mimeType: "application/gpx+xml",
+    buffer: Buffer.from(
+      '<gpx><trk><trkseg><trkpt lat="0" lon="0"><ele>100</ele></trkpt><trkpt lat="0.009" lon="0"><ele>100</ele></trkpt></trkseg></trk></gpx>',
+    ),
+  });
+  await ready(page);
+  await page
+    .locator("summary")
+    .filter({ hasText: "Conditions & model" })
+    .click();
+  await page.getByLabel("Along-route wind", { exact: true }).fill("-17");
+  await ready(page);
+  await page.getByLabel("Sustainable power", { exact: true }).fill("0");
+  await ready(page);
+  await expect(page.getByTestId("moving-time")).toBeVisible();
+  const unavailable = page
+    .locator(".comparison-row")
+    .filter({ hasText: "10% lower aerodynamic drag" });
+  await expect(unavailable).toContainText("Unavailable.");
+  await expect(unavailable).toContainText("baseline briefing is still valid");
+  await expect(unavailable.locator(".saving-bar")).toHaveCount(0);
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download ride briefing" }).click();
+  const download = await downloadPromise;
+  const content = await readFile((await download.path())!, "utf8");
+  expect(content).toContain("Sustainable crank power: 0 W");
+  expect(content).toContain("10% lower aerodynamic drag: unavailable.");
+  expect(content).not.toMatch(/NaN|Infinity/);
+  await page.locator("#comparisons").screenshot({
+    path: `test-results/${testInfo.project.name}-unavailable.png`,
+  });
+});
+
+test("smoothed descent keeps its final remainder and zero time savings are not ranked as gains", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await ready(page);
+  const endLat = 1001 / ((6371000 * Math.PI) / 180);
+  await page.locator("#gpx-file").setInputFiles({
+    name: "steady-descent.gpx",
+    mimeType: "application/gpx+xml",
+    buffer: Buffer.from(
+      `<gpx><trk><trkseg><trkpt lat="0" lon="0"><ele>100</ele></trkpt><trkpt lat="${endLat}" lon="0"><ele>49.95</ele></trkpt></trkseg></trk></gpx>`,
+    ),
+  });
+  await ready(page);
+  await expect(
+    page.getByRole("heading", { name: "steady-descent", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await page
+    .locator("summary")
+    .filter({ hasText: "Conditions & model" })
+    .click();
+  await page.getByLabel("Speed ceiling", { exact: true }).fill("15");
+  await ready(page);
+  await expect(page.getByTestId("moving-time")).toHaveText("4 min");
+  await expect(page.locator(".comparison-insight")).toContainText(
+    "None of these changes saves modeled time",
+  );
+  await expect(page.locator(".comparison-icon.best")).toHaveCount(0);
 });

@@ -118,3 +118,27 @@ it("demo is synthetic and closes at same elevation with balanced ascent/descent"
   expect(r.horizontalM).toBe(38000);
   expect(r.profile[0].elevationM).toBe(r.profile.at(-1)!.elevationM);
 });
+
+it.each([
+  [-5, 100],
+  [5, 100],
+  [-25, 100],
+  [25, 100],
+  [-5, 200],
+  [5, 200],
+])(
+  "smoothing preserves a constant %s%% grade through a short final interval (%s m window)",
+  (grade, smoothing) => {
+    const length = 1001;
+    const endLat = length / ((6371000 * Math.PI) / 180);
+    const r = routeFromTracks(
+      [[pt(0, 500), pt(endLat, 500 + (length * grade) / 100)]],
+      "constant grade",
+      smoothing,
+    );
+    expect(r.horizontalM).toBeCloseTo(length, 7);
+    expect(r.segments.at(-1)!.horizontalM).toBeCloseTo(1, 7);
+    for (const s of r.segments)
+      expect((100 * s.deltaM) / s.horizontalM).toBeCloseTo(grade, 7);
+  },
+);

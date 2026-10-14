@@ -125,9 +125,11 @@ export function routeFromTracks(
     grid.push({ x: length, e: interpolate(length) });
     const smooth = grid.map((p, n) => {
       if (n === 0 || n === grid.length - 1 || smoothingM === 0) return p.e;
-      const r = Math.ceil(smoothingM / 50),
+      // Shrink symmetrically at boundaries. Clipping one side biases the
+      // median, inventing ramps at endpoints (especially a short remainder).
+      const r = Math.min(Math.ceil(smoothingM / 50), n, grid.length - 1 - n),
         values = grid
-          .slice(Math.max(0, n - r), Math.min(grid.length, n + r + 1))
+          .slice(n - r, n + r + 1)
           .map((q) => q.e)
           .sort((a, b) => a - b);
       return values[Math.floor(values.length / 2)];

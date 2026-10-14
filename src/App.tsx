@@ -239,6 +239,13 @@ export default function App() {
   const ride = result?.ride,
     demanding = ride ? climbs(route, ride) : [],
     worst = demanding[0];
+  const comparisons = result?.comparisons ?? [];
+  const availableComparisons = comparisons.filter((c) => c.available);
+  const bestChange = availableComparisons.find((c) => c.savedS > 0.5);
+  const largestDifference = Math.max(
+    1,
+    ...availableComparisons.map((c) => Math.abs(c.savedS)),
+  );
   function reset() {
     ++importId.current;
     if (source) {
@@ -251,7 +258,14 @@ export default function App() {
   }
   function exportBrief() {
     if (!ride) return;
-    const text = `Bike Science Pro · Public beta\n${route.name}\n\n${(route.distanceM / 1000).toFixed(1)} km · ${Math.round(route.ascentM)} m ascent\nEstimated moving time: ${time(ride.timeS)}\nAverage speed: ${ride.speedKmh.toFixed(1)} km/h\nSustainable crank power: ${inputs.powerW} W\nSystem mass: ${inputs.riderKg + inputs.bikeKg + inputs.kitKg} kg\nCdA ${inputs.cda} m² · Crr ${inputs.crr}\nWind: ${inputs.windKmh} km/h (+ headwind) · ${inputs.temperatureC} °C · air-density altitude ${inputs.altitudeM} m\nSpeed ceiling: ${inputs.speedLimitKmh} km/h · coast below −3%: ${inputs.coastDescents}\nCrank work: ${Math.round(ride.workKj)} kJ\n\n${route.warnings.join("\n")}\n\nSteady-state planning estimate, not a finish-time promise. No stops, traffic, corners, acceleration, crosswind or fatigue model. Descent ceiling is a modelling assumption, not a recommended speed.\nComparisons change one variable at a time:\n${result!.comparisons.map((c) => `${c.title}: ${savings(c.savedS)} ${c.savedS < -0.5 ? "slower" : c.savedS > 0.5 ? "saved" : "difference"}`).join("\n")}\n\nModel and sources: see Assumptions & limitations in the app. GPX processed locally; no coordinates in this briefing.\n`;
+    const comparisonText = comparisons
+      .map((c) =>
+        c.available
+          ? `${c.title}: ${savings(c.savedS)} ${c.savedS < -0.5 ? "slower" : c.savedS > 0.5 ? "saved" : "difference"}`
+          : `${c.title}: unavailable. ${c.reason}`,
+      )
+      .join("\n");
+    const text = `Bike Science Pro · Public beta\n${route.name}\n\n${(route.distanceM / 1000).toFixed(1)} km · ${Math.round(route.ascentM)} m ascent\nEstimated moving time: ${time(ride.timeS)}\nAverage speed: ${ride.speedKmh.toFixed(1)} km/h\nSustainable crank power: ${inputs.powerW} W\nSystem mass: ${inputs.riderKg + inputs.bikeKg + inputs.kitKg} kg\nCdA ${inputs.cda} m² · Crr ${inputs.crr}\nWind: ${inputs.windKmh} km/h (+ headwind) · ${inputs.temperatureC} °C · air-density altitude ${inputs.altitudeM} m\nSpeed ceiling: ${inputs.speedLimitKmh} km/h · coast below −3%: ${inputs.coastDescents}\nCrank work: ${Math.round(ride.workKj)} kJ\n\n${route.warnings.join("\n")}\n\nSteady-state planning estimate, not a finish-time promise. No stops, traffic, corners, acceleration, crosswind or fatigue model. Descent ceiling is a modelling assumption, not a recommended speed.\nComparisons change one variable at a time:\n${comparisonText}\n\nModel and sources: see Assumptions & limitations in the app. GPX processed locally; no coordinates in this briefing.\n`;
     const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
     const a = document.createElement("a");
     a.href = url;
@@ -982,13 +996,20 @@ export default function App() {
                     your absolute watts in the weight scenario, stay fixed.
                   </p>
                   <div className="comparison-list">
-                    {result!.comparisons.map((c, n) => (
-                      <div className="comparison-row" key={c.key}>
+                    {comparisons.map((c) => (
+                      <div
+                        className={
+                          c.available
+                            ? "comparison-row"
+                            : "comparison-row unavailable"
+                        }
+                        key={c.key}
+                      >
                         <div className="comparison-label">
                           <span
-                            className={`comparison-icon ${n === 0 ? "best" : ""}`}
+                            className={`comparison-icon ${c.key === bestChange?.key ? "best" : ""}`}
                           >
-                            {n === 0 ? (
+                            {c.key === bestChange?.key ? (
                               <ArrowUpRight size={18} />
                             ) : (
                               <FlaskConical size={17} />
@@ -999,31 +1020,39 @@ export default function App() {
                             <small>{c.detail}</small>
                           </div>
                         </div>
-                        <div className="saving-bar">
-                          <span
-                            style={{
-                              width: `${Math.max(2, (Math.abs(c.savedS) / Math.max(1, ...result!.comparisons.map((v) => Math.abs(v.savedS)))) * 100)}%`,
-                            }}
-                          />
-                        </div>
-                        <div
-                          className={
-                            c.savedS < -0.5 ? "saving slower" : "saving"
-                          }
-                        >
-                          <strong>{savings(c.savedS)}</strong>
-                          <small>
-                            {c.savedS < -0.5
-                              ? "slower"
-                              : c.savedS > 0.5
-                                ? "saved"
-                                : "difference"}
-                          </small>
-                        </div>
+                        {c.available ? (
+                          <>
+                            <div className="saving-bar" aria-hidden="true">
+                              <span
+                                style={{
+                                  width: `${Math.abs(c.savedS) <= 0.5 ? 0 : Math.max(2, (Math.abs(c.savedS) / largestDifference) * 100)}%`,
+                                }}
+                              />
+                            </div>
+                            <div
+                              className={
+                                c.savedS < -0.5 ? "saving slower" : "saving"
+                              }
+                            >
+                              <strong>{savings(c.savedS)}</strong>
+                              <small>
+                                {c.savedS < -0.5
+                                  ? "slower"
+                                  : c.savedS > 0.5
+                                    ? "saved"
+                                    : "difference"}
+                              </small>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="comparison-note">
+                            <strong>Unavailable.</strong> {c.reason}
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>
-                  {result!.comparisons.length === 0 && (
+                  {comparisons.length === 0 && (
                     <p>
                       No comparison scenarios are available at these input
                       limits.
@@ -1032,14 +1061,16 @@ export default function App() {
                   <div className="comparison-insight">
                     <FlaskConical size={20} />
                     <p>
-                      {result!.comparisons[0] ? (
+                      {bestChange ? (
                         <>
-                          <strong>{result!.comparisons[0].title}</strong> ranks
-                          first for modeled time savings here. A change can also
-                          slow this ride, especially with tailwinds or coasting
-                          descents. These are sensitivity examples, not
-                          guaranteed equipment gains or training advice.
+                          <strong>{bestChange.title}</strong> ranks first for
+                          modeled time savings here. A change can also slow this
+                          ride, especially with tailwinds or coasting descents.
+                          These are sensitivity examples, not guaranteed
+                          equipment gains or training advice.
                         </>
+                      ) : comparisons.length ? (
+                        "None of these changes saves modeled time under these conditions. A speed ceiling, coasting or assisting wind can change the outcome."
                       ) : (
                         "Try the default ride inputs to explore comparisons."
                       )}

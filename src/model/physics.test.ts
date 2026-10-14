@@ -214,3 +214,23 @@ it("coasting-only route omits the unchanged zero-power scenario", () => {
     ),
   ).toBe(false);
 });
+
+it("keeps a valid baseline when reduced tailwind assistance makes a comparison immobile", () => {
+  const route = {
+    ...demoRoute(),
+    segments: [
+      { horizontalM: 1000, deltaM: 0, startM: 0, elevationM: 100, track: 0 },
+    ],
+    distanceM: 1000,
+  };
+  const inputs = { ...DEFAULT_INPUTS, powerW: 0, windKmh: -17 };
+  const baseline = simulate(route, inputs);
+  expect(baseline.timeS).toBeGreaterThan(0);
+  const scenarios = compare(route, inputs, baseline);
+  expect(scenarios.find((c) => c.key === "aero")).toMatchObject({
+    available: false,
+  });
+  expect(scenarios.find((c) => c.key === "rolling")).toMatchObject({
+    available: true,
+  });
+});

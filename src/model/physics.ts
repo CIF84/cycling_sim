@@ -1,5 +1,6 @@
 import type { Inputs, Route, Ride, Comparison } from "./types";
 export const G = 9.80665;
+class ImmobileRouteError extends Error {}
 function range(value: number, min: number, max: number, name: string) {
   if (!Number.isFinite(value) || value < min || value > max)
     throw new Error(`${name} must be between ${min} and ${max}.`);
@@ -140,7 +141,7 @@ export function simulate(route: Route, i: Inputs): Ride {
       speedMs = Math.min(equilibrium, i.speedLimitKmh / 3.6),
       capped = equilibrium > speedMs + 1e-6;
     if (speedMs <= 0)
-      throw new Error(
+      throw new ImmobileRouteError(
         "This power cannot keep you moving on every section. Add sustainable power or choose a downhill-only route for coasting.",
       );
     // If braking at the ceiling, reduce pedaling to power actually needed there.
@@ -230,11 +231,34 @@ export function compare(
         return false;
       }
     })
-    .map((s) => {
-      const r = simulate(route, { ...i, ...s.changes });
-      return { ...s, timeS: r.timeS, savedS: base.timeS - r.timeS };
+    .map((s): Comparison => {
+      try {
+        const r = simulate(route, { ...i, ...s.changes });
+        return {
+          ...s,
+          available: true,
+          timeS: r.timeS,
+          savedS: base.timeS - r.timeS,
+        };
+      } catch (error) {
+        // A valid baseline must survive an immobile counterfactual. Unexpected
+        // calculation errors still propagate instead of being hidden.
+        if (!(error instanceof ImmobileRouteError)) throw error;
+        return {
+          ...s,
+          available: false,
+          timeS: null,
+          savedS: null,
+          reason:
+            "This change cannot keep you moving on every section at the selected power. The baseline briefing is still valid.",
+        };
+      }
     })
-    .sort((a, b) => b.savedS - a.savedS);
+    .sort((a, b) =>
+      a.available && b.available
+        ? b.savedS - a.savedS
+        : Number(b.available) - Number(a.available),
+    );
 }
 export function powerForTime(
   route: Route,

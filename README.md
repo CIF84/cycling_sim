@@ -43,7 +43,7 @@ Sustainable power is absolute crank power, not automatically derived from FTP or
 
 ## Cloudflare
 
-[Open the deployed review preview](https://bike-science-pro-preview.roman-christov.workers.dev). Deployed 14 October 2026; all 8 hosted desktop/mobile browser checks pass. Production-domain publication remains for owner review.
+[Open the deployed review preview](https://bike-science-pro-preview.roman-christov.workers.dev). Updated 15 October 2026 after correctness review; all 14 hosted desktop/mobile browser checks pass. Production-domain publication remains for owner review.
 
 [Deployment instructions](docs/DEPLOYMENT.md) cover an isolated `bike-science-pro-preview` Worker, the production Worker, verification and rollback. Workers static assets serve `dist`; no custom domain is configured. The Spořilov repository and deployment were left untouched. Its existing project uses Pages; this project uses Workers static assets as explicitly requested.
 
@@ -62,4 +62,4 @@ Accounts, cloud route storage, live weather, Strava, payments and AI assistant a
 
 The original `.py` modules, `tests/`, route file and original [README](docs/LEGACY_README.md) are retained for history and reference. They are **not** the beta runtime, and their known solver, segmentation and biology issues are not certified by the new tests. Historical setup: `pip install -r requirements.txt pytest`, then `python -m pytest tests` or `streamlit run streamlit_app.py`.
 
-[Implementation plan and baseline](docs/IMPLEMENTATION_PLAN.md) · [Verification and launch notes](docs/VERIFICATION.md)
+[Implementation plan and baseline](docs/IMPLEMENTATION_PLAN.md) · [Verification and launch notes](docs/VERIFICATION.md) · [PR review findings](docs/PR_REVIEW.md)

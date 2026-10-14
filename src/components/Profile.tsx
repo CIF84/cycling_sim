@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route, Ride } from "../model/types";
+import { inspectProfile } from "../model/profile";
 export function Profile({ route, ride }: { route: Route; ride: Ride }) {
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(900);
@@ -11,13 +12,8 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
     return () => observer.disconnect();
   }, []);
   const [fraction, setFraction] = useState(0.32);
-  const target = fraction * route.distanceM;
-  const point = route.profile.reduce((a, b) =>
-    Math.abs(b.distanceM - target) < Math.abs(a.distanceM - target) ? b : a,
-  );
-  const segment = ride.segments.reduce((a, b) =>
-    Math.abs(b.startM - target) < Math.abs(a.startM - target) ? b : a,
-  );
+  const point = inspectProfile(route, ride, fraction);
+  const { segment } = point;
   const elevations = route.profile.map((p) => p.elevationM),
     min = Math.floor(Math.min(...elevations) / 50) * 50,
     max = Math.max(min + 100, Math.ceil(Math.max(...elevations) / 50) * 50);

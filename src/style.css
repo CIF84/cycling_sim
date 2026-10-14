@@ -818,6 +818,16 @@ summary::-webkit-details-marker {
 .comparison-row:last-child {
   border: 0;
 }
+.comparison-row.unavailable {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.comparison-note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
 .comparison-label {
   display: flex;
   gap: 10px;

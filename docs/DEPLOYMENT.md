@@ -22,12 +22,12 @@ Complete Cloudflare OAuth yourself and verify that `whoami` identifies the inten
 
 The preview command deploys **bike-science-pro-preview**, a separate worker, and returns its `https://bike-science-pro-preview.<account-subdomain>.workers.dev` URL. That is a shareable public beta preview, not a custom-domain production release. Inspect the actual returned URL, not the placeholder above. `preview_urls` are disabled; the preview uses its own isolated worker and deployment history.
 
-On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed successfully:
+On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes:
 
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Worker: `bike-science-pro-preview`
-- Version: `742d3032-d6eb-40f7-968e-1b436ce5af97`
-- All 8 hosted desktop/mobile browser checks passed. HTTPS returned 200 with the configured security headers, and all 5 public assets matched the local production build byte for byte.
+- Version: `26c908f8-f974-4412-bcaa-146a8cf788e8`
+- All 14 hosted desktop/mobile browser checks passed. HTTPS returned 200 with the configured security headers, and all 5 public assets matched the local production build byte for byte.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. No production Worker or custom domain was deployed or changed, and no temporary account was created.
 

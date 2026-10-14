@@ -66,14 +66,15 @@ export interface Ride {
   cappedS: number;
   segments: SegmentResult[];
 }
-export interface Comparison {
+export type Comparison = {
   key: string;
   title: string;
   detail: string;
-  timeS: number;
-  savedS: number;
   changes: Partial<Inputs>;
-}
+} & (
+  | { available: true; timeS: number; savedS: number }
+  | { available: false; timeS: null; savedS: null; reason: string }
+);
 export const DEFAULT_INPUTS: Inputs = {
   riderKg: 75,
   bikeKg: 10,

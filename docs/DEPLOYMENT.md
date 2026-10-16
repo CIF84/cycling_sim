@@ -30,7 +30,7 @@ On 14 October 2026, the owner completed Cloudflare OAuth and the separate previe
 - Version: `4e381995-5515-4717-824a-6d9a2c9d9b8f` (25 manufacturer-sourced groupset presets)
 - The groupset release passed all 102 unit checks, strict TypeScript, the production build and all 26 hosted desktop/mobile browser checks. Security headers and all five public asset hashes were verified. Preset/manual editing, source links, unchanged ride estimates, Czech/English switching and 320 px overflow are covered.
 
-The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. No production Worker or custom domain was deployed or changed, and no temporary account was created.
+The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 
 ## Review the hosted preview
 
@@ -42,15 +42,33 @@ The tests should allow that origin in their outbound-request assertion (the test
 
 Keep the local model limitations visible. For a broad launch, calibrate a few representative outdoor rides with known power, route elevation and conditions; beta estimates are not finish-time promises.
 
-## Production after owner review
+## Production public beta
+
+The owner approved publication on **16 October 2026**. [PR #1](https://github.com/CIF84/cycling_sim/pull/1) was merged into `main` as `d01d1470fb4765979a3fd0bb81cf7cb72b40a3ad`, preserving the reviewed beta commits. The verified build from that revision was published to the top-level production Worker with `pnpm exec wrangler deploy --env ''`.
+
+- Production: [Bike Science Pro](https://bike-science-pro.roman-christov.workers.dev) · [Čeština](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) · [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en)
+- Worker: `bike-science-pro`
+- Version: `64b18568-b3d0-47a0-a292-4c5ed8bedfe1`
+- Verification: 102 unit checks, strict TypeScript and production build pass; all 26 production desktop/mobile browser checks pass without retries. HTTPS/security headers and all five public asset bytes match the verified build.
+- The preview Worker remains separate and unchanged. No custom domain or Spořilov resource was configured or changed.
+
+For subsequent approved releases, use the intended `main` revision, run the checks above, then:
 
 ```sh
 pnpm deploy:production
 ```
 
-This deploys **bike-science-pro**, currently to its own `workers.dev` address only. Publication to a production custom domain is intentionally left for owner review. After that review, add a Workers custom domain through Cloudflare’s dashboard or explicit routes configuration for this worker. Confirm account and zone before adding it. Do not attach the Spořilov domain or alter its deployment.
+This deploys **bike-science-pro** to its own `workers.dev` address. No custom domain has been selected. A future custom domain requires the owner to identify it; then configure that domain for this Worker through Cloudflare’s dashboard or explicit routes configuration. Confirm account and zone before adding it. Do not attach the Spořilov domain or alter its deployment.
 
-For Git-connected Workers Builds later, use this repo root, Node 22+, install `pnpm install --frozen-lockfile`, build `pnpm build`, and deploy `pnpm exec wrangler deploy` (or `--env preview` for the separate preview). Keep the public static files limited to `dist`. Source review uses the `codex/bike-science-pro-beta` branch. This implementation does not configure Git-connected deployment, CI, or custom-domain publication; production deployment remains an explicit step after owner review.
+Verify each production release with:
+
+```sh
+BETA_URL='https://bike-science-pro.roman-christov.workers.dev' pnpm test:e2e
+```
+
+`BETA_URL` is the test suite's target URL setting; it also supports the production address.
+
+For Git-connected Workers Builds later, use this repo root, Node 22+, install `pnpm install --frozen-lockfile`, build `pnpm build`, and deploy `pnpm exec wrangler deploy --env ''` (or `--env preview` for the separate preview). Keep the public static files limited to `dist`. Production source is on `main`; the original beta review is retained in PR #1 and the `codex/bike-science-pro-beta` branch. This implementation does not configure Git-connected deployment, CI, or custom-domain publication. Deployments remain explicit commands after review; pushing a documentation commit does not redeploy the app.
 
 ## Local Workers verification
 

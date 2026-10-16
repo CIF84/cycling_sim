@@ -2,7 +2,7 @@
 
 ## Final result
 
-React/Vite beta implemented in this checkout, with source review on the `codex/bike-science-pro-beta` branch. GPX parsing and simulation run locally in a browser worker, independently from the UI. The Python prototype and original README remain available as historical material. Cloudflare publication is limited to the separate preview Worker. No production-domain publication or Spořilov change was made.
+React/Vite beta is merged into `main` through PR #1 and published after owner approval on 16 October 2026. GPX parsing and simulation run locally in a browser worker, independently from the UI. The Python prototype and original README remain available as historical material. [Production](https://bike-science-pro.roman-christov.workers.dev) and [preview](https://bike-science-pro-preview.roman-christov.workers.dev) use separate Cloudflare Workers. No custom domain or Spořilov change was made.
 
 The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inputs yield about **1 h 26 min**, **26.6 km/h**, and **880 kJ** crank work. These are model outputs, not validated ride observations. Raising sustainable power from 180 to 220 W changes the demo to about **1 h 17 min**. Gearing-only changes leave time unchanged.
 
@@ -17,7 +17,7 @@ The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inpu
 
 ## Browser and accessibility checks
 
-**26 browser tests pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the production build served by Vite preview and the [deployed Cloudflare preview](https://bike-science-pro-preview.roman-christov.workers.dev). The preceding 22-test localization suite also passed in Cloudflare’s local Workers runtime. Tested interactions:
+**26 browser tests pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the production build served by Vite preview and the deployed Cloudflare [preview](https://bike-science-pro-preview.roman-christov.workers.dev) and [production](https://bike-science-pro.roman-christov.workers.dev) apps. The preceding 22-test localization suite also passed in Cloudflare’s local Workers runtime. Tested interactions:
 
 - Immediate demo and moving time; sustainable watts and gravel surface changes.
 - Front chainring edits change cadence while preserving ride time; wind changes route time.
@@ -35,7 +35,7 @@ The local app was also opened and inspected in the Codex browser at desktop and 
 - Preview Worker `--dry-run` accepts static assets with no server bindings. Actual local workerd serves security headers and supports the client-side worker/download/import flows.
 - Compatibility date adjusted from 2026-10-14 to **2026-10-13**, the newest date supported by the installed pinned runtime. This avoids a local startup failure.
 - Production CSP blocks outbound app connections. No analytics, external fonts or GPX uploads. `sample_routes/my_ride.gpx`, Python files, tests and docs are absent from `dist`.
-- Owner completed Cloudflare OAuth and the separate `bike-science-pro-preview` Worker was deployed on 14 October 2026. The review fixes were deployed on 15 October 2026 as version `26c908f8-f974-4412-bcaa-146a8cf788e8`. No production Worker/custom domain was deployed or changed.
+- Owner completed Cloudflare OAuth and the separate `bike-science-pro-preview` Worker was deployed on 14 October 2026. The review fixes were deployed on 15 October 2026 as version `26c908f8-f974-4412-bcaa-146a8cf788e8`. Those initial releases deployed only the preview; the production launch is recorded below.
 - Hosted HTTPS response is 200 with CSP, no-framing, no-referrer, nosniff and restricted permissions headers. All 5 served public assets match the local build byte for byte. Cloudflare also adds its infrastructure network-error reporting headers; the application has no analytics or route uploads.
 - On 14 October, the first test run immediately after the initial deployment hit Cloudflare's initial propagation: one document request and two asset requests returned 404. Six tests passed. After propagation, a full rerun passed **all 8 tests in 9.9 seconds**, with no test retries or application changes. The deployed app was also opened in the Codex browser for review.
 
@@ -73,10 +73,18 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - Browser cases cover both manual tooth fields, invalid-list recovery, reset, language switching without losing the preset, official reference links, exported actual gearing, unchanged ride estimates and comparisons, and no overflow at 320 px. Axe detects zero violations with source details expanded. Desktop/mobile layouts were visually inspected.
 - Preview version **`4e381995-5515-4717-824a-6d9a2c9d9b8f`** serves the verified build. All five public asset hashes and HTTPS/security headers pass. The GPX/model worker bundle is unchanged. PR #1 remains unmerged; production remains unpublished.
 
-## Remaining limitations and launch decision
+## Production launch · 16 October 2026
 
-No known failing local checks remain. This is ready for owner review as a **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.
+- The owner approved merge and publication. PR #1 merged at 13:22 UTC as **`d01d1470fb4765979a3fd0bb81cf7cb72b40a3ad`**. The deployed app, dependencies and hosting configuration exactly match the reviewed beta commit `7a2440e`.
+- Re-ran all **102 unit checks**, strict TypeScript and the production build before release. Published to **`bike-science-pro`**, version **`64b18568-b3d0-47a0-a292-4c5ed8bedfe1`**.
+- All **26 production desktop/mobile browser checks pass in 18.8 seconds**, without retries: demo, GPX imports, errors, comparisons, localization, groupset/manual editing, downloads and accessibility. The production demo was also opened and visually inspected in the app browser.
+- Production returns HTTPS 200 with the configured CSP, no-framing, no-referrer, nosniff and restricted permissions headers. All five served public assets match the local build byte for byte.
+- The preview remains available independently. No custom domain, production backend, GPX upload service or Spořilov change was introduced. Documentation updates after the launch do not change the deployed assets.
+
+## Remaining limitations
+
+No known failing local checks remain. This is published as an owner-approved **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.
 
 Fuel/sweat/sodium prescriptions, manual routes inferred from totals, accounts, storage, integrations and AI were deferred for reliability and launch focus. A bounded inverse-power utility is numerically checked but not shown publicly because mathematical reachability does not prove a rider can sustain the required power.
 
-Remaining release gate: owner review of the hosted preview and production domain. Cloudflare authentication and preview deployment are complete. No production domain is selected or connected automatically. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.
+The owner review, merge and production launch are complete. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.

@@ -2,11 +2,11 @@
 
 A browser-based cycling ride briefing: **How hard is this ride? How should I prepare? Which changes matter most?**
 
-Try the fictional Sunday Loop immediately, or import a GPX locally. Estimate moving time, examine the elevation profile and demanding sections, check virtual cadence, and compare power, system mass, aerodynamic drag and rolling resistance independently.
+[Open Bike Science Pro](https://bike-science-pro.roman-christov.workers.dev). Try the fictional Sunday Loop immediately, or import a GPX locally. Estimate moving time, examine the elevation profile and demanding sections, check virtual cadence, and compare power, system mass, aerodynamic drag and rolling resistance independently.
 
 ## Languages
 
-English and Czech are available from the header language selector. [Review in Czech](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs) or [English](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=en). Explicit links override the saved choice; otherwise the app uses the saved language, then the browser’s primary language (Czech or English fallback).
+English and Czech are available from the header language selector. [Open in Czech](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) or [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en). Explicit links override the saved choice; otherwise the app uses the saved language, then the browser’s primary language (Czech or English fallback).
 
 Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Only the language preference is stored locally. See [localization maintenance and review](docs/LOCALIZATION.md).
 
@@ -55,7 +55,7 @@ Sustainable power is absolute crank power, not automatically derived from FTP or
 
 ## Cloudflare
 
-[Open the deployed review preview](https://bike-science-pro-preview.roman-christov.workers.dev). Updated 16 October 2026 with Czech localization and manufacturer-sourced groupset presets; all 102 unit checks and 26 hosted desktop/mobile browser checks pass. Production-domain publication remains for owner review.
+[Production public beta](https://bike-science-pro.roman-christov.workers.dev) launched on 16 October 2026 after owner approval and the merge of PR #1 into `main`. All 102 unit checks and 26 desktop/mobile browser checks against production pass. The [separate preview](https://bike-science-pro-preview.roman-christov.workers.dev) remains available for future review.
 
 [Deployment instructions](docs/DEPLOYMENT.md) cover an isolated `bike-science-pro-preview` Worker, the production Worker, verification and rollback. Workers static assets serve `dist`; no custom domain is configured. The Spořilov repository and deployment were left untouched. Its existing project uses Pages; this project uses Workers static assets as explicitly requested.
 
@@ -64,7 +64,7 @@ pnpm exec wrangler login
 pnpm deploy:preview
 ```
 
-Authenticate to the intended Cloudflare account first. Review the returned `workers.dev` preview before production-domain publication. This work did not publish a production domain or create an unauthenticated temporary Cloudflare account.
+Authenticate to the intended Cloudflare account first. Review changes on the separate preview before deploying an approved `main` revision with `pnpm deploy:production`. Production is published at its dedicated `workers.dev` address; no custom domain is configured.
 
 ## Deferred for a credible first release
 

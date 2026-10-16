@@ -1,3 +1,4 @@
+import { ModelError, message, type Message } from "./messages";
 import { XMLParser, XMLValidator } from "fast-xml-parser";
 import type { Route, Segment, ProfilePoint } from "./types";
 interface Point {
@@ -22,10 +23,10 @@ export function routeFromTracks(
   smoothingM = 100,
 ): Route {
   if (!Number.isFinite(smoothingM) || smoothingM < 0 || smoothingM > 500)
-    throw new Error("Invalid smoothing distance.");
+    throw new ModelError("Invalid smoothing distance.");
   const segments: Segment[] = [],
     profile: ProfilePoint[] = [],
-    warnings: string[] = [];
+    warnings: Message[] = [];
   let distanceM = 0,
     horizontalM = 0,
     ascentM = 0,
@@ -38,7 +39,7 @@ export function routeFromTracks(
     trackCount = 0;
   const pointCount = tracks.reduce((n, t) => n + t.length, 0);
   if (pointCount > 100000)
-    throw new Error(
+    throw new ModelError(
       "This GPX has over 100,000 points. Export a simplified track and try again.",
     );
   // Split large jumps rather than fabricate terrain across missing recordings.
@@ -54,7 +55,7 @@ export function routeFromTracks(
         (p.ele !== null &&
           (!Number.isFinite(p.ele) || p.ele < -500 || p.ele > 9000))
       )
-        throw new Error("GPX contains invalid coordinates or elevations.");
+        throw new ModelError("GPX contains invalid coordinates or elevations.");
       if (part.length) {
         const d = haversine(part[part.length - 1], p);
         if (d < 0.05) {
@@ -73,7 +74,7 @@ export function routeFromTracks(
     parts.push(part);
   }
   if (parts.length > 100)
-    throw new Error(
+    throw new ModelError(
       "This GPX has more than 100 separate sections. Export a single ride or simplify track breaks.",
     );
   for (const track of parts) {
@@ -84,14 +85,14 @@ export function routeFromTracks(
     const length = xs.at(-1)!;
     if (length < 1) continue;
     if (horizontalM + length > 1500000)
-      throw new Error(
+      throw new ModelError(
         "Routes over 1,500 km are not supported. Split this file into individual rides.",
       );
     const known = track
       .map((p, n) => (p.ele === null ? -1 : n))
       .filter((n) => n >= 0);
     if (!known.length)
-      throw new Error(
+      throw new ModelError(
         "A track has no elevation data. Export GPX with elevations; we cannot infer climbing from coordinates alone.",
       );
     let k = 0;
@@ -140,7 +141,7 @@ export function routeFromTracks(
       const dx = grid[n].x - grid[n - 1].x,
         de = smooth[n] - smooth[n - 1];
       if (Math.abs(de / dx) > 0.4)
-        throw new Error(
+        throw new ModelError(
           "Elevation implies a grade over 40%. Check the GPX elevation spikes or use a corrected export.",
         );
       segments.push({
@@ -158,28 +159,49 @@ export function routeFromTracks(
     }
   }
   if (!segments.length || distanceM < 100)
-    throw new Error("The GPX needs at least 100 m of connected route points.");
+    throw new ModelError(
+      "The GPX needs at least 100 m of connected route points.",
+    );
   if (duplicates)
-    warnings.push(`${duplicates} duplicate or near-identical points removed.`);
+    warnings.push(
+      message("{count} duplicate or near-identical points removed.", {
+        count: duplicates,
+      }),
+    );
   if (missing)
     warnings.push(
-      `${missing} missing elevations filled within their own track; leading/trailing values held constant. Climbing is less certain.`,
+      message(
+        "{count} missing elevations filled within their own track; leading/trailing values held constant. Climbing is less certain.",
+        { count: missing },
+      ),
     );
   if (sparse)
     warnings.push(
-      `${sparse} point intervals exceed 250 m; short climbs and turns may be missing.`,
+      message(
+        "{count} point intervals exceed 250 m; short climbs and turns may be missing.",
+        { count: sparse },
+      ),
     );
   if (gaps)
     warnings.push(
-      `${gaps} gaps over 2 km excluded. Missing parts are not included in time or distance.`,
+      message(
+        "{count} gaps over 2 km excluded. Missing parts are not included in time or distance.",
+        { count: gaps },
+      ),
     );
   if (trackCount > 1)
     warnings.push(
-      `${trackCount} separate track sections; connecting travel is excluded.`,
+      message(
+        "{count} separate track sections; connecting travel is excluded.",
+        { count: trackCount },
+      ),
     );
   if (rawAscentM - ascentM > Math.max(30, rawAscentM * 0.15))
     warnings.push(
-      `Elevation processing reduced recorded ascent from ${Math.round(rawAscentM)} to ${Math.round(ascentM)} m. Inspect the profile; short climbs may be softened.`,
+      message(
+        "Elevation processing reduced recorded ascent from {raw} to {modeled} m. Inspect the profile; short climbs may be softened.",
+        { raw: Math.round(rawAscentM), modeled: Math.round(ascentM) },
+      ),
     );
   return {
     name,
@@ -203,13 +225,13 @@ export function parseGPX(
   smoothingM = 100,
 ): Route {
   if (new TextEncoder().encode(xml).length > 10 * 1024 * 1024)
-    throw new Error("Please choose a GPX smaller than 10 MB.");
+    throw new ModelError("Please choose a GPX smaller than 10 MB.");
   if (/<!DOCTYPE|<!ENTITY/i.test(xml))
-    throw new Error(
+    throw new ModelError(
       "GPX documents with external entities or DTDs are not supported.",
     );
   if (XMLValidator.validate(xml) !== true)
-    throw new Error(
+    throw new ModelError(
       "This file is not valid GPX XML. Try exporting the route again.",
     );
   const root = new XMLParser({
@@ -218,7 +240,7 @@ export function parseGPX(
     parseTagValue: false,
     processEntities: false,
   }).parse(xml).gpx;
-  if (!root) throw new Error("This file is not a GPX document.");
+  if (!root) throw new ModelError("This file is not a GPX document.");
   const read = (p: Record<string, unknown>): Point => ({
     lat: String(p["@_lat"] ?? "").trim() === "" ? NaN : Number(p["@_lat"]),
     lon: String(p["@_lon"] ?? "").trim() === "" ? NaN : Number(p["@_lon"]),
@@ -232,7 +254,7 @@ export function parseGPX(
   if (!tracks.length)
     for (const rte of array(root.rte)) tracks.push(array(rte.rtept).map(read));
   if (!tracks.length)
-    throw new Error(
+    throw new ModelError(
       "No track or route points found. Waypoints alone do not define a ride.",
     );
   return routeFromTracks(tracks, name.replace(/\.gpx$/i, ""), smoothingM);

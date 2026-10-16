@@ -189,7 +189,7 @@ test("larger import keeps inputs responsive and superseded jobs do not win", asy
     page.getByRole("heading", { name: "large-synthetic", exact: true }),
   ).toBeVisible();
   await expect(page.getByText("230 → 253 W", { exact: true })).toBeVisible();
-  await expect(page.getByText(/20,000 source points/)).toBeVisible();
+  await expect(page.getByText(/Source points: 20,000/)).toBeVisible();
 });
 
 test("profile grade stays on the section under the cursor", async ({
@@ -251,7 +251,7 @@ test("valid coasting briefing survives an unavailable comparison and exports its
   const download = await downloadPromise;
   const content = await readFile((await download.path())!, "utf8");
   expect(content).toContain("Sustainable crank power: 0 W");
-  expect(content).toContain("10% lower aerodynamic drag: unavailable.");
+  expect(content).toContain("10% lower aerodynamic drag: Unavailable.");
   expect(content).not.toMatch(/NaN|Infinity/);
   await page.locator("#comparisons").screenshot({
     path: `test-results/${testInfo.project.name}-unavailable.png`,

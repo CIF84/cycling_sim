@@ -1,9 +1,15 @@
+import { ModelError, message } from "./messages";
+import type { MessageKey } from "../i18n/cs";
 import type { Inputs, Route, Ride, Comparison } from "./types";
 export const G = 9.80665;
-class ImmobileRouteError extends Error {}
-function range(value: number, min: number, max: number, name: string) {
+class ImmobileRouteError extends ModelError {}
+function range(value: number, min: number, max: number, name: MessageKey) {
   if (!Number.isFinite(value) || value < min || value > max)
-    throw new Error(`${name} must be between ${min} and ${max}.`);
+    throw new ModelError("{field} must be between {min} and {max}.", {
+      field: message(name),
+      min,
+      max,
+    });
 }
 export function validateInputs(i: Inputs) {
   range(i.riderKg, 30, 200, "Rider weight");
@@ -29,8 +35,9 @@ export function validateInputs(i: Inputs) {
       new Set(teeth).size !== teeth.length ||
       teeth.some((t) => !Number.isInteger(t) || t < 9 || t > 65)
     )
-      throw new Error(
-        `${name}: enter distinct whole tooth counts from 9 to 65.`,
+      throw new ModelError(
+        "{field}: enter distinct whole tooth counts from 9 to 65.",
+        { field: message(name) },
       );
   }
 }
@@ -77,7 +84,7 @@ export function solveSpeed(powerW: number, p: Physics): number {
     high = 16;
   while (residual(high) < 0 && high < 128) high *= 2;
   if (residual(high) < 0)
-    throw new Error(
+    throw new ModelError(
       "No speed equilibrium within solver bounds. Check route and conditions.",
     );
   for (let j = 0; j < 80; j++) {
@@ -112,7 +119,7 @@ export function chooseGear(speedKmh: number, i: Inputs) {
 export function simulate(route: Route, i: Inputs): Ride {
   validateInputs(i);
   if (!route.segments.length)
-    throw new Error("The route has no rideable segments.");
+    throw new ModelError("The route has no rideable segments.");
   let timeS = 0,
     workKj = 0,
     pedalingS = 0,
@@ -125,7 +132,7 @@ export function simulate(route: Route, i: Inputs): Ride {
       s.horizontalM <= 0 ||
       !Number.isFinite(s.deltaM)
     )
-      throw new Error("Invalid route segment.");
+      throw new ModelError("Invalid route segment.");
     const gradePct = (100 * s.deltaM) / s.horizontalM;
     const p = {
       massKg: i.riderKg + i.bikeKg + i.kitKg,
@@ -190,32 +197,43 @@ export function compare(
   i: Inputs,
   base = simulate(route, i),
 ): Comparison[] {
-  const scenarios = [
-    {
-      key: "power",
-      title: "10% more sustainable power",
-      detail: `${Math.round(i.powerW)} → ${Math.round(i.powerW * 1.1)} W`,
-      changes: { powerW: i.powerW * 1.1 },
-    },
-    {
-      key: "weight",
-      title: "2 kg less carried weight",
-      detail: "System mass −2 kg · same watts",
-      changes: i.kitKg >= 2 ? { kitKg: i.kitKg - 2 } : { bikeKg: i.bikeKg - 2 },
-    },
-    {
-      key: "aero",
-      title: "10% lower aerodynamic drag",
-      detail: `CdA ${i.cda.toFixed(3)} → ${(i.cda * 0.9).toFixed(3)} m²`,
-      changes: { cda: i.cda * 0.9 },
-    },
-    {
-      key: "rolling",
-      title: "20% lower rolling resistance",
-      detail: `Crr ${i.crr.toFixed(4)} → ${(i.crr * 0.8).toFixed(4)}`,
-      changes: { crr: i.crr * 0.8 },
-    },
-  ];
+  const scenarios: Pick<Comparison, "key" | "title" | "detail" | "changes">[] =
+    [
+      {
+        key: "power",
+        title: "10% more sustainable power",
+        detail: message("{before} → {after} W", {
+          before: Math.round(i.powerW),
+          after: Math.round(i.powerW * 1.1),
+        }),
+        changes: { powerW: i.powerW * 1.1 },
+      },
+      {
+        key: "weight",
+        title: "2 kg less carried weight",
+        detail: message("System mass −2 kg · same watts"),
+        changes:
+          i.kitKg >= 2 ? { kitKg: i.kitKg - 2 } : { bikeKg: i.bikeKg - 2 },
+      },
+      {
+        key: "aero",
+        title: "10% lower aerodynamic drag",
+        detail: message("CdA {before} → {after} m²", {
+          before: { number: i.cda, digits: 3 },
+          after: { number: i.cda * 0.9, digits: 3 },
+        }),
+        changes: { cda: i.cda * 0.9 },
+      },
+      {
+        key: "rolling",
+        title: "20% lower rolling resistance",
+        detail: message("Crr {before} → {after}", {
+          before: { number: i.crr, digits: 4 },
+          after: { number: i.crr * 0.8, digits: 4 },
+        }),
+        changes: { crr: i.crr * 0.8 },
+      },
+    ];
   return scenarios
     .filter((s) => {
       if (

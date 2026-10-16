@@ -1,4 +1,4 @@
-# Public beta verification · updated 15 October 2026
+# Public beta verification · updated 16 October 2026
 
 ## Final result
 
@@ -17,7 +17,7 @@ The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inpu
 
 ## Browser and accessibility checks
 
-**14 browser tests pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844). The full suite passed against both the **production build served by Cloudflare’s local Workers runtime** and the [deployed preview](https://bike-science-pro-preview.roman-christov.workers.dev), not only the Vite dev server. Tested interactions:
+**22 browser tests pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844). The full suite passed against both the **production build served by Cloudflare’s local Workers runtime** and the [deployed preview](https://bike-science-pro-preview.roman-christov.workers.dev), not only the Vite dev server. Tested interactions:
 
 - Immediate demo and moving time; sustainable watts and gravel surface changes.
 - Front chainring edits change cadence while preserving ride time; wind changes route time.
@@ -31,7 +31,7 @@ The local app was also opened and inspected in the Codex browser at desktop and 
 
 ## Build and hosting verification
 
-- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 261 kB (83 kB gzip), separate GPX/model worker about 73 kB, CSS about 19 kB (5 kB gzip). All runtime assets are local.
+- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 294 kB (97 kB gzip), separate GPX/model worker about 73 kB, CSS about 19 kB (5 kB gzip). All runtime assets are local.
 - Preview Worker `--dry-run` accepts static assets with no server bindings. Actual local workerd serves security headers and supports the client-side worker/download/import flows.
 - Compatibility date adjusted from 2026-10-14 to **2026-10-13**, the newest date supported by the installed pinned runtime. This avoids a local startup failure.
 - Production CSP blocks outbound app connections. No analytics, external fonts or GPX uploads. `sample_routes/my_ride.gpx`, Python files, tests and docs are absent from `dist`.
@@ -47,6 +47,18 @@ The local app was also opened and inspected in the Codex browser at desktop and 
 - Desktop/mobile screenshots of the new unavailable state were inspected, and the updated live demo was opened in the Codex browser. The existing Axe audit still reports zero detected violations.
 - `pnpm audit --prod` reports no known runtime dependency vulnerabilities at review time. Deployed asset hashes and HTTPS/security headers were verified again.
 - PR #1 remains open and unmerged; no production deployment was performed.
+
+## Czech localization · 16 October 2026
+
+- Added a complete English/Czech website catalog, including model explanations, assumptions, privacy text, chart accessibility, preparation/comparison results, GPX warnings, validation errors and downloaded briefings. The selector preserves route, inputs and results. Explicit language links override the saved choice; browser language is the initial fallback.
+- Czech decimal commas and point input are accepted without changing numerical units. Ambiguous/invalid values are rejected. Structured worker messages can be translated after calculation, so changing language does not restart computation. No equations, GPX processing or comparison scenarios changed.
+- Only the selected language is saved locally; routes/settings remain in memory. Imported filenames are never translated. No translation API or additional network service was added.
+- All **71 unit checks** pass: 49 existing model/GPX/profile checks and 22 localization cases. Strict TypeScript, production build, formatting and diff checks pass.
+- All **22 browser checks** pass in local Cloudflare Workers (9.5 s) and the hosted preview (15.4 s), without retries. They exercise Czech browser defaults, explicit/saved preference, unavailable storage, comma input, live warning/error translation, unchanged worker count on language switches, GPX-name preservation, downloads and both viewport sizes. English regression coverage remains intact.
+- Both languages pass the automated accessibility audit with advanced inputs open; the Czech model/privacy explanations are also expanded for the audit. No horizontal page overflow was detected. Desktop and mobile screenshots were inspected, and the live Czech preview was opened in the app browser. Independent native-language review remains with the owner.
+- Preview version **`7b3412ef-44a7-438b-83bf-6af239e412cb`** is deployed only to `bike-science-pro-preview`. All five public asset hashes match the local build (following the canonical redirect from `/index.html`); HTTPS/security headers are verified. PR #1 remains unmerged and production remains unpublished.
+
+See [localization details and review notes](LOCALIZATION.md).
 
 ## Remaining limitations and launch decision
 

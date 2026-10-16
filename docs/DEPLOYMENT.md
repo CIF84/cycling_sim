@@ -22,12 +22,13 @@ Complete Cloudflare OAuth yourself and verify that `whoami` identifies the inten
 
 The preview command deploys **bike-science-pro-preview**, a separate worker, and returns its `https://bike-science-pro-preview.<account-subdomain>.workers.dev` URL. That is a shareable public beta preview, not a custom-domain production release. Inspect the actual returned URL, not the placeholder above. `preview_urls` are disabled; the preview uses its own isolated worker and deployment history.
 
-On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes:
+On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes and on 16 October with English/Czech localization:
 
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
+- Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `26c908f8-f974-4412-bcaa-146a8cf788e8`
-- All 14 hosted desktop/mobile browser checks passed. HTTPS returned 200 with the configured security headers, and all 5 public assets matched the local production build byte for byte.
+- Version: `7b3412ef-44a7-438b-83bf-6af239e412cb`
+- All 22 hosted desktop/mobile browser checks passed, including both languages. HTTPS returned 200 with the configured security headers, and all 5 public assets matched the local production build byte for byte.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. No production Worker or custom domain was deployed or changed, and no temporary account was created.
 
@@ -37,7 +38,7 @@ The first immediate test run encountered transient Cloudflare 404 responses for 
 BETA_URL='https://bike-science-pro-preview.roman-christov.workers.dev' pnpm test:e2e
 ```
 
-The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
+The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Switch English/Čeština with a GPX loaded, enter decimal commas, check translated warnings and download the Czech briefing. Only the language preference should survive a refresh. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
 
 Keep the local model limitations visible. For a broad launch, calibrate a few representative outdoor rides with known power, route elevation and conditions; beta estimates are not finish-time promises.
 

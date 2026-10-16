@@ -4,6 +4,12 @@ A browser-based cycling ride briefing: **How hard is this ride? How should I pre
 
 Try the fictional Sunday Loop immediately, or import a GPX locally. Estimate moving time, examine the elevation profile and demanding sections, check virtual cadence, and compare power, system mass, aerodynamic drag and rolling resistance independently.
 
+## Languages
+
+English and Czech are available from the header language selector. [Review in Czech](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs) or [English](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=en). Explicit links override the saved choice; otherwise the app uses the saved language, then the browser’s primary language (Czech or English fallback).
+
+Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Only the language preference is stored locally. See [localization maintenance and review](docs/LOCALIZATION.md).
+
 ## Local setup
 
 Use Node **20.19+ or 22.12+** and pnpm **11.25** (the checked-in `pnpm-lock.yaml` is the reproducible dependency lock).
@@ -43,7 +49,7 @@ Sustainable power is absolute crank power, not automatically derived from FTP or
 
 ## Cloudflare
 
-[Open the deployed review preview](https://bike-science-pro-preview.roman-christov.workers.dev). Updated 15 October 2026 after correctness review; all 14 hosted desktop/mobile browser checks pass. Production-domain publication remains for owner review.
+[Open the deployed review preview](https://bike-science-pro-preview.roman-christov.workers.dev). Updated 16 October 2026 with Czech localization; all 22 hosted desktop/mobile browser checks pass. Production-domain publication remains for owner review.
 
 [Deployment instructions](docs/DEPLOYMENT.md) cover an isolated `bike-science-pro-preview` Worker, the production Worker, verification and rollback. Workers static assets serve `dist`; no custom domain is configured. The Spořilov repository and deployment were left untouched. Its existing project uses Pages; this project uses Workers static assets as explicitly requested.
 

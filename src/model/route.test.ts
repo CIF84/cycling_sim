@@ -1,3 +1,4 @@
+import { englishMessage } from "./messages";
 import { it, expect } from "vitest";
 import { parseGPX, routeFromTracks, haversine, demoRoute } from "./route";
 const pt = (lat: number, ele: number | null) => ({ lat, lon: 0, ele });
@@ -18,7 +19,7 @@ it("sparse points preserve every distance interval, final partial segment, and n
   expect(r.ascentM).toBeCloseTo(50, 8);
   expect(r.segments.reduce((n, s) => n + s.deltaM, 0)).toBeCloseTo(50, 8);
   expect(r.profile.at(-1)!.elevationM).toBe(150);
-  expect(r.warnings.join()).toMatch(/250 m/);
+  expect(r.warnings.map(englishMessage).join()).toMatch(/250 m/);
 });
 it("supports route points and prefixed GPX", () => {
   expect(
@@ -46,7 +47,7 @@ it("does not join separate tracks or their elevations", () => {
   expect(r.horizontalM).toBeCloseTo(222.389853, 5);
   expect(r.ascentM).toBeCloseTo(10);
   expect(r.descentM).toBeCloseTo(10);
-  expect(r.warnings.join()).toMatch(/connecting travel/);
+  expect(r.warnings.map(englishMessage).join()).toMatch(/connecting travel/);
 });
 it("duplicates do not alter distance or fabricate vertical climbing", () => {
   const r = routeFromTracks(
@@ -55,7 +56,7 @@ it("duplicates do not alter distance or fabricate vertical climbing", () => {
   );
   expect(r.horizontalM).toBeCloseTo(1111.949266, 5);
   expect(r.ascentM).toBeCloseTo(10);
-  expect(r.warnings.join()).toMatch(/duplicate/);
+  expect(r.warnings.map(englishMessage).join()).toMatch(/duplicate/);
 });
 it("partial missing elevations interpolate within the track; endpoints held constant", () => {
   const r = routeFromTracks(
@@ -74,7 +75,7 @@ it("partial missing elevations interpolate within the track; endpoints held cons
   expect(r.profile[0].elevationM).toBe(10);
   expect(r.profile.at(-1)!.elevationM).toBe(30);
   expect(r.ascentM).toBeCloseTo(20);
-  expect(r.warnings.join()).toMatch(/3 missing/);
+  expect(r.warnings.map(englishMessage).join()).toMatch(/3 missing/);
 });
 it("rejects entirely missing elevations, malformed XML, waypoints and hostile DTD", () => {
   expect(() => parseGPX(xml(track(false)))).toThrow(/no elevation/);
@@ -89,7 +90,7 @@ it("splits huge GPS jumps and explicitly excludes their distance", () => {
   );
   expect(r.horizontalM).toBeCloseTo(444.7797066, 5);
   expect(r.trackCount).toBe(2);
-  expect(r.warnings.join()).toMatch(/gaps over 2 km/);
+  expect(r.warnings.map(englishMessage).join()).toMatch(/gaps over 2 km/);
 });
 it("rejects invalid coordinates and excessive grade", () => {
   expect(() => routeFromTracks([[pt(NaN, 0), pt(0.01, 0)]], "bad")).toThrow(

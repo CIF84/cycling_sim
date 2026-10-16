@@ -1,3 +1,5 @@
+import type { Message } from "./messages";
+import type { MessageKey } from "../i18n/cs";
 export interface Segment {
   horizontalM: number;
   deltaM: number;
@@ -22,7 +24,7 @@ export interface Route {
   rawAscentM: number;
   pointCount: number;
   trackCount: number;
-  warnings: string[];
+  warnings: Message[];
   smoothingM: number;
 }
 export interface Inputs {
@@ -68,12 +70,12 @@ export interface Ride {
 }
 export type Comparison = {
   key: string;
-  title: string;
-  detail: string;
+  title: MessageKey;
+  detail: Message;
   changes: Partial<Inputs>;
 } & (
   | { available: true; timeS: number; savedS: number }
-  | { available: false; timeS: null; savedS: null; reason: string }
+  | { available: false; timeS: null; savedS: null; reason: MessageKey }
 );
 export const DEFAULT_INPUTS: Inputs = {
   riderKg: 75,

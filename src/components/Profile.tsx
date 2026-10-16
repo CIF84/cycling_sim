@@ -1,7 +1,9 @@
+import { useI18n } from "../i18n/context";
 import { useEffect, useRef, useState } from "react";
 import type { Route, Ride } from "../model/types";
 import { inspectProfile } from "../model/profile";
 export function Profile({ route, ride }: { route: Route; ride: Ride }) {
+  const { t, number } = useI18n();
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(900);
   useEffect(() => {
@@ -26,19 +28,25 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
     <div className="profile" ref={container}>
       <div className="chart-readout">
         <span>
-          <strong>{(point.distanceM / 1000).toFixed(1)} km</strong> into the
-          ride
+          <strong>{number(point.distanceM / 1000, 1)} km</strong>{" "}
+          {t("into the ride")}{" "}
         </span>
         <span>
-          {Math.round(point.elevationM)} m <i>·</i>{" "}
-          {segment.gradePct.toFixed(1)}% grade <i>·</i>{" "}
-          {Math.round(segment.speedKmh)} km/h
+          {number(Math.round(point.elevationM))} m <i>·</i>{" "}
+          {number(segment.gradePct, 1)}
+          {t("% grade")} <i>·</i> {number(Math.round(segment.speedKmh))} km/h
         </span>
       </div>
       <svg
         viewBox={`0 0 ${width} 240`}
         role="img"
-        aria-label={`Elevation profile. From ${Math.round(Math.min(...elevations))} to ${Math.round(Math.max(...elevations))} metres. Use the slider below to inspect sections.`}
+        aria-label={t(
+          "Elevation profile. From {min} to {max} metres. Use the slider below to inspect sections.",
+          {
+            min: Math.round(Math.min(...elevations)),
+            max: Math.round(Math.max(...elevations)),
+          },
+        )}
         onPointerMove={(e) => {
           const r = e.currentTarget.getBoundingClientRect();
           setFraction(
@@ -69,7 +77,7 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
               strokeDasharray="4 5"
             />
             <text x="40" y={204 - t * 155} textAnchor="end">
-              {Math.round(min + t * (max - min))} m
+              {number(Math.round(min + t * (max - min)))} m
             </text>
           </g>
         ))}
@@ -100,7 +108,7 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
         })}
         {[0, 0.25, 0.5, 0.75, 1].map((t) => (
           <text key={t} x={x(t * route.distanceM)} y="225" textAnchor="middle">
-            {Math.round((t * route.distanceM) / 1000)} km
+            {number(Math.round((t * route.distanceM) / 1000))} km
           </text>
         ))}
         <line
@@ -121,11 +129,15 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
         />
       </svg>
       <label className="sr-only" htmlFor="profile-position">
-        Inspect route distance
+        {" "}
+        {t("Inspect route distance")}{" "}
       </label>
       <input
         id="profile-position"
-        aria-valuetext={`${(point.distanceM / 1000).toFixed(1)} km, ${Math.round(point.elevationM)} metres`}
+        aria-valuetext={t("{distance} km, {elevation} metres", {
+          distance: number(point.distanceM / 1000, 1),
+          elevation: Math.round(point.elevationM),
+        })}
         type="range"
         min="0"
         max="1000"
@@ -133,10 +145,14 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
         onChange={(e) => setFraction(Number(e.target.value) / 1000)}
       />
       <p className="caption">
-        Move across the profile or use the slider.{" "}
+        {" "}
+        {t("Move across the profile or use the slider.")}{" "}
         {route.source === "demo"
-          ? "Fictional terrain, built for exploring the model."
-          : `Elevation sampled every 25 m; ${route.smoothingM} m median smoothing. Track breaks are not connected.`}
+          ? t("Fictional terrain, built for exploring the model.")
+          : t(
+              "Elevation sampled every 25 m; {smoothing} m median smoothing. Track breaks are not connected.",
+              { smoothing: route.smoothingM },
+            )}
       </p>
     </div>
   );

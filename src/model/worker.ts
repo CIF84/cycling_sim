@@ -1,3 +1,4 @@
+import { ModelError, message } from "./messages";
 import { demoRoute, parseGPX } from "./route";
 import { simulate, compare } from "./physics";
 import type { Inputs, Route } from "./types";
@@ -27,9 +28,9 @@ self.onmessage = (event: MessageEvent<Request>) => {
     self.postMessage({
       id,
       error:
-        error instanceof Error
-          ? error.message
-          : "Unable to process this route.",
+        error instanceof ModelError
+          ? error.detail
+          : message("Unable to process this route."),
     });
   }
 };

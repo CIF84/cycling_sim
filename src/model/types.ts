@@ -48,6 +48,8 @@ export interface Inputs {
 }
 export interface SegmentResult {
   startM: number;
+  startTimeS: number;
+  startWorkKj: number;
   distanceM: number;
   gradePct: number;
   speedKmh: number;

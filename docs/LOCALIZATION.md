@@ -12,6 +12,8 @@ Only `bike-science-language` is saved in browser local storage. GPX data and rid
 
 Review terminology in particular: **udržitelný výkon** (sustainable power), **valivý odpor** (rolling resistance), **kadence** (cadence, displayed as ot/min), and **rychlostní limit modelu** (model speed ceiling, explicitly not a safe-speed recommendation). “Energetický výdej” remains separate from suggested food intake. Czech text preserves the English model’s limitations and uncertainty.
 
+The preview chart's **Výška / Energie** controls preserve the cursor and selected view when switching languages. Moving time, work so far/remaining, axis labels, slider announcements and the coasting explanation are localized. Energy is described as **práce na pedálech**, distinct from metabolic energy expenditure or suggested food intake. Seven additional formatting cases cover zero, sub-minute and rounded elapsed times.
+
 ## Implementation
 
 - `src/i18n/cs.ts`: typed Czech catalog keyed by English source messages. Use whole sentences and named placeholders for dynamic messages. Avoid building translated grammar from unrelated fragments. Numbered warning labels avoid ambiguous plural forms.

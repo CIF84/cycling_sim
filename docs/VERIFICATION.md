@@ -2,6 +2,8 @@
 
 ## Final result
 
+The `codex/energy-chart` branch adds a preview-only Elevation / Energy chart, described below. Production remains on the approved launch version until the owner reviews this update.
+
 React/Vite beta is merged into `main` through PR #1 and published after owner approval on 16 October 2026. GPX parsing and simulation run locally in a browser worker, independently from the UI. The Python prototype and original README remain available as historical material. [Production](https://bike-science-pro.roman-christov.workers.dev) and [preview](https://bike-science-pro-preview.roman-christov.workers.dev) use separate Cloudflare Workers. No custom domain or Spořilov change was made.
 
 The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inputs yield about **1 h 26 min**, **26.6 km/h**, and **880 kJ** crank work. These are model outputs, not validated ride observations. Raising sustainable power from 180 to 220 W changes the demo to about **1 h 17 min**. Gearing-only changes leave time unchanged.
@@ -10,14 +12,14 @@ The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inpu
 
 - System Python baseline could not import the historical tests because pandas/gpxpy were absent. Those tests use pytest-style functions; `unittest` discovery was only a dependency/import check, not proof of baseline correctness.
 - The legacy pure solver was extracted with Python AST and executed independently of its pandas import. It reproduced **0.36 km/h** at 0 W, −5%, 90 kg, and also at zero-power flat riding in −30 km/h tailwind.
-- **102 TypeScript unit checks pass** (`pnpm test`): 49 numerical/GPX/profile, 22 localization and 31 groupset checks. Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
+- **118 TypeScript unit checks pass** (`pnpm test`): 58 numerical/GPX/profile, 29 localization/formatting and 31 groupset checks. Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
 - Zero-power −5% descent matches its closed-form terminal speed (about 49 km/h); flat/uphill zero-power sections explicitly fail route completion. Strong-tailwind coasting matches its separate analytical solution.
 - Checks include invalid inputs, exact slope geometry, air-density trends, speed ceilings and reduced work under braking, route totals, time-weighted cadence flags, gearing invariance, independent one-field scenarios, negative weight savings on a descent, unchanged zero-power scenario omission, and inverse reachability including a 30% climb.
 - GPX checks cover independent great-circle distance, sparse-point distance preservation, final remainders, net elevation, route points/namespaces, track separation, duplicates, partial/no elevation, malicious DTD/malformed XML, excluded jumps, spike rejection, smoothing and demo integrity.
 
 ## Browser and accessibility checks
 
-**26 browser tests pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the production build served by Vite preview and the deployed Cloudflare [preview](https://bike-science-pro-preview.roman-christov.workers.dev) and [production](https://bike-science-pro.roman-christov.workers.dev) apps. The preceding 22-test localization suite also passed in Cloudflare’s local Workers runtime. Tested interactions:
+**32 browser cases pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the local production build and the [deployed chart preview](https://bike-science-pro-preview.roman-christov.workers.dev). The production launch retained its earlier 26-case verification; the new chart is not published there. Earlier localization checks also passed in Cloudflare’s local Workers runtime. Tested interactions:
 
 - Immediate demo and moving time; sustainable watts and gravel surface changes.
 - Front chainring edits change cadence while preserving ride time; wind changes route time.
@@ -31,7 +33,7 @@ The local app was also opened and inspected in the Codex browser at desktop and 
 
 ## Build and hosting verification
 
-- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 303 kB (99 kB gzip), separate GPX/model worker about 74 kB, CSS about 21 kB (5 kB gzip). All runtime assets are local.
+- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 307 kB (101 kB gzip), separate GPX/model worker about 74 kB, CSS about 21 kB (5 kB gzip). All runtime assets are local.
 - Preview Worker `--dry-run` accepts static assets with no server bindings. Actual local workerd serves security headers and supports the client-side worker/download/import flows.
 - Compatibility date adjusted from 2026-10-14 to **2026-10-13**, the newest date supported by the installed pinned runtime. This avoids a local startup failure.
 - Production CSP blocks outbound app connections. No analytics, external fonts or GPX uploads. `sample_routes/my_ride.gpx`, Python files, tests and docs are absent from `dist`.
@@ -80,6 +82,15 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - All **26 production desktop/mobile browser checks pass in 18.8 seconds**, without retries: demo, GPX imports, errors, comparisons, localization, groupset/manual editing, downloads and accessibility. The production demo was also opened and visually inspected in the app browser.
 - Production returns HTTPS 200 with the configured CSP, no-framing, no-referrer, nosniff and restricted permissions headers. All five served public assets match the local build byte for byte.
 - The preview remains available independently. No custom domain, production backend, GPX upload service or Spořilov change was introduced. Documentation updates after the launch do not change the deployed assets.
+
+## Elevation / Energy preview · 16 October 2026
+
+- Added an Elevation / Energy selector with one shared cursor and slider. Both views show estimated moving time from the start; Energy shows accumulated pedal work and work remaining in kJ. Switching views/languages retains position and does not start a new simulation worker. No fueling recommendations or new metabolic estimates were added.
+- Six model checks cover independently calculated flat-route time/work, partial sections, exact boundaries, a short remainder, coasting, reduced power at a speed ceiling, track breaks, monotonic accumulation and agreement with briefing totals. Seven formatting cases cover zero/sub-minute progress and rounding.
+- The new coasting browser case exposed a pre-existing GPX roundoff defect: a nominal 1,000 m track could gain a final interval of roughly `1e-13 m`, with zero elevation change, falsely blocking zero-power riding. Three regressions failed on the previous implementation. The grid now folds sub-micrometre remainders into the preceding interval while retaining exact endpoint distance/elevation. Real short intervals remain preserved.
+- All **118 unit checks**, strict TypeScript, production build, formatting and diff checks pass. All **32 local desktop/mobile browser cases** pass (14.9 s). On the hosted preview, 31 initially passed and one navigation failed with `ERR_NETWORK_IO_SUSPENDED` before the app loaded. Both desktop/mobile larger-route cases passed on rerun, including the added Energy endpoint check. No app change or redeployment was required for that transient navigation failure.
+- Browser coverage includes keyboard/pointer inspection, switching at the same distance, updated power, translated accessible slider values, zero-work rides with advancing time, separate tracks, 20,000-point imports, both languages, 320 px layouts and zero detected Axe violations. Desktop and mobile views were visually inspected. Existing demo, import, error, comparison, download and groupset coverage remains intact.
+- Preview version **`f20e7de0-59c8-47f4-bb9d-a3e9581ccf22`** serves the verified build. HTTPS/security headers and all five public asset bytes match locally. Production was checked and still serves its approved launch assets. This branch remains unmerged pending owner review.
 
 ## Remaining limitations
 

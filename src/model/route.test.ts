@@ -6,6 +6,28 @@ const xml = (body: string) =>
   `<?xml version="1.0"?><gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1">${body}</gpx>`;
 const track = (elev = true) =>
   `<trk><trkseg><trkpt lat="0" lon="0">${elev ? "<ele>100</ele>" : ""}</trkpt><trkpt lat="0.01" lon="0">${elev ? "<ele>150</ele>" : ""}</trkpt></trkseg></trk>`;
+it.each([
+  [-5, 0],
+  [-5, 100],
+  [5, 100],
+])(
+  "avoids a roundoff-only final segment at %s%% with %s m smoothing",
+  (grade, smoothing) => {
+    const lat = (m: number) => m / ((6371000 * Math.PI) / 180);
+    const route = routeFromTracks(
+      [[pt(lat(10000), 500), pt(lat(11000), 500 + grade * 10)]],
+      "roundoff",
+      smoothing,
+    );
+    expect(route.segments).toHaveLength(40);
+    expect(route.horizontalM).toBeCloseTo(1000, 8);
+    expect(route.profile.at(-1)!.elevationM).toBe(500 + grade * 10);
+    for (const s of route.segments) {
+      expect(s.horizontalM).toBeGreaterThan(24.99);
+      expect((100 * s.deltaM) / s.horizontalM).toBeCloseTo(grade, 7);
+    }
+  },
+);
 it("haversine independent equatorial one-degree arc", () =>
   expect(haversine(pt(0, 0), pt(1, 0))).toBeCloseTo(111194.92664456, 5));
 it("sparse points preserve every distance interval, final partial segment, and net elevation", () => {

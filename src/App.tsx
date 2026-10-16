@@ -903,18 +903,6 @@ export default function App() {
                   </div>
                 </section>
                 <section className="card profile-card">
-                  <div className="card-heading">
-                    <div>
-                      <span className="step-label">
-                        {" "}
-                        {t("01 / HOW HARD IS THIS RIDE?")}{" "}
-                      </span>
-                      <h3>{t("The shape of your ride")}</h3>
-                    </div>
-                    <span className="chart-legend">
-                      <span /> {t("Elevation")}{" "}
-                    </span>
-                  </div>
                   <Profile
                     key={route.name + route.smoothingM}
                     route={route}

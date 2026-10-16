@@ -122,7 +122,11 @@ export function routeFromTracks(
     // Uniform distance grid, exact final endpoint, no dropped remainder. Median
     // filtering acts in metres instead of an arbitrary count of GPS points.
     const grid: { x: number; e: number }[] = [];
-    for (let x = 0; x < length; x += 25) grid.push({ x, e: interpolate(x) });
+    // A near-grid endpoint can differ by floating-point roundoff alone. Fold a
+    // sub-micrometre remainder into the preceding interval; keep the exact
+    // endpoint, distance and elevation instead of inventing a near-zero ramp.
+    for (let x = 0; x < length - 1e-6; x += 25)
+      grid.push({ x, e: interpolate(x) });
     grid.push({ x: length, e: interpolate(length) });
     const smooth = grid.map((p, n) => {
       if (n === 0 || n === grid.length - 1 || smoothingM === 0) return p.e;

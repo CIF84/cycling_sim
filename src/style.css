@@ -672,29 +672,72 @@ summary::-webkit-details-marker {
   letter-spacing: -0.5px;
   margin-top: 7px;
 }
-.chart-legend {
+.chart-switch {
   display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: #61705b;
+  align-items: stretch;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f5f7f1;
+  flex-shrink: 0;
 }
-.chart-legend > span {
-  height: 6px;
-  width: 6px;
-  background: #6a8a4c;
-  border-radius: 50%;
+.chart-switch button {
+  border: 0;
+  border-radius: 5px;
+  padding: 10px 12px;
+  min-height: 40px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #43583f;
+  background: transparent;
+}
+.chart-switch button[aria-pressed="true"] {
+  background: var(--green);
+  color: white;
+}
+.profile-heading {
+  flex-wrap: wrap;
 }
 .profile {
   padding: 17px 20px 5px;
 }
 .chart-readout {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 11px;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 12px;
   color: #75836f;
   padding: 0 5px;
+}
+.chart-position,
+.chart-values {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+.chart-position strong {
+  font-size: 16px;
+  font-weight: 650;
+}
+.chart-energy-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.chart-energy-values > span {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+}
+.chart-energy-values > span:last-child {
+  justify-content: flex-end;
+  text-align: right;
+}
+.chart-axis-label {
+  margin: 14px 5px -22px;
+  font-size: 11px;
+  color: #64735d;
 }
 .chart-readout strong {
   color: #3c553f;
@@ -723,6 +766,10 @@ summary::-webkit-details-marker {
 }
 .profile .caption {
   margin: 11px 5px 12px;
+}
+.profile .energy-explanation {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
 }
 .ride-takeaway {
   display: flex;
@@ -1411,17 +1458,21 @@ footer .brand {
   .prepare-section h3 {
     font-size: 18px;
   }
-  .chart-legend {
-    font-size: 10px;
-    white-space: nowrap;
-    margin-top: 24px;
+  .chart-switch {
+    width: 100%;
+  }
+  .chart-switch button {
+    flex: 1;
+    min-height: 44px;
   }
   .profile {
     padding: 15px 10px 4px;
   }
   .chart-readout {
-    flex-wrap: wrap;
-    gap: 2px;
+    gap: 10px;
+  }
+  .chart-energy-values > span {
+    flex-direction: column;
   }
   .profile svg {
     height: auto;

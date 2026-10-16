@@ -22,13 +22,14 @@ Complete Cloudflare OAuth yourself and verify that `whoami` identifies the inten
 
 The preview command deploys **bike-science-pro-preview**, a separate worker, and returns its `https://bike-science-pro-preview.<account-subdomain>.workers.dev` URL. That is a shareable public beta preview, not a custom-domain production release. Inspect the actual returned URL, not the placeholder above. `preview_urls` are disabled; the preview uses its own isolated worker and deployment history.
 
-On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes and on 16 October with English/Czech localization and groupset presets:
+On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes and on 16 October with English/Czech localization, groupset presets and the preview-only Elevation / Energy chart:
 
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `4e381995-5515-4717-824a-6d9a2c9d9b8f` (25 manufacturer-sourced groupset presets)
-- The groupset release passed all 102 unit checks, strict TypeScript, the production build and all 26 hosted desktop/mobile browser checks. Security headers and all five public asset hashes were verified. Preset/manual editing, source links, unchanged ride estimates, Czech/English switching and 320 px overflow are covered.
+- Version: `f20e7de0-59c8-47f4-bb9d-a3e9581ccf22` (Elevation / Energy chart; awaiting owner review)
+- The chart release passes 118 unit checks, strict TypeScript, the production build and all 32 desktop/mobile browser cases. One hosted navigation was interrupted by a browser network suspension; the affected larger-route case passed on rerun. Security headers and all five public asset bytes match the local build.
+- Preview source: `codex/energy-chart`. Shared cursor/time, zero-work coasting, GPX track breaks, 20,000-point imports, Czech/English switching, accessibility and 320 px layout are covered. Production remains on version `64b18568-b3d0-47a0-a292-4c5ed8bedfe1` pending owner approval of this change.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 
@@ -38,7 +39,7 @@ The first immediate test run encountered transient Cloudflare 404 responses for 
 BETA_URL='https://bike-science-pro-preview.roman-christov.workers.dev' pnpm test:e2e
 ```
 
-The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, groupset selection, manual chainring/cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Switch English/Čeština with a GPX loaded, enter decimal commas, check translated warnings and download the Czech briefing. Only the language preference should survive a refresh. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
+The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check the Elevation / Energy switch and shared slider/time, demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, groupset selection, manual chainring/cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Switch English/Čeština with a GPX loaded, enter decimal commas, check translated warnings and download the Czech briefing. Only the language preference should survive a refresh. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
 
 Keep the local model limitations visible. For a broad launch, calibrate a few representative outdoor rides with known power, route elevation and conditions; beta estimates are not finish-time promises.
 

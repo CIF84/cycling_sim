@@ -132,7 +132,7 @@ export const cs = {
   "Distance ÷ moving time": "Vzdálenost ÷ čas v pohybu",
   "01 / HOW HARD IS THIS RIDE?": "01 / JAK NÁROČNÁ BUDE JÍZDA?",
   "The shape of your ride": "Profil vaší trasy",
-  Elevation: "Nadmořská výška",
+  Elevation: "Výška",
   "The main climb starts at {distance} km.":
     "Hlavní stoupání začíná po {distance} km.",
   "Allow about {time} for this {distance} km section. Settle into a sustainable rhythm; the model holds {power} W while pedaling.":
@@ -247,6 +247,23 @@ export const cs = {
   "Public beta · Model v0.1 · Local-first":
     "Veřejná beta · Model v0.1 · Vše ve vašem zařízení",
   "into the ride": "od startu",
+  "Chart view": "Zobrazení grafu",
+  Energy: "Energie",
+  "moving time so far": "čas v pohybu od startu",
+  "work so far": "dosavadní práce",
+  "work remaining": "zbývající práce",
+  "Cumulative pedal work (kJ)": "Práce na pedálech od startu (kJ)",
+  "Cumulative pedal work. From zero to {work} kJ over the ride. Use the slider below to inspect progress.":
+    "Práce na pedálech od startu. Od nuly do {work} kJ za celou jízdu. Průběh prozkoumáš posuvníkem níže.",
+  "{distance} km, {time} moving time, {work} kJ of pedal work":
+    "{distance} km, {time} v pohybu, práce na pedálech {work} kJ",
+  "{distance} km, {time} moving time, {elevation} metres":
+    "{distance} km, {time} v pohybu, nadmořská výška {elevation} metrů",
+  "Moving time excludes stops and travel between separate tracks.":
+    "Čas v pohybu nezahrnuje zastávky ani přesuny mezi oddělenými úseky záznamu.",
+  "Moving time excludes stops.": "Čas v pohybu nezahrnuje zastávky.",
+  "Energy delivered through the pedals, accumulated from the start. The curve stays flat while coasting; your body still uses energy. This is not a food intake target.":
+    "Energie předaná do pedálů od startu. Při jízdě bez šlapání křivka neroste; tělo ale dál spotřebovává energii. Nejde o doporučený příjem jídla.",
   "% grade": "% sklon",
   "Elevation profile. From {min} to {max} metres. Use the slider below to inspect sections.":
     "Výškový profil. Od {min} do {max} metrů. Jednotlivé úseky prozkoumáte posuvníkem níže.",

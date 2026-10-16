@@ -10,6 +10,10 @@ English and Czech are available from the header language selector. [Open in Czec
 
 Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Only the language preference is stored locally. See [localization maintenance and review](docs/LOCALIZATION.md).
 
+## Chart preview
+
+The [separate review preview](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs) adds an **Elevation / Energy** switch within the existing chart. Both views keep the same distance slider and show estimated moving time to the selected point. Energy shows cumulative pedal work and work remaining in kJ; it does not prescribe food intake. English and Czech are supported. This change is on `codex/energy-chart` pending owner review; production remains on the approved launch version.
+
 ## Groupset presets
 
 Under **Gearing & cadence**, choose from 25 Shimano/SRAM road and gravel examples. A preset sets both chainrings and the exact cassette cog list; either remains editable. Each setup links to official manufacturer specifications, checked 16 October 2026. Current-generation labels distinguish Tiagra R4000 11-speed, GRX 1×/2×, SRAM road AXS 12-speed and XPLR 13-speed from Apex XPLR 12-speed. These are example configurations, so check what is fitted to your bike. See the [complete catalog, sources and scope](docs/GROUPSETS.md).

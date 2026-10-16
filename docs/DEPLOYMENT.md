@@ -27,8 +27,8 @@ On 14 October 2026, the owner completed Cloudflare OAuth and the separate previe
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `7b3412ef-44a7-438b-83bf-6af239e412cb`
-- All 22 hosted desktop/mobile browser checks passed, including both languages. HTTPS returned 200 with the configured security headers, and all 5 public assets matched the local production build byte for byte.
+- Version: `477353a0-f428-46e5-81be-f392651de2c7`
+- The localization release passed all 22 hosted desktop/mobile checks, security-header checks and asset-hash verification. The subsequent Czech altitude-label/layout adjustment passed the production build and all four English/Czech form/accessibility browser checks; alignment was also inspected at 1440, 1024, 390 and 320 px.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. No production Worker or custom domain was deployed or changed, and no temporary account was created.
 

@@ -60,6 +60,10 @@ The local app was also opened and inspected in the Codex browser at desktop and 
 
 See [localization details and review notes](LOCALIZATION.md).
 
+## Czech label/layout follow-up · 16 October 2026
+
+Shortened the altitude input label to “Nadmořská výška”, retaining the explanation below. Paired fields now align their input boxes even if a label wraps at narrow widths. Browser inspection confirmed equal input top positions at 1440, 1024, 390 and 320 px. Production build and all four hosted English/Czech desktop/mobile form/accessibility checks pass. Preview version: `477353a0-f428-46e5-81be-f392651de2c7`. No calculation change or production publication.
+
 ## Remaining limitations and launch decision
 
 No known failing local checks remain. This is ready for owner review as a **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.

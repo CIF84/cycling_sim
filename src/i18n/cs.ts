@@ -66,7 +66,7 @@ export const cs = {
   "Positive = headwind, negative = tailwind. Applied to the entire route; not a weather forecast.":
     "Kladná hodnota = protivítr, záporná = vítr do zad. Platí pro celou trasu; nejde o předpověď počasí.",
   Temperature: "Teplota",
-  "Air-density altitude": "Nadmořská výška pro hustotu vzduchu",
+  "Air-density altitude": "Nadmořská výška",
   "Altitude and temperature estimate air density only, not heat stress or physiological performance.":
     "Výška a teplota slouží jen k odhadu hustoty vzduchu, nikoli tepelné zátěže nebo výkonnosti organismu.",
   "Aerodynamic drag (CdA)": "Aerodynamický odpor (CdA)",

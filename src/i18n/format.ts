@@ -19,6 +19,15 @@ export function formatNumber(locale: Locale, n: number, digits?: number) {
     ...(digits === undefined ? {} : { minimumFractionDigits: digits }),
   }).format(n);
 }
+// Progress starts at zero; a positive sub-minute duration must not look like zero.
+export function formatElapsedTime(locale: Locale, seconds: number) {
+  if (seconds <= 0) return "0 min";
+  if (seconds < 60) return "<1 min";
+  const minutes = Math.round(seconds / 60);
+  return minutes < 60
+    ? `${formatNumber(locale, minutes)} min`
+    : `${formatNumber(locale, Math.floor(minutes / 60))} h ${formatNumber(locale, minutes % 60)} min`;
+}
 export function translate(
   locale: Locale,
   key: MessageKey,

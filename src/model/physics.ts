@@ -160,6 +160,8 @@ export function simulate(route: Route, i: Inputs): Ride {
     const distanceM = Math.hypot(s.horizontalM, s.deltaM),
       t = distanceM / speedMs,
       gear = chooseGear(speedMs * 3.6, i);
+    const startTimeS = timeS,
+      startWorkKj = workKj;
     timeS += t;
     workKj += (powerW * t) / 1000;
     if (powerW > 1) {
@@ -169,6 +171,8 @@ export function simulate(route: Route, i: Inputs): Ride {
     if (capped) cappedS += t;
     return {
       startM: s.startM,
+      startTimeS,
+      startWorkKj,
       distanceM,
       gradePct,
       speedKmh: speedMs * 3.6,

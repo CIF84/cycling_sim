@@ -22,6 +22,14 @@ Inputs must be finite and within documented UI bounds. Grades beyond ±40% are r
 
 At a speed ceiling we assume braking/reduced pedaling. Effective crank power is reduced to the nonnegative power needed at that speed (never greater than input power). If gravity/wind already propels the rider, effective crank power is zero. No cadence is reported while coasting. Mechanical energy sums **actual modeled crank power × section time**, excluding braking losses supplied by gravity.
 
+## Elevation / Energy chart
+
+The preview chart uses one distance cursor for both views. The worker records cumulative moving time and crank work at the start of every section. For a cursor fraction `f` within that section, the inspector adds `f × section_time` and `f × section_power × section_time / 1000` kJ. The section power is the actual modeled crank power, including zero-power coasting and any speed-ceiling reduction. Binary search finds the containing section; moving the cursor or switching views does not rerun the simulation. Rendered lines are sampled for display, while readouts use the full section data.
+
+Both views show estimated moving time from the start, excluding stops and missing travel between GPX tracks. Zero is displayed as `0 min`; positive durations below one minute use `<1 min`. Energy shows accumulated pedal work in kJ and work remaining. The curve is nondecreasing, stays flat during coasting, and ends at the existing briefing's crank-work total. Separate tracks remain separate drawing paths; their missing connections contribute neither time nor work.
+
+This is **mechanical work**, not total metabolic energy, carbohydrate use, fatigue, glycogen remaining or a food-intake target. With constant pedaling power, a steeper energy-versus-distance line means more time and work per kilometre, not a higher prescribed power. No fueling recommendations or additional calorie estimates were introduced. Existing metabolic-efficiency limitations below still apply to the separate preparation card.
+
 ## Sources and their scope
 
 - [Martin, Milliken, Cobb, McFadden & Coggan (1998), Validation of a Mathematical Model for Road Cycling Power](https://pubmed.ncbi.nlm.nih.gov/28121252/): experimentally evaluated power-demand framework; includes effects omitted here, so its reported error is not this app’s accuracy.
@@ -52,6 +60,8 @@ Coordinates must be finite and within geographic bounds; elevations within −50
 Partial missing elevations are interpolated by distance **inside the same section**, with nearest-known leading/trailing elevations held constant and a warning. A usable section with no elevations fails: we cannot assume it is flat. Single-point and sub-1 m sections cannot define terrain and are omitted. Route totals include only modeled sections.
 
 Interpolate elevation on a 25 m horizontal grid, including the exact final point of every section. A centered median filter spans roughly the selected smoothing width (0/100/200 m); section endpoints are preserved. The odd-sized window shrinks symmetrically near each endpoint, avoiding one-sided median bias and artificial ramps at a short final interval. Segment differences preserve **horizontal distance and net endpoint elevation**. Accumulate ascent/descent from processed segment differences. Slope distance is slightly longer than GPS horizontal distance. Both are exposed; smoothing can change slope distance through elevation changes but does not change horizontal distance.
+
+A terminal grid interval shorter than one micrometre is folded into the preceding interval while retaining the exact endpoint distance and elevation. This avoids floating-point roundoff creating a near-zero flat segment that incorrectly blocks zero-power coasting. Genuine short remainders remain represented.
 
 Profile inspection selects the segment containing the requested distance and interpolates elevation within that same segment. At a track break, the following section supplies both elevation and grade; no interpolation spans the missing connection. Separate sections follow the connected-span semantics in the [GPX 1.1 schema](https://www.topografix.com/GPX/1/1/#type_trksegType).
 

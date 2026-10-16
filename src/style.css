@@ -428,6 +428,89 @@ summary::-webkit-details-marker {
   display: block;
   margin-top: 8px;
 }
+.groupset-picker > small,
+.gearing-sources small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.gearing-preset {
+  margin-top: 13px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #f3f5ee;
+}
+.gearing-preset-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+}
+.gearing-preset-heading strong {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.gearing-preset-heading > span {
+  flex-shrink: 0;
+  padding: 2px 5px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 10px;
+}
+.gearing-preset dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 13px 0 5px;
+}
+.gearing-preset dt,
+.gearing-preset p {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 0;
+}
+.gearing-preset dd {
+  margin: 3px 0 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+.gearing-preset dd span {
+  font-size: 10px;
+  font-weight: 400;
+}
+.gearing-sources {
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+}
+.advanced .gearing-sources summary {
+  padding: 10px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+}
+.gearing-sources summary::after {
+  content: "+";
+  margin-left: auto;
+}
+.gearing-sources[open] summary::after {
+  content: "−";
+}
+.gearing-sources ul {
+  padding: 0;
+  margin: 8px 0;
+  list-style: none;
+}
+.gearing-sources a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
 .check-field {
   font-size: 12px;
   display: flex;

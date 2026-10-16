@@ -10,6 +10,12 @@ English and Czech are available from the header language selector. [Review in Cz
 
 Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Only the language preference is stored locally. See [localization maintenance and review](docs/LOCALIZATION.md).
 
+## Groupset presets
+
+Under **Gearing & cadence**, choose from 25 Shimano/SRAM road and gravel examples. A preset sets both chainrings and the exact cassette cog list; either remains editable. Each setup links to official manufacturer specifications, checked 16 October 2026. Current-generation labels distinguish Tiagra R4000 11-speed, GRX 1×/2×, SRAM road AXS 12-speed and XPLR 13-speed from Apex XPLR 12-speed. These are example configurations, so check what is fitted to your bike. See the [complete catalog, sources and scope](docs/GROUPSETS.md).
+
+The default is now Shimano 105 50/34 with 12-speed 11–34. Gearing changes cadence insights only; presets do not change bike weight, power or estimated ride time.
+
 ## Local setup
 
 Use Node **20.19+ or 22.12+** and pnpm **11.25** (the checked-in `pnpm-lock.yaml` is the reproducible dependency lock).
@@ -49,7 +55,7 @@ Sustainable power is absolute crank power, not automatically derived from FTP or
 
 ## Cloudflare
 
-[Open the deployed review preview](https://bike-science-pro-preview.roman-christov.workers.dev). Updated 16 October 2026 with Czech localization; all 22 hosted desktop/mobile browser checks pass. Production-domain publication remains for owner review.
+[Open the deployed review preview](https://bike-science-pro-preview.roman-christov.workers.dev). Updated 16 October 2026 with Czech localization and manufacturer-sourced groupset presets; all 102 unit checks and 26 hosted desktop/mobile browser checks pass. Production-domain publication remains for owner review.
 
 [Deployment instructions](docs/DEPLOYMENT.md) cover an isolated `bike-science-pro-preview` Worker, the production Worker, verification and rollback. Workers static assets serve `dist`; no custom domain is configured. The Spořilov repository and deployment were left untouched. Its existing project uses Pages; this project uses Workers static assets as explicitly requested.
 

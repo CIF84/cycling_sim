@@ -9,3 +9,12 @@ Baseline (14 October 2026): Python/Streamlit prototype, no frontend or hosting c
 5. Document model evidence, intentional historical differences, privacy, deployment and beta limitations. Deploy an isolated preview only if existing access permits; no production-domain publication.
 
 Launch scope: no accounts/storage/weather/Strava/payments/AI. No physiological difficulty score or sweat/sodium prescription. No manual route from distance+ascent (terrain distribution is unknown). No public inverse-time UI until physiological feasibility can be explained; the numerical utility validates bounded reachability.
+
+## Groupset presets — 16 October 2026
+
+Baseline: two cassette-only presets; chainring edits could leave the named cassette preset selected. All 71 unit checks and 22 browser checks passed for the preceding localization release.
+
+1. Check current Shimano/SRAM road and gravel generations, exact chainring combinations, every cassette cog and compatible derailleur configurations against manufacturer sources only. Record dated references and distinguish curated examples from universal factory specifications.
+2. Store the catalog independently of UI/localization. Apply chainrings and cassette together, preserve manual editing, and make a manual change to either field select Custom. Keep all other simulation inputs unchanged.
+3. Provide English/Czech controls, readable gearing summaries and manufacturer links. Verify catalog integrity, cadence/time behavior, preset/custom/reset interactions, accessibility and mobile layout.
+4. Build, update documentation, deploy and verify only the separate preview, then push the update to the existing unmerged PR.

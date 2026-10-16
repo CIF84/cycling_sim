@@ -33,6 +33,8 @@ import {
 import { demoRoute } from "./model/route";
 import { cadence } from "./model/physics";
 import { Profile } from "./components/Profile";
+import { GroupsetSelect } from "./components/GroupsetSelect";
+import { DEFAULT_GROUPSET_ID, applyGroupset, sameTeeth } from "./model/gearing";
 import "./style.css";
 function NumberField({
   label,
@@ -170,7 +172,7 @@ function climbs(route: Route, ride: Ride) {
 export default function App() {
   const { locale, setLocale, t, number, formatMessage, time, savings } =
     useI18n();
-  const [cassetteMode, setCassetteMode] = useState("road");
+  const [groupsetId, setGroupsetId] = useState(DEFAULT_GROUPSET_ID);
   const [inputs, setInputs] = useState<Inputs>({ ...DEFAULT_INPUTS });
   const [source, setSource] = useState<{ xml: string; name: string } | null>(
       null,
@@ -298,6 +300,8 @@ export default function App() {
       `${t("Sustainable crank power")}: ${number(inputs.powerW)} W`,
       `${t("System mass")}: ${number(inputs.riderKg + inputs.bikeKg + inputs.kitKg)} kg`,
       `CdA ${number(inputs.cda)} m² · Crr ${number(inputs.crr)}`,
+      `${t("Front chainrings")}: ${inputs.chainrings.join(", ")}`,
+      `${t("Cassette cogs")}: ${inputs.cogs.join(", ")}`,
       t(
         "Wind: {wind} km/h (+ headwind) · {temperature} °C · air-density altitude {altitude} m",
         {
@@ -714,44 +718,28 @@ export default function App() {
                 <Bike size={16} /> {t("Gearing & cadence")} <span>+</span>
               </summary>
               <div className="details-body">
-                <label className="field">
-                  {" "}
-                  {t("Cassette preset")}{" "}
-                  <select
-                    value={cassetteMode}
-                    onChange={(e) => {
-                      setCassetteMode(e.target.value);
-                      if (e.target.value === "road")
-                        update(
-                          "cogs",
-                          [11, 12, 13, 14, 16, 18, 20, 22, 25, 28, 32],
-                        );
-                      else if (e.target.value === "wide")
-                        update(
-                          "cogs",
-                          [10, 11, 12, 13, 15, 17, 19, 21, 24, 28, 32, 36],
-                        );
-                    }}
-                  >
-                    <option value="road">
-                      {t("Shimano 105 11-speed · 11–32")}
-                    </option>
-                    <option value="wide">SRAM XG-1270 · 10–36</option>
-                    <option value="custom">
-                      {t("Custom · edit cogs below")}
-                    </option>
-                  </select>
-                </label>
+                <GroupsetSelect
+                  value={groupsetId}
+                  onChange={(preset) => {
+                    setGroupsetId(preset?.id ?? "custom");
+                    if (preset)
+                      setInputs((current) => applyGroupset(current, preset));
+                  }}
+                />
                 <TeethField
                   label={t("Front chainrings")}
                   value={inputs.chainrings}
-                  onChange={(v) => update("chainrings", v)}
+                  onChange={(v) => {
+                    if (!sameTeeth(v, inputs.chainrings))
+                      setGroupsetId("custom");
+                    update("chainrings", v);
+                  }}
                 />
                 <TeethField
                   label={t("Cassette cogs")}
                   value={inputs.cogs}
                   onChange={(v) => {
-                    setCassetteMode("custom");
+                    if (!sameTeeth(v, inputs.cogs)) setGroupsetId("custom");
                     update("cogs", v);
                   }}
                 />
@@ -786,7 +774,7 @@ export default function App() {
               className="reset-button"
               onClick={() => {
                 setInputs({ ...DEFAULT_INPUTS });
-                setCassetteMode("road");
+                setGroupsetId(DEFAULT_GROUPSET_ID);
               }}
             >
               <RotateCcw size={14} /> {t("Reset ride inputs")}{" "}
@@ -860,7 +848,7 @@ export default function App() {
                     onClick={() => {
                       reset();
                       setInputs({ ...DEFAULT_INPUTS });
-                      setCassetteMode("road");
+                      setGroupsetId(DEFAULT_GROUPSET_ID);
                     }}
                   >
                     {" "}

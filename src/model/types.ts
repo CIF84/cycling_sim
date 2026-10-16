@@ -1,5 +1,6 @@
 import type { Message } from "./messages";
 import type { MessageKey } from "../i18n/cs";
+import { DEFAULT_GROUPSET } from "./gearing";
 export interface Segment {
   horizontalM: number;
   deltaM: number;
@@ -90,8 +91,8 @@ export const DEFAULT_INPUTS: Inputs = {
   efficiency: 0.97,
   speedLimitKmh: 50,
   coastDescents: true,
-  chainrings: [34, 50],
-  cogs: [11, 12, 13, 14, 16, 18, 20, 22, 25, 28, 32],
+  chainrings: [...DEFAULT_GROUPSET.chainrings],
+  cogs: [...DEFAULT_GROUPSET.cassette.cogs],
   wheelM: 2.105,
   cadenceRpm: 85,
 };

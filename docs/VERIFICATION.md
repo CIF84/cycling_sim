@@ -10,14 +10,14 @@ The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inpu
 
 - System Python baseline could not import the historical tests because pandas/gpxpy were absent. Those tests use pytest-style functions; `unittest` discovery was only a dependency/import check, not proof of baseline correctness.
 - The legacy pure solver was extracted with Python AST and executed independently of its pandas import. It reproduced **0.36 km/h** at 0 W, −5%, 90 kg, and also at zero-power flat riding in −30 km/h tailwind.
-- **49 TypeScript numerical/GPX/profile tests pass** (`pnpm test`). Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
+- **102 TypeScript unit checks pass** (`pnpm test`): 49 numerical/GPX/profile, 22 localization and 31 groupset checks. Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
 - Zero-power −5% descent matches its closed-form terminal speed (about 49 km/h); flat/uphill zero-power sections explicitly fail route completion. Strong-tailwind coasting matches its separate analytical solution.
 - Checks include invalid inputs, exact slope geometry, air-density trends, speed ceilings and reduced work under braking, route totals, time-weighted cadence flags, gearing invariance, independent one-field scenarios, negative weight savings on a descent, unchanged zero-power scenario omission, and inverse reachability including a 30% climb.
 - GPX checks cover independent great-circle distance, sparse-point distance preservation, final remainders, net elevation, route points/namespaces, track separation, duplicates, partial/no elevation, malicious DTD/malformed XML, excluded jumps, spike rejection, smoothing and demo integrity.
 
 ## Browser and accessibility checks
 
-**22 browser tests pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844). The full suite passed against both the **production build served by Cloudflare’s local Workers runtime** and the [deployed preview](https://bike-science-pro-preview.roman-christov.workers.dev), not only the Vite dev server. Tested interactions:
+**26 browser tests pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the production build served by Vite preview and the [deployed Cloudflare preview](https://bike-science-pro-preview.roman-christov.workers.dev). The preceding 22-test localization suite also passed in Cloudflare’s local Workers runtime. Tested interactions:
 
 - Immediate demo and moving time; sustainable watts and gravel surface changes.
 - Front chainring edits change cadence while preserving ride time; wind changes route time.
@@ -31,7 +31,7 @@ The local app was also opened and inspected in the Codex browser at desktop and 
 
 ## Build and hosting verification
 
-- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 294 kB (97 kB gzip), separate GPX/model worker about 73 kB, CSS about 19 kB (5 kB gzip). All runtime assets are local.
+- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 303 kB (99 kB gzip), separate GPX/model worker about 74 kB, CSS about 21 kB (5 kB gzip). All runtime assets are local.
 - Preview Worker `--dry-run` accepts static assets with no server bindings. Actual local workerd serves security headers and supports the client-side worker/download/import flows.
 - Compatibility date adjusted from 2026-10-14 to **2026-10-13**, the newest date supported by the installed pinned runtime. This avoids a local startup failure.
 - Production CSP blocks outbound app connections. No analytics, external fonts or GPX uploads. `sample_routes/my_ride.gpx`, Python files, tests and docs are absent from `dist`.
@@ -63,6 +63,15 @@ See [localization details and review notes](LOCALIZATION.md).
 ## Czech label/layout follow-up · 16 October 2026
 
 Shortened the altitude input label to “Nadmořská výška”, retaining the explanation below. Paired fields now align their input boxes even if a label wraps at narrow widths. Browser inspection confirmed equal input top positions at 1440, 1024, 390 and 320 px. Production build and all four hosted English/Czech desktop/mobile form/accessibility checks pass. Preview version: `477353a0-f428-46e5-81be-f392651de2c7`. No calculation change or production publication.
+
+## Groupset presets · 16 October 2026
+
+- Added 25 curated Shimano/SRAM road and gravel configurations, setting both chainrings and every cassette cog. Specifications and generation/derailleur compatibility were checked only against official manufacturer sources. Each preset exposes source links; the complete dated record is in [GROUPSETS.md](GROUPSETS.md).
+- Current Tiagra R4000 is 2×11; SRAM RED/Force/Rival XPLR E1 are 1×13, while Apex XPLR remains 1×12 in these examples. GRX 10–45/10–51 presets use the appropriate GS/SGS configurations. These are representative setups, not every possible factory or aftermarket combination.
+- Default changed intentionally from 50/34 with 11-speed 11–32 to Shimano 105 50/34 with 12-speed 11–34. Cadence insights can change; power, mass, moving time, work and comparison results do not. An independent wheel-speed/cadence calculation and simulation checks verify that separation.
+- All **102 unit checks**, strict TypeScript and production build pass. All **26 browser checks** pass against the local production build (12.5 s) and hosted preview (19.0 s), without retries. The four new groupset cases also passed locally after the final source-panel spacing refinement.
+- Browser cases cover both manual tooth fields, invalid-list recovery, reset, language switching without losing the preset, official reference links, exported actual gearing, unchanged ride estimates and comparisons, and no overflow at 320 px. Axe detects zero violations with source details expanded. Desktop/mobile layouts were visually inspected.
+- Preview version **`4e381995-5515-4717-824a-6d9a2c9d9b8f`** serves the verified build. All five public asset hashes and HTTPS/security headers pass. The GPX/model worker bundle is unchanged. PR #1 remains unmerged; production remains unpublished.
 
 ## Remaining limitations and launch decision
 

@@ -14,8 +14,8 @@ export const cs = {
   "The model": "O modelu",
   "GPX stays on your device": "GPX zůstává ve vašem zařízení",
   "LESS GUESSWORK. BETTER RIDES.": "MÉNĚ ODHADŮ. LEPŠÍ VYJÍŽĎKY.",
-  "Know the ride.": "Poznejte svou trasu.",
-  "Ride with a plan.": "Vyrazte s plánem.",
+  "Know the ride.": "Seznam se s trasou.",
+  "Ride with a plan.": "Vyraž s plánem.",
   "Understand the effort, prepare for the climbs, and see which changes matter on your route.":
     "Zjistěte, jak náročná bude jízda, připravte se na stoupání a porovnejte, které změny na vaší trase pomohou nejvíc.",
   "Explore the demo": "Vyzkoušet ukázku",

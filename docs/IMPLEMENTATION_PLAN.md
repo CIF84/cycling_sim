@@ -26,3 +26,11 @@ Baseline: production is the approved `d01d147` application, documented by `27c64
 1. Carry cumulative moving time and crank work through the independent model, using actual modeled power (including coasting and speed-cap reductions). Check partial sections, endpoints, track breaks and zero-work rides against independent calculations.
 2. Reuse the existing chart for Elevation / Energy views, preserving one cursor and adding moving time to both. Explain pedal work in kJ; defer fueling recommendations and new calorie estimates. Localize controls and accessibility text.
 3. Exercise switching, keyboard/pointer input, changed inputs, large/short routes, coasting, Czech/English and narrow screens. Build and verify the preview, keeping production unchanged pending owner review.
+
+## Chart-linked climbs — 19 November 2026
+
+Baseline: PR #2 is published on production; 130 unit checks and 42 production browser cases pass. Climb cards are static, and the chart inspects one point at a time.
+
+1. Extract the existing climb grouping into a pure model module, adding actual pedal work and stable geometry IDs. Preserve thresholds and track breaks; independently verify totals, ranking and cadence/coasting cases.
+2. Make climb cards accessible selection buttons. Highlight the section in both chart views, retain whole-route inspection, expose climb time/work/lowest cadence, and provide clear selection. Keep selection through power/gearing/language/view changes; clear it for new routes and smoothing.
+3. Verify keyboard/touch, numeric updates, clearing, GPX replacement (including identical filenames), boundaries, both languages and narrow layouts. Deploy only the separate preview; production requires a later owner decision.

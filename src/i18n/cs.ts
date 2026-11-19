@@ -150,6 +150,18 @@ export const cs = {
   "Distance ÷ moving time": "Vzdálenost ÷ čas v pohybu",
   "01 / HOW HARD IS THIS RIDE?": "01 / JAK NÁROČNÁ BUDE JÍZDA?",
   "The shape of your ride": "Profil vaší trasy",
+  "Ride chart": "Graf trasy",
+  "Select a climb to highlight it in the chart.":
+    "Vyber stoupání a zvýrazni ho v grafu.",
+  "Show climb {number}: {start}–{end} km":
+    "Zobrazit stoupání {number}: {start}–{end} km",
+  "Climb {number}": "Stoupání {number}",
+  "Clear selection": "Zrušit výběr",
+  "Climb moving time": "Čas ve stoupání",
+  "Climb pedal work": "Práce ve stoupání",
+  "Lowest modeled cadence": "Nejnižší modelovaná kadence",
+  "Climb totals at your current settings. Cadence uses the closest available gear while pedaling; work is not a food intake target.":
+    "Souhrn stoupání při aktuálním nastavení. Kadence vychází z nejvhodnějšího dostupného převodu při šlapání; práce není doporučený příjem jídla.",
   Elevation: "Výška",
   "The main climb starts at {distance} km.":
     "Hlavní stoupání začíná po {distance} km.",

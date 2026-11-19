@@ -30,6 +30,14 @@ Both views show estimated moving time from the start, excluding stops and missin
 
 This is **mechanical work**, not total metabolic energy, carbohydrate use, fatigue, glycogen remaining or a food-intake target. With constant pedaling power, a steeper energy-versus-distance line means more time and work per kilometre, not a higher prescribed power. No fueling recommendations or additional calorie estimates were introduced. Existing metabolic-efficiency limitations below still apply to the separate preparation card.
 
+## Climb selection and summaries
+
+The demanding sections retain the existing practical definition: contiguous modeled segments at least 2% uphill, totaling at least 100 m of slope distance. Only the three longest by moving time are shown. These are briefing sections, not validated climb classifications. A brief dip or flat can split a longer real-world climb, and elevation smoothing can change its boundaries. Separate GPX tracks are never joined.
+
+Selecting a card highlights its full distance interval in both chart views without changing simulation inputs or hiding the rest of the route. Section moving time is the sum of its modeled segment times. Pedal work is the sum of actual segment crank power × time / 1000 in kJ, including reduced power at the speed ceiling and zero work while coasting. Lowest modeled cadence is the minimum among pedaled segments using the existing nearest-to-preferred virtual gear; coasting segments are excluded, and an entirely coasting section displays Coasting. It is not an average cadence or a shift plan. These summaries update with the current inputs; gearing alone changes cadence, not time or work.
+
+Selection uses a route-geometry identifier so re-ranking after power changes does not select another climb. It clears when the selected section disappears, a new route is imported (even with the same filename), smoothing changes, inputs reset or simulation fails. Selection is never stored on the device. No additional metabolic or fueling recommendation is inferred from climb work.
+
 ## Sources and their scope
 
 - [Martin, Milliken, Cobb, McFadden & Coggan (1998), Validation of a Mathematical Model for Road Cycling Power](https://pubmed.ncbi.nlm.nih.gov/28121252/): experimentally evaluated power-demand framework; includes effects omitted here, so its reported error is not this app’s accuracy.

@@ -2,6 +2,8 @@
 
 ## Final result
 
+The chart-linked climb update is being prepared on `codex/climb-chart` for the separate preview. Its release checks are recorded below; production retains the approved PR #2 release until the owner's next publication decision.
+
 The owner approved PR #2 on 19 November 2026. Its Elevation / Energy chart, GPX remainder correction and opt-in remembered setup are merged into `main` and published to production as version `cca515d5-bfb5-40f6-929c-9acfedff1f87`. The dated entries below retain the earlier preview/launch history.
 
 React/Vite beta is merged into `main` through PR #1 and published after owner approval on 16 October 2026. GPX parsing and simulation run locally in a browser worker, independently from the UI. The Python prototype and original README remain available as historical material. [Production](https://bike-science-pro.roman-christov.workers.dev) and [preview](https://bike-science-pro-preview.roman-christov.workers.dev) use separate Cloudflare Workers. No custom domain or Spořilov change was made.
@@ -110,6 +112,13 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - All **42 production desktop/mobile browser checks pass** without retries (28.2 s). Coverage includes the new Energy and local setup features plus demo, import, error, comparison, groupset, localization, download and accessibility regressions. The live Czech demo was also opened to confirm both controls and its completed briefing.
 - All five production asset bytes and configured security headers match the tested build. Preview deployment history confirms it remains independently on `a3928998-5ad1-4a2c-8e44-4d1c2c07589b`. No custom domain, backend, GPX upload or Spořilov change.
 - Production and preview use separate browser storage; preferences saved on preview do not automatically appear on production. Release documentation changes after deployment do not alter the published application.
+
+## Chart-linked climb preview · 19 November 2026
+
+- Demanding-section cards now select a shaded interval in both chart views and move the shared cursor to its start. The whole route stays available. A clear action removes the selection. The summary shows section moving time, actual crank work and lowest modeled pedaling cadence, in English or Czech.
+- Extracted the existing climb grouping into a pure model module without changing its thresholds. Stable geometry IDs preserve the selected climb when power changes re-rank the cards. Route replacement, smoothing, reset and errors clear selection; changing chart view, language, power or gearing keeps valid selection.
+- Six added model checks cover independent constant-grade time/work/cadence calculations, reduced work at a speed ceiling, tailwind coasting, track breaks, minimum length, ranking, stable IDs and mixed pedaling/coasting cadence. All **136 unit checks**, strict TypeScript and the production build pass. No simulation equations or worker bundle changed.
+- All **50 local desktop/mobile browser cases pass** without retries (24.5 s). Eight new cases cover keyboard/touch selection, shared views/slider, recalculated summaries, gearing-only invariance, clearing/focus, invalid-input recovery, smoothing and same-filename GPX replacement. Czech/English and 320 px layouts are covered; Axe reports zero detected violations with a climb selected. Desktop and phone screenshots were visually inspected.
 
 ## Remaining limitations
 

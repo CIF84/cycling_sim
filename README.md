@@ -14,6 +14,10 @@ Switching languages keeps the imported GPX, inputs and calculated results. It al
 
 The **Elevation / Energy** switch uses one chart area. Both views keep the same distance slider and show estimated moving time to the selected point. Energy shows cumulative pedal work and work remaining in kJ; it does not prescribe food intake. English and Czech are supported. Published with owner approval on 19 November 2026 through [PR #2](https://github.com/CIF84/cycling_sim/pull/2).
 
+## Climb inspection · preview
+
+On the [review preview](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs), select a demanding-section card to highlight that climb in either chart view. Its summary shows moving time, actual pedal work and lowest modeled pedaling cadence. The shared slider moves to the climb's start and remains available across the whole route. Clear selection removes the highlight. Power/gearing edits update the summary; a replacement route or smoothing change clears it. This addition is awaiting owner review and is not published to production.
+
 ## Remembered setup
 
 **Remember my setup on this device** / **Zapamatovat nastavení v tomto zařízení** is off by default. Enable it to save rider/bike/kit weights, sustainable power, riding position/drag, rolling resistance, drivetrain efficiency, speed ceiling, coasting preference, groupset or custom gearing, wheel circumference and preferred cadence. Valid edits save automatically; refresh restores them. Review power and conditions for each ride.

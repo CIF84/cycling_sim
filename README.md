@@ -8,11 +8,19 @@ A browser-based cycling ride briefing: **How hard is this ride? How should I pre
 
 English and Czech are available from the header language selector. [Open in Czech](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) or [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en). Explicit links override the saved choice; otherwise the app uses the saved language, then the browser’s primary language (Czech or English fallback).
 
-Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Only the language preference is stored locally. See [localization maintenance and review](docs/LOCALIZATION.md).
+Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Language is saved locally; the preview can also remember ride preferences when explicitly enabled. See [localization maintenance and review](docs/LOCALIZATION.md).
 
 ## Chart preview
 
 The [separate review preview](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs) adds an **Elevation / Energy** switch within the existing chart. Both views keep the same distance slider and show estimated moving time to the selected point. Energy shows cumulative pedal work and work remaining in kJ; it does not prescribe food intake. English and Czech are supported. This change is on `codex/energy-chart` pending owner review; production remains on the approved launch version.
+
+## Remembered setup preview
+
+The preview adds **Remember my setup on this device** / **Zapamatovat nastavení v tomto zařízení**, off by default. Enable it to save rider/bike/kit weights, sustainable power, riding position/drag, rolling resistance, drivetrain efficiency, speed ceiling, coasting preference, groupset or custom gearing, wheel circumference and preferred cadence. Valid edits save automatically; refresh restores them. Review power and conditions for each ride.
+
+GPX content, filenames, routes, smoothing, chart position, wind, temperature and air-density altitude are not saved. Every visit starts with the demo and default conditions. Turning the option off removes the saved setup without changing current inputs or language. **Reset ride inputs** restores defaults and, if remembering is enabled, saves those defaults.
+
+Storage is local to this browser and site address, with no account or network request. Preview, production, different browsers and private sessions do not share it. Clearing site data removes it. Invalid edits retain the last valid snapshot; unreadable/incompatible records fall back to defaults with an explanation. Browser storage failures are visible and do not prevent simulation. See [the storage contract](docs/LOCAL_SETUP.md).
 
 ## Groupset presets
 

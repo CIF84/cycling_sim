@@ -92,6 +92,14 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - Browser coverage includes keyboard/pointer inspection, switching at the same distance, updated power, translated accessible slider values, zero-work rides with advancing time, separate tracks, 20,000-point imports, both languages, 320 px layouts and zero detected Axe violations. Desktop and mobile views were visually inspected. Existing demo, import, error, comparison, download and groupset coverage remains intact.
 - Preview version **`f20e7de0-59c8-47f4-bb9d-a3e9581ccf22`** serves the verified build. HTTPS/security headers and all five public asset bytes match locally. Production was checked and still serves its approved launch assets. This branch remains unmerged pending owner review.
 
+## Remembered setup · 19 November 2026
+
+- Added opt-in local rider/bike/power/model preferences, including presets and custom tooth lists. GPX content, filenames and route data are never persisted; wind, temperature and altitude reset for every visit. The first simulation uses validated restored inputs.
+- Valid edits save automatically. Invalid edits retain the last good setup; corrupt/incompatible saved records fall back to defaults with a message. Turning saving off keeps current inputs, removes only the setup key, and stops other open tabs from saving it again. Reset saves defaults only while opted in.
+- Storage access/quota/removal failures are handled without breaking simulation. Even if deletion fails, opting out stops future writes and offers removal retry with an explanation. Language remains independent. No model equations, dependencies, backend or account system changed.
+- **130 unit checks**, strict TypeScript, production build, formatting and diff checks pass. **42 desktop/mobile browser cases pass** against the final local build (23.9 s), without retries. Coverage includes opt-in/refresh, presets/custom gears, invalid edits, reset, route/condition exclusion, two-tab removal, blocked storage, Czech/English, accessibility and 320/820 px layouts. Saved-state desktop/mobile screenshots were inspected.
+- Preview deployment is prepared but currently awaits renewal of the expired Cloudflare sign-in. Production has not been deployed in this change. See [the local storage contract and review steps](LOCAL_SETUP.md).
+
 ## Remaining limitations
 
 No known failing local checks remain. This is published as an owner-approved **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.

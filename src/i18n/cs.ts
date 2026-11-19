@@ -22,6 +22,24 @@ export const cs = {
   "No sign-up. No upload.": "Bez registrace. Bez odesílání souborů.",
   "EVERY ROUTE HAS A STORY": "KAŽDÁ TRASA MÁ SVŮJ PŘÍBĚH",
   "Your ride setup": "Nastavení jízdy",
+  "Remember my setup on this device": "Zapamatovat nastavení v tomto zařízení",
+  "Saves rider, bike, power and model preferences in this browser. GPX files, wind, temperature and altitude aren’t saved.":
+    "Uloží nastavení jezdce, kola, výkonu a modelu v tomto prohlížeči. GPX, vítr, teplota ani nadmořská výška se neukládají.",
+  "Saved here · changes save automatically. Review power and conditions for each ride.":
+    "Uloženo zde · změny se ukládají automaticky. Před každou jízdou zkontroluj výkon a podmínky.",
+  "These changes aren’t saved yet. Correct the setup inputs; any previously saved setup is kept.":
+    "Tyto změny zatím nejsou uložené. Oprav zadané hodnoty; případné dříve uložené nastavení zůstává zachované.",
+  "Browser storage is unavailable. Your changes work for this visit, but can’t be saved here.":
+    "Úložiště prohlížeče není dostupné. Změny platí pro tuto návštěvu, ale nelze je zde uložit.",
+  "The saved setup couldn’t be read. Default inputs are shown; enable this option to save a new setup.":
+    "Uložené nastavení se nepodařilo načíst. Zobrazuje se výchozí nastavení; zapnutím této volby uložíš nové.",
+  "Saved setup removed. Your current inputs stay until you leave this page.":
+    "Uložené nastavení bylo odstraněno. Aktuální hodnoty zůstanou do opuštění stránky.",
+  "Saving is off, but the previous setup couldn’t be removed. It may return next visit. Try removing it again, or clear this site’s data in your browser.":
+    "Ukládání je vypnuté, ale předchozí nastavení se nepodařilo odstranit. Při další návštěvě se může znovu načíst. Zkus ho odstranit znovu, nebo v prohlížeči vymaž data tohoto webu.",
+  "Remove saved setup": "Odstranit uložené nastavení",
+  "Your language preference is saved in this browser. If you enable “Remember my setup”, rider, bike, power and model preferences are also saved here and updated automatically. Turning it off removes that saved setup. GPX files, wind, temperature and altitude are never saved. Preview and production keep separate preferences; clearing site data removes them.":
+    "Volba jazyka se ukládá v tomto prohlížeči. Pokud zapneš volbu „Zapamatovat nastavení“, uloží se zde také nastavení jezdce, kola, výkonu a modelu a bude se automaticky aktualizovat. Vypnutím volby uložené nastavení odstraníš. GPX, vítr, teplota ani nadmořská výška se nikdy neukládají. Náhled a veřejná verze mají oddělené nastavení; vymazáním dat webu se uložené údaje odstraní.",
   "01 / THE ROUTE": "01 / TRASA",
   "The Sunday Loop": "Nedělní okruh",
   "Imported route": "Importovaná trasa",
@@ -239,8 +257,6 @@ export const cs = {
   "Privacy & beta scope": "Soukromí a rozsah bety",
   "GPX files are read into memory on your device and processed in a browser worker. No route uploads, analytics, cookies, accounts or cloud route storage. Refresh or “Return to demo & clear GPX” discards your imported route. Downloaded briefings contain your chosen settings and route name, but no coordinates. Cloudflare handles ordinary asset requests and may retain standard infrastructure logs; GPX contents are not sent to it.":
     "Soubory GPX se načítají do paměti vašeho zařízení a zpracovávají na pozadí v prohlížeči. Bez odesílání tras, analytiky, cookies, účtů či ukládání tras do cloudu. Obnovení stránky nebo volba „Vrátit ukázku a vymazat GPX“ importovanou trasu zahodí. Stažený přehled obsahuje vaše nastavení a název trasy, ale žádné souřadnice. Cloudflare obsluhuje běžné požadavky na soubory aplikace a může uchovávat standardní provozní záznamy; obsah GPX se mu neodesílá.",
-  "Only your language preference is saved in this browser; your route and ride settings are not stored.":
-    "V prohlížeči se ukládá pouze volba jazyka; trasa ani nastavení jízdy se neukládají.",
   "The beta focuses on route briefing, preparation and controlled comparisons. Live weather, Strava, accounts, payments and an AI assistant are deferred. Unsupported nutrition recommendations and target-time promises are excluded.":
     "Beta se zaměřuje na přehled trasy, přípravu a srovnání jednotlivých změn. Aktuální počasí, Strava, účty, platby a AI asistent jsou odložené. Nepodložená výživová doporučení ani sliby cílového času nenabízíme.",
   "Built for the ride ahead.": "Pro vaši příští vyjížďku.",

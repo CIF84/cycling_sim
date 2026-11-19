@@ -13,23 +13,24 @@ pnpm install --frozen-lockfile
 pnpm check
 pnpm exec playwright install chromium
 pnpm test:e2e
-pnpm exec wrangler login
+pnpm exec wrangler login --scopes account:read user:read workers:write workers_scripts:write
 pnpm exec wrangler whoami
 pnpm deploy:preview
 ```
 
-Complete Cloudflare OAuth yourself and verify that `whoami` identifies the intended account. If the account has multiple account IDs, supply the correct `CLOUDFLARE_ACCOUNT_ID` in the environment or add that ID to the local configuration. Do not borrow Spořilov credentials/configuration or place tokens in source files.
+Complete Cloudflare OAuth in your signed-in browser and verify that `whoami` identifies the intended account. These scopes are sufficient for this static-assets Worker; Wrangler may list other optional feature scopes as missing. If the sign-in has expired, renew it before deploying. If the account has multiple account IDs, supply the correct `CLOUDFLARE_ACCOUNT_ID` in the environment or add that ID to the local configuration. Do not borrow Spořilov credentials/configuration or place tokens in source files.
 
 The preview command deploys **bike-science-pro-preview**, a separate worker, and returns its `https://bike-science-pro-preview.<account-subdomain>.workers.dev` URL. That is a shareable public beta preview, not a custom-domain production release. Inspect the actual returned URL, not the placeholder above. `preview_urls` are disabled; the preview uses its own isolated worker and deployment history.
 
-On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes and on 16 October with English/Czech localization, groupset presets and the preview-only Elevation / Energy chart:
+On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes, on 16 October with English/Czech localization, groupset presets and the Elevation / Energy chart, and on **19 November 2026** with opt-in local setup preferences:
 
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `f20e7de0-59c8-47f4-bb9d-a3e9581ccf22` (Elevation / Energy chart; awaiting owner review)
-- The chart release passes 118 unit checks, strict TypeScript, the production build and all 32 desktop/mobile browser cases. One hosted navigation was interrupted by a browser network suspension; the affected larger-route case passed on rerun. Security headers and all five public asset bytes match the local build.
-- Preview source: `codex/energy-chart`. Shared cursor/time, zero-work coasting, GPX track breaks, 20,000-point imports, Czech/English switching, accessibility and 320 px layout are covered. Production remains on version `64b18568-b3d0-47a0-a292-4c5ed8bedfe1` pending owner approval of this change.
+- Version: `a3928998-5ad1-4a2c-8e44-4d1c2c07589b` (remembered setup and Elevation / Energy chart; awaiting owner review)
+- The release passes 130 unit checks, strict TypeScript, the production build and all 42 desktop/mobile browser cases locally (23.9 s) and on the hosted preview (29.7 s), without retries. Security headers and all five public asset bytes match the tested build.
+- Preview source: `codex/energy-chart`, deployed from `e37f544894b62ebec01cf9483c7ad78d38e4cc33`. Storage opt-in/refresh/removal/reset, invalid/blocked storage, custom/preset gearing, GPX/condition exclusion and two-tab forgetting are covered alongside chart/model/import regression checks. The hosted Czech saved setup was manually checked through refresh and removal, and test inputs were cleared. [PR #2](https://github.com/CIF84/cycling_sim/pull/2) remains draft and unmerged.
+- The production deployment history was checked before and after preview deployment and remains on version `64b18568-b3d0-47a0-a292-4c5ed8bedfe1`. No production deployment or Spořilov change was made.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 

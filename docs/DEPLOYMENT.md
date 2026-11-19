@@ -28,10 +28,10 @@ The separate preview was first deployed on 14 October 2026. Earlier localization
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
 - Version: `8e4248ed-0c6e-42dc-8d56-df817470d775`
-- Source: `codex/climb-chart`, deployed from `acd41348f451e3a007d5eef244cc415e851acb63`. [PR #3](https://github.com/CIF84/cycling_sim/pull/3) is draft and unmerged for owner review. Later documentation commits do not change its assets.
+- Source: `codex/climb-chart`, deployed from `acd41348f451e3a007d5eef244cc415e851acb63`. [PR #3](https://github.com/CIF84/cycling_sim/pull/3) was subsequently approved and merged; its production release is recorded below. Later documentation commits do not change its assets.
 - Verification: 136 unit checks, strict TypeScript and production build pass. All 50 desktop/mobile browser cases pass locally (24.5 s) and on the hosted preview (33.1 s), without retries. All five public asset bytes and security headers match the tested build. The live Czech selection and view switch were manually checked.
 - Select a demanding-section card to highlight its distance interval in either chart view and see moving time, actual pedal work and lowest modeled cadence. Power/gearing edits update the summary; route replacement and smoothing clear it. The shared slider still inspects the whole route. No fueling recommendation or new simulation equation was added.
-- Production deployment history was checked after preview deployment and remains on `cca515d5-bfb5-40f6-929c-9acfedff1f87`. No production deployment, custom domain or Spořilov change was made.
+- This preview deployment initially left production on `cca515d5-bfb5-40f6-929c-9acfedff1f87`. The later owner-approved production update is recorded below. No custom domain or Spořilov change was made.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 
@@ -49,12 +49,14 @@ Keep the local model limitations visible. For a broad launch, calibrate a few re
 
 The initial owner-approved beta launched on **16 October 2026** through [PR #1](https://github.com/CIF84/cycling_sim/pull/1). On **19 November 2026**, the owner approved [PR #2](https://github.com/CIF84/cycling_sim/pull/2), which merged into `main` as `a44e3df157119b4a0febc094fe7f7be531b002dc`. Its tree exactly matches reviewed head `cb93776`. The verified build was published with `pnpm exec wrangler deploy --env ''`, adding the Elevation / Energy chart, GPX remainder fix and local setup preferences.
 
+Later on **19 November 2026**, the owner approved [PR #3](https://github.com/CIF84/cycling_sim/pull/3). It merged as `4fd758615f67d6f33766c8c5ca7a987a0d491cad`, whose tree exactly matches reviewed head `23eb58d`. The checked build was published with `pnpm exec wrangler deploy --env ''`, adding linked climb cards, chart highlighting and section summaries.
+
 - Production: [Bike Science Pro](https://bike-science-pro.roman-christov.workers.dev) · [Čeština](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) · [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en)
 - Worker: `bike-science-pro`
-- Version: `cca515d5-bfb5-40f6-929c-9acfedff1f87`
-- Previous production version: `64b18568-b3d0-47a0-a292-4c5ed8bedfe1` (initial beta, retained in deployment history for rollback).
-- Verification: 130 unit checks, strict TypeScript and production build pass; all 42 production desktop/mobile browser checks pass without retries (28.2 s). HTTPS/security headers and all five public asset bytes match the verified build. The live Czech demo shows both new controls.
-- The preview Worker remained separate during this production release; its later climb-card update is recorded above. No custom domain or Spořilov resource was configured or changed.
+- Version: `000bf4d7-8d28-41ce-bc5c-f4f482decdff`
+- Previous production version: `cca515d5-bfb5-40f6-929c-9acfedff1f87` (PR #2, retained in deployment history for rollback).
+- Verification: 136 unit checks, strict TypeScript and production build pass; all 50 production desktop/mobile browser checks pass without retries (30.1 s). HTTPS/security headers and all five public asset bytes match the verified build. The live Czech climb selection and Energy view were manually inspected.
+- The preview Worker remains independently on `8e4248ed-0c6e-42dc-8d56-df817470d775`. No custom domain or Spořilov resource was configured or changed.
 
 For subsequent approved releases, use the intended `main` revision, run the checks above, then:
 

@@ -2,7 +2,7 @@
 
 ## Final result
 
-The chart-linked climb update is deployed to the separate preview from `codex/climb-chart`, with [PR #3](https://github.com/CIF84/cycling_sim/pull/3) draft and unmerged. Its release checks are recorded below; production retains the approved PR #2 release until the owner's next publication decision.
+The owner approved [PR #3](https://github.com/CIF84/cycling_sim/pull/3) on 19 November 2026. Its chart-linked climbs are merged into `main` and published to production as version `000bf4d7-8d28-41ce-bc5c-f4f482decdff`. The dated entries below retain preview and earlier release history.
 
 The owner approved PR #2 on 19 November 2026. Its Elevation / Energy chart, GPX remainder correction and opt-in remembered setup are merged into `main` and published to production as version `cca515d5-bfb5-40f6-929c-9acfedff1f87`. The dated entries below retain the earlier preview/launch history.
 
@@ -14,19 +14,19 @@ The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inpu
 
 - System Python baseline could not import the historical tests because pandas/gpxpy were absent. Those tests use pytest-style functions; `unittest` discovery was only a dependency/import check, not proof of baseline correctness.
 - The legacy pure solver was extracted with Python AST and executed independently of its pandas import. It reproduced **0.36 km/h** at 0 W, −5%, 90 kg, and also at zero-power flat riding in −30 km/h tailwind.
-- **130 TypeScript unit checks pass** (`pnpm test`): 58 numerical/GPX/profile, 29 localization/formatting, 31 groupset and 12 storage checks. Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
+- **136 TypeScript unit checks pass** (`pnpm test`): 64 numerical/GPX/profile/climb, 29 localization/formatting, 31 groupset and 12 storage checks. Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
 - Zero-power −5% descent matches its closed-form terminal speed (about 49 km/h); flat/uphill zero-power sections explicitly fail route completion. Strong-tailwind coasting matches its separate analytical solution.
 - Checks include invalid inputs, exact slope geometry, air-density trends, speed ceilings and reduced work under braking, route totals, time-weighted cadence flags, gearing invariance, independent one-field scenarios, negative weight savings on a descent, unchanged zero-power scenario omission, and inverse reachability including a 30% climb.
 - GPX checks cover independent great-circle distance, sparse-point distance preservation, final remainders, net elevation, route points/namespaces, track separation, duplicates, partial/no elevation, malicious DTD/malformed XML, excluded jumps, spike rejection, smoothing and demo integrity.
 
 ## Browser and accessibility checks
 
-**42 browser cases pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the local build, [preview](https://bike-science-pro-preview.roman-christov.workers.dev) and [production](https://bike-science-pro.roman-christov.workers.dev). The production run on 19 November passed without retries in 28.2 seconds. Earlier localization checks also passed in Cloudflare’s local Workers runtime. Tested interactions:
+**50 browser cases pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the local build, [preview](https://bike-science-pro-preview.roman-christov.workers.dev) and [production](https://bike-science-pro.roman-christov.workers.dev). The latest production run on 19 November passed without retries in 30.1 seconds. Earlier localization checks also passed in Cloudflare’s local Workers runtime. Tested interactions:
 
 - Immediate demo and moving time; sustainable watts and gravel surface changes.
 - Front chainring edits change cadence while preserving ride time; wind changes route time.
 - Input reset, keyboard profile slider, briefing file download, comparison updates and no page-level horizontal overflow.
-- Shared Elevation / Energy cursor and moving time, zero-work coasting and English/Czech accessible chart controls.
+- Shared Elevation / Energy cursor and moving time, zero-work coasting and English/Czech accessible chart controls. Climb selection/highlighting, section time/work/cadence, input updates, clear/focus behavior and same-filename route replacement.
 - Local setup opt-in, refresh, valid/invalid edits, preset/custom gearing, reset/removal, two-tab forgetting, blocked storage, and exclusion of GPX data and visit conditions.
 - Synthetic GPX import with 50 m ascent, quality disclosure, smoothing toggle, missing elevations, malformed files, stationary zero-power estimate, invalid mass and recovery to the demo.
 - A 20,000-point synthetic import with rapid power changes; latest inputs win and superseded worker results do not replace them. The test completed in under a second on this machine; no general phone performance guarantee is made.
@@ -37,7 +37,7 @@ The local app was also opened and inspected in the Codex browser at desktop and 
 
 ## Build and hosting verification
 
-- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 314 kB (103 kB gzip), separate GPX/model worker about 74 kB, CSS about 22 kB (5 kB gzip). All runtime assets are local.
+- TypeScript strict check and production Vite build pass (`pnpm build`). Main JS about 318 kB (104 kB gzip), separate GPX/model worker about 74 kB, CSS about 23 kB (6 kB gzip). All runtime assets are local.
 - Preview Worker `--dry-run` accepts static assets with no server bindings. Actual local workerd serves security headers and supports the client-side worker/download/import flows.
 - Compatibility date adjusted from 2026-10-14 to **2026-10-13**, the newest date supported by the installed pinned runtime. This avoids a local startup failure.
 - Production CSP blocks outbound app connections. No analytics, external fonts or GPX uploads. `sample_routes/my_ride.gpx`, Python files, tests and docs are absent from `dist`.
@@ -123,10 +123,18 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - All **50 hosted desktop/mobile cases pass** without retries (33.1 s). The hosted Czech climb selection and Energy switch were manually inspected; desktop/mobile screenshots cover both views. All five public assets match the tested build byte for byte, and configured security headers are present.
 - Preview version **`8e4248ed-0c6e-42dc-8d56-df817470d775`** was deployed from `acd4134`. Production history remains on **`cca515d5-bfb5-40f6-929c-9acfedff1f87`**. This update is held in draft PR #3 for owner review; no production deployment was performed.
 
+## Climb-card production release · 19 November 2026
+
+- Owner approved merge and publication of PR #3. Merge commit **`4fd758615f67d6f33766c8c5ca7a987a0d491cad`** has exactly the reviewed tree from `23eb58d`.
+- Re-ran all **136 unit checks**, strict TypeScript and production build before publication. Deployed only **`bike-science-pro`**, version **`000bf4d7-8d28-41ce-bc5c-f4f482decdff`**.
+- All **50 production desktop/mobile browser checks pass** without retries (30.1 s), including climb interactions and prior demo, GPX, comparison, localization, groupset, storage, download and accessibility coverage. The live Czech climb summary and Energy highlight were also inspected manually.
+- All five production assets match the tested build byte for byte; configured security headers are present. Preview remains independently on `8e4248ed-0c6e-42dc-8d56-df817470d775`. No custom domain, backend or Spořilov change.
+- Release documentation commits after publication do not alter the deployed assets.
+
 ## Remaining limitations
 
 No known failing local checks remain. This is published as an owner-approved **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.
 
 Fuel/sweat/sodium prescriptions, manual routes inferred from totals, accounts, cloud route storage, integrations and AI were deferred for reliability and launch focus. Opt-in browser setup preferences are separate from route storage. A bounded inverse-power utility is numerically checked but not shown publicly because mathematical reachability does not prove a rider can sustain the required power.
 
-The initial beta and PR #2 owner review, merge and production publication are complete. The climb-card update in PR #3 is awaiting owner review on preview. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.
+The initial beta, PR #2 and PR #3 owner reviews, merges and production publications are complete. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.

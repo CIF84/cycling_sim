@@ -34,3 +34,5 @@ Baseline: PR #2 is published on production; 130 unit checks and 42 production br
 1. Extract the existing climb grouping into a pure model module, adding actual pedal work and stable geometry IDs. Preserve thresholds and track breaks; independently verify totals, ranking and cadence/coasting cases.
 2. Make climb cards accessible selection buttons. Highlight the section in both chart views, retain whole-route inspection, expose climb time/work/lowest cadence, and provide clear selection. Keep selection through power/gearing/language/view changes; clear it for new routes and smoothing.
 3. Verify keyboard/touch, numeric updates, clearing, GPX replacement (including identical filenames), boundaries, both languages and narrow layouts. Deploy only the separate preview; production requires a later owner decision.
+
+Completed: 136 unit checks, strict TypeScript, production build and all 50 desktop/mobile cases pass locally and on the hosted preview. Climb selection was also checked manually in the Czech preview. Draft PR #3 contains the update; production remains unchanged.

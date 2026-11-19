@@ -22,15 +22,16 @@ Complete Cloudflare OAuth in your signed-in browser and verify that `whoami` ide
 
 The preview command deploys **bike-science-pro-preview**, a separate worker, and returns its `https://bike-science-pro-preview.<account-subdomain>.workers.dev` URL. That is a shareable public beta preview, not a custom-domain production release. Inspect the actual returned URL, not the placeholder above. `preview_urls` are disabled; the preview uses its own isolated worker and deployment history.
 
-On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes, on 16 October with English/Czech localization, groupset presets and the Elevation / Energy chart, and on **19 November 2026** with opt-in local setup preferences:
+The separate preview was first deployed on 14 October 2026. Earlier localization, groupset, Energy-chart and local-setup releases are recorded in [VERIFICATION.md](VERIFICATION.md). The current **19 November 2026** preview connects climb cards to the chart:
 
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `a3928998-5ad1-4a2c-8e44-4d1c2c07589b` (remembered setup and Elevation / Energy chart; owner approved, also published to production below)
-- The release passes 130 unit checks, strict TypeScript, the production build and all 42 desktop/mobile browser cases locally (23.9 s) and on the hosted preview (29.7 s), without retries. Security headers and all five public asset bytes match the tested build.
-- Preview source: `codex/energy-chart`, deployed from `e37f544894b62ebec01cf9483c7ad78d38e4cc33`. Storage opt-in/refresh/removal/reset, invalid/blocked storage, custom/preset gearing, GPX/condition exclusion and two-tab forgetting are covered alongside chart/model/import regression checks. The hosted Czech saved setup was manually checked through refresh and removal, and test inputs were cleared. [PR #2](https://github.com/CIF84/cycling_sim/pull/2) was subsequently approved and merged on 19 November 2026.
-- The preview deployment initially left production on version `64b18568-b3d0-47a0-a292-4c5ed8bedfe1`. The later owner-approved production update is recorded below. No Spořilov change was made.
+- Version: `8e4248ed-0c6e-42dc-8d56-df817470d775`
+- Source: `codex/climb-chart`, deployed from `acd41348f451e3a007d5eef244cc415e851acb63`. [PR #3](https://github.com/CIF84/cycling_sim/pull/3) is draft and unmerged for owner review. Later documentation commits do not change its assets.
+- Verification: 136 unit checks, strict TypeScript and production build pass. All 50 desktop/mobile browser cases pass locally (24.5 s) and on the hosted preview (33.1 s), without retries. All five public asset bytes and security headers match the tested build. The live Czech selection and view switch were manually checked.
+- Select a demanding-section card to highlight its distance interval in either chart view and see moving time, actual pedal work and lowest modeled cadence. Power/gearing edits update the summary; route replacement and smoothing clear it. The shared slider still inspects the whole route. No fueling recommendation or new simulation equation was added.
+- Production deployment history was checked after preview deployment and remains on `cca515d5-bfb5-40f6-929c-9acfedff1f87`. No production deployment, custom domain or Spořilov change was made.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 
@@ -40,7 +41,7 @@ The first immediate test run encountered transient Cloudflare 404 responses for 
 BETA_URL='https://bike-science-pro-preview.roman-christov.workers.dev' pnpm test:e2e
 ```
 
-The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check the Elevation / Energy switch and shared slider/time, demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, groupset selection, manual chainring/cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Switch English/Čeština with a GPX loaded, enter decimal commas, check translated warnings and download the Czech briefing. Language survives refresh; rider/bike/power/model preferences should survive only after enabling Remember my setup. GPX, wind, temperature and altitude must reset. Turn remembering off and reload to verify removal. Preview and production have separate browser storage. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
+The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check climb-card selection, the shaded interval and section time/work/cadence in both views, Clear selection, power/gearing updates and replacement routes. Also check the Elevation / Energy switch and shared slider/time, demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, groupset selection, manual chainring/cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Switch English/Čeština with a GPX loaded, enter decimal commas, check translated warnings and download the Czech briefing. Language survives refresh; rider/bike/power/model preferences should survive only after enabling Remember my setup. GPX, wind, temperature and altitude must reset. Turn remembering off and reload to verify removal. Preview and production have separate browser storage. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
 
 Keep the local model limitations visible. For a broad launch, calibrate a few representative outdoor rides with known power, route elevation and conditions; beta estimates are not finish-time promises.
 
@@ -53,7 +54,7 @@ The initial owner-approved beta launched on **16 October 2026** through [PR #1](
 - Version: `cca515d5-bfb5-40f6-929c-9acfedff1f87`
 - Previous production version: `64b18568-b3d0-47a0-a292-4c5ed8bedfe1` (initial beta, retained in deployment history for rollback).
 - Verification: 130 unit checks, strict TypeScript and production build pass; all 42 production desktop/mobile browser checks pass without retries (28.2 s). HTTPS/security headers and all five public asset bytes match the verified build. The live Czech demo shows both new controls.
-- The preview Worker remains separate and unchanged. No custom domain or Spořilov resource was configured or changed.
+- The preview Worker remained separate during this production release; its later climb-card update is recorded above. No custom domain or Spořilov resource was configured or changed.
 
 For subsequent approved releases, use the intended `main` revision, run the checks above, then:
 

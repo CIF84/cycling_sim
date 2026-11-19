@@ -1,7 +1,7 @@
 import { useI18n } from "./i18n/context";
 import { decimalText, isLocale, parseDecimal } from "./i18n/format";
 import { message, type Message } from "./model/messages";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   Bike,
   ArrowUpRight,
@@ -33,6 +33,7 @@ import {
 import { demoRoute } from "./model/route";
 import { cadence } from "./model/physics";
 import { Profile } from "./components/Profile";
+import { findClimbs } from "./model/climbs";
 import { GroupsetSelect } from "./components/GroupsetSelect";
 import { DEFAULT_GROUPSET_ID, applyGroupset, sameTeeth } from "./model/gearing";
 import { useRememberedSetup } from "./settings/useRememberedSetup";
@@ -131,45 +132,6 @@ function TeethField({
     </div>
   );
 }
-function climbs(route: Route, ride: Ride) {
-  const groups: {
-    start: number;
-    end: number;
-    gain: number;
-    timeS: number;
-    distance: number;
-    maxGrade: number;
-    minCadence: number;
-    track: number;
-  }[] = [];
-  ride.segments.forEach((s, n) => {
-    if (s.gradePct < 2) return;
-    const prev = groups.at(-1),
-      track = route.segments[n].track;
-    if (prev && Math.abs(prev.end - s.startM) < 0.1 && prev.track === track) {
-      prev.end += s.distanceM;
-      prev.distance += s.distanceM;
-      prev.gain += route.segments[n].deltaM;
-      prev.timeS += s.timeS;
-      prev.maxGrade = Math.max(prev.maxGrade, s.gradePct);
-      prev.minCadence = Math.min(prev.minCadence, s.cadence ?? Infinity);
-    } else
-      groups.push({
-        start: s.startM,
-        end: s.startM + s.distanceM,
-        gain: route.segments[n].deltaM,
-        timeS: s.timeS,
-        distance: s.distanceM,
-        maxGrade: s.gradePct,
-        minCadence: s.cadence ?? Infinity,
-        track,
-      });
-  });
-  return groups
-    .filter((g) => g.distance >= 100)
-    .sort((a, b) => b.timeS - a.timeS)
-    .slice(0, 3);
-}
 export default function App() {
   const { locale, setLocale, t, number, formatMessage, time, savings } =
     useI18n();
@@ -186,6 +148,9 @@ export default function App() {
       null,
     ),
     [smoothingM, setSmoothingM] = useState(100);
+  const [routeRevision, setRouteRevision] = useState(0);
+  const [selectedClimbId, setSelectedClimbId] = useState<string | null>(null);
+  const chartRef = useRef<HTMLElement>(null);
   const [route, setRoute] = useState<Route>(demoRoute),
     [result, setResult] = useState<{
       ride: Ride;
@@ -211,6 +176,7 @@ export default function App() {
       if (e.data.id !== id) return;
       setBusy(false);
       if (e.data.error) {
+        setSelectedClimbId(null);
         setError(e.data.error);
         setResult(null);
       } else {
@@ -257,14 +223,33 @@ export default function App() {
     try {
       const xml = await file.text();
       if (currentImport !== importId.current) return;
+      setSelectedClimbId(null);
+      setRouteRevision((revision) => revision + 1);
       setSource({ xml, name: file.name });
     } catch {
       setImportError(message("This file could not be read. Please try again."));
     }
   }
-  const ride = result?.ride,
-    demanding = ride ? climbs(route, ride) : [],
-    worst = demanding[0];
+  const ride = result?.ride;
+  const demanding = useMemo(
+    () => (ride ? findClimbs(route, ride) : []),
+    [route, ride],
+  );
+  const worst = demanding[0];
+  const selectedClimb = demanding.find((g) => g.id === selectedClimbId) ?? null;
+  useEffect(() => {
+    if (selectedClimbId && !selectedClimb) setSelectedClimbId(null);
+  }, [selectedClimbId, selectedClimb]);
+  function selectClimb(id: string) {
+    setSelectedClimbId(id);
+    chartRef.current?.focus({ preventScroll: true });
+    chartRef.current?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+      block: "start",
+    });
+  }
   const comparisons = result?.comparisons ?? [];
   const availableComparisons = comparisons.filter((c) => c.available);
   const bestChange = availableComparisons.find((c) => c.savedS > 0.5);
@@ -274,6 +259,8 @@ export default function App() {
   );
   function reset() {
     ++importId.current;
+    setSelectedClimbId(null);
+    setRouteRevision((revision) => revision + 1);
     if (source) {
       setRoute(demoRoute());
       setResult(null);
@@ -574,7 +561,10 @@ export default function App() {
                   {t("Elevation smoothing")}{" "}
                   <select
                     value={smoothingM}
-                    onChange={(e) => setSmoothingM(Number(e.target.value))}
+                    onChange={(e) => {
+                      setSelectedClimbId(null);
+                      setSmoothingM(Number(e.target.value));
+                    }}
                   >
                     <option value={0}>
                       {t("Off · raw resampled elevation")}
@@ -973,11 +963,25 @@ export default function App() {
                     <small>{t("Distance ÷ moving time")}</small>
                   </div>
                 </section>
-                <section className="card profile-card">
+                <section
+                  className="card profile-card"
+                  id="ride-profile"
+                  ref={chartRef}
+                  tabIndex={-1}
+                  aria-label={t("Ride chart")}
+                >
                   <Profile
-                    key={route.name + route.smoothingM}
+                    key={`${routeRevision}:${route.smoothingM}`}
                     route={route}
                     ride={ride}
+                    selectedClimb={selectedClimb}
+                    climbNumber={
+                      selectedClimb ? demanding.indexOf(selectedClimb) + 1 : 0
+                    }
+                    onClearClimb={() => {
+                      setSelectedClimbId(null);
+                      chartRef.current?.focus({ preventScroll: true });
+                    }}
                   />
                   <div className="ride-takeaway">
                     <Mountain size={20} />
@@ -1070,39 +1074,60 @@ export default function App() {
                     <span className="muted">{t("Ranked by moving time")}</span>
                   </div>
                   {demanding.length ? (
-                    <div className="climb-list">
-                      {demanding.map((g, n) => (
-                        <div className="climb-row" key={g.start}>
-                          <span className="climb-number">0{n + 1}</span>
-                          <div className="climb-title">
-                            <strong>
-                              {number(g.start / 1000, 1)}–
-                              {number(g.end / 1000, 1)} km
-                            </strong>
-                            <small>
-                              {number(g.distance / 1000, 1)} km · +
-                              {number(Math.round(g.gain))} m
-                            </small>
-                          </div>
-                          <div>
-                            <strong>{number(g.maxGrade, 1)}%</strong>
-                            <small>{t("steepest segment")}</small>
-                          </div>
-                          <div>
-                            <strong>{time(g.timeS)}</strong>
-                            <small>{t("at your ride power")}</small>
-                          </div>
-                          <div>
-                            <strong>
-                              {Number.isFinite(g.minCadence)
-                                ? `${number(Math.round(g.minCadence))} ${t("rpm")}`
-                                : t("Coasting")}
-                            </strong>
-                            <small>{t("lowest virtual cadence")}</small>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <>
+                      <p className="climb-hint">
+                        {t("Select a climb to highlight it in the chart.")}
+                      </p>
+                      <div className="climb-list">
+                        {demanding.map((g, n) => (
+                          <button
+                            type="button"
+                            className="climb-row"
+                            key={g.id}
+                            disabled={busy}
+                            aria-pressed={selectedClimbId === g.id}
+                            aria-controls="ride-profile"
+                            aria-label={t(
+                              "Show climb {number}: {start}–{end} km",
+                              {
+                                number: n + 1,
+                                start: number(g.start / 1000, 1),
+                                end: number(g.end / 1000, 1),
+                              },
+                            )}
+                            onClick={() => selectClimb(g.id)}
+                          >
+                            <span className="climb-number">0{n + 1}</span>
+                            <span className="climb-title">
+                              <strong>
+                                {number(g.start / 1000, 1)}–
+                                {number(g.end / 1000, 1)} km
+                              </strong>
+                              <small>
+                                {number(g.distance / 1000, 1)} km · +
+                                {number(Math.round(g.gain))} m
+                              </small>
+                            </span>
+                            <span>
+                              <strong>{number(g.maxGrade, 1)}%</strong>
+                              <small>{t("steepest segment")}</small>
+                            </span>
+                            <span>
+                              <strong>{time(g.timeS)}</strong>
+                              <small>{t("at your ride power")}</small>
+                            </span>
+                            <span>
+                              <strong>
+                                {g.minCadence !== null
+                                  ? `${number(Math.round(g.minCadence))} ${t("rpm")}`
+                                  : t("Coasting")}
+                              </strong>
+                              <small>{t("lowest virtual cadence")}</small>
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </>
                   ) : (
                     <p className="empty">
                       {" "}

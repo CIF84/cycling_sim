@@ -3,14 +3,30 @@ import { formatElapsedTime } from "../i18n/format";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Route, Ride } from "../model/types";
 import { energyProfile, inspectProfile } from "../model/profile";
+import type { Climb } from "../model/climbs";
 
-export function Profile({ route, ride }: { route: Route; ride: Ride }) {
+export function Profile({
+  route,
+  ride,
+  selectedClimb,
+  climbNumber,
+  onClearClimb,
+}: {
+  route: Route;
+  ride: Ride;
+  selectedClimb: Climb | null;
+  climbNumber: number;
+  onClearClimb: () => void;
+}) {
   const { t, number, locale } = useI18n();
   const container = useRef<HTMLDivElement>(null);
   const id = useId();
   const [width, setWidth] = useState(900);
   const [view, setView] = useState<"elevation" | "energy">("elevation");
   const [fraction, setFraction] = useState(0.32);
+  useEffect(() => {
+    if (selectedClimb) setFraction(selectedClimb.start / route.distanceM);
+  }, [selectedClimb?.id, selectedClimb?.start, route.distanceM]);
   useEffect(() => {
     const observer = new ResizeObserver((entries) =>
       setWidth(Math.max(280, Math.min(900, entries[0].contentRect.width))),
@@ -101,6 +117,61 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
         </div>
       </div>
       <div className="profile" ref={container}>
+        {selectedClimb && (
+          <div
+            className="climb-selection"
+            data-testid="climb-selection"
+            aria-live="polite"
+          >
+            <div className="climb-selection-heading">
+              <div>
+                <strong>
+                  {t("Climb {number}", { number: climbNumber })} ·{" "}
+                  {number(selectedClimb.start / 1000, 1)}–
+                  {number(selectedClimb.end / 1000, 1)} km
+                </strong>
+                <span>
+                  {number(selectedClimb.distance / 1000, 1)} km · +
+                  {number(Math.round(selectedClimb.gain))} m
+                </span>
+              </div>
+              <button
+                type="button"
+                className="clear-climb"
+                onClick={onClearClimb}
+              >
+                {t("Clear selection")}
+              </button>
+            </div>
+            <dl className="climb-selection-stats">
+              <div>
+                <dt>{t("Climb moving time")}</dt>
+                <dd data-testid="climb-time">
+                  {formatElapsedTime(locale, selectedClimb.timeS)}
+                </dd>
+              </div>
+              <div>
+                <dt>{t("Climb pedal work")}</dt>
+                <dd data-testid="climb-work">
+                  {number(Math.round(selectedClimb.workKj))} kJ
+                </dd>
+              </div>
+              <div>
+                <dt>{t("Lowest modeled cadence")}</dt>
+                <dd data-testid="climb-cadence">
+                  {selectedClimb.minCadence === null
+                    ? t("Coasting")
+                    : `${number(Math.round(selectedClimb.minCadence))} ${t("rpm")}`}
+                </dd>
+              </div>
+            </dl>
+            <p>
+              {t(
+                "Climb totals at your current settings. Cadence uses the closest available gear while pedaling; work is not a food intake target.",
+              )}
+            </p>
+          </div>
+        )}
         <div className="chart-readout">
           <div className="chart-position">
             <span>
@@ -222,6 +293,37 @@ export function Profile({ route, ride }: { route: Route; ride: Ride }) {
               />
             </g>
           ))}
+          {selectedClimb && (
+            <g
+              data-testid="climb-highlight"
+              aria-hidden="true"
+              pointerEvents="none"
+            >
+              <rect
+                x={x(selectedClimb.start)}
+                y="35"
+                width={Math.max(
+                  0,
+                  x(selectedClimb.end) - x(selectedClimb.start),
+                )}
+                height="165"
+                fill="#b6ce72"
+                fillOpacity=".3"
+              />
+              {[selectedClimb.start, selectedClimb.end].map((distance) => (
+                <line
+                  key={distance}
+                  x1={x(distance)}
+                  x2={x(distance)}
+                  y1="35"
+                  y2="200"
+                  stroke="#617d32"
+                  strokeWidth="1.5"
+                  strokeDasharray="5 3"
+                />
+              ))}
+            </g>
+          )}
           {[0, 0.25, 0.5, 0.75, 1].map((tick) => (
             <text
               key={tick}

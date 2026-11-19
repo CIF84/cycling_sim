@@ -2,6 +2,8 @@
 
 ## Final result
 
+The chart-linked climb update is deployed to the separate preview from `codex/climb-chart`, with [PR #3](https://github.com/CIF84/cycling_sim/pull/3) draft and unmerged. Its release checks are recorded below; production retains the approved PR #2 release until the owner's next publication decision.
+
 The owner approved PR #2 on 19 November 2026. Its Elevation / Energy chart, GPX remainder correction and opt-in remembered setup are merged into `main` and published to production as version `cca515d5-bfb5-40f6-929c-9acfedff1f87`. The dated entries below retain the earlier preview/launch history.
 
 React/Vite beta is merged into `main` through PR #1 and published after owner approval on 16 October 2026. GPX parsing and simulation run locally in a browser worker, independently from the UI. The Python prototype and original README remain available as historical material. [Production](https://bike-science-pro.roman-christov.workers.dev) and [preview](https://bike-science-pro-preview.roman-christov.workers.dev) use separate Cloudflare Workers. No custom domain or Spořilov change was made.
@@ -111,10 +113,20 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - All five production asset bytes and configured security headers match the tested build. Preview deployment history confirms it remains independently on `a3928998-5ad1-4a2c-8e44-4d1c2c07589b`. No custom domain, backend, GPX upload or Spořilov change.
 - Production and preview use separate browser storage; preferences saved on preview do not automatically appear on production. Release documentation changes after deployment do not alter the published application.
 
+## Chart-linked climb preview · 19 November 2026
+
+- Demanding-section cards now select a shaded interval in both chart views and move the shared cursor to its start. The whole route stays available. A clear action removes the selection. The summary shows section moving time, actual crank work and lowest modeled pedaling cadence, in English or Czech.
+- Extracted the existing climb grouping into a pure model module without changing its thresholds. Stable geometry IDs preserve the selected climb when power changes re-rank the cards. Route replacement, smoothing, reset and errors clear selection; changing chart view, language, power or gearing keeps valid selection.
+- Six added model checks cover independent constant-grade time/work/cadence calculations, reduced work at a speed ceiling, tailwind coasting, track breaks, minimum length, ranking, stable IDs and mixed pedaling/coasting cadence. All **136 unit checks**, strict TypeScript and the production build pass. No simulation equations or worker bundle changed.
+- All **50 local desktop/mobile browser cases pass** without retries (24.5 s). Eight new cases cover keyboard/touch selection, shared views/slider, recalculated summaries, gearing-only invariance, clearing/focus, invalid-input recovery, smoothing and same-filename GPX replacement. Czech/English and 320 px layouts are covered; Axe reports zero detected violations with a climb selected. Desktop and phone screenshots were visually inspected.
+
+- All **50 hosted desktop/mobile cases pass** without retries (33.1 s). The hosted Czech climb selection and Energy switch were manually inspected; desktop/mobile screenshots cover both views. All five public assets match the tested build byte for byte, and configured security headers are present.
+- Preview version **`8e4248ed-0c6e-42dc-8d56-df817470d775`** was deployed from `acd4134`. Production history remains on **`cca515d5-bfb5-40f6-929c-9acfedff1f87`**. This update is held in draft PR #3 for owner review; no production deployment was performed.
+
 ## Remaining limitations
 
 No known failing local checks remain. This is published as an owner-approved **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.
 
 Fuel/sweat/sodium prescriptions, manual routes inferred from totals, accounts, cloud route storage, integrations and AI were deferred for reliability and launch focus. Opt-in browser setup preferences are separate from route storage. A bounded inverse-power utility is numerically checked but not shown publicly because mathematical reachability does not prove a rider can sustain the required power.
 
-The owner review, merge and production launch are complete. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.
+The initial beta and PR #2 owner review, merge and production publication are complete. The climb-card update in PR #3 is awaiting owner review on preview. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.

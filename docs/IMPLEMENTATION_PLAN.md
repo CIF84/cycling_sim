@@ -18,3 +18,11 @@ Baseline: two cassette-only presets; chainring edits could leave the named casse
 2. Store the catalog independently of UI/localization. Apply chainrings and cassette together, preserve manual editing, and make a manual change to either field select Custom. Keep all other simulation inputs unchanged.
 3. Provide English/Czech controls, readable gearing summaries and manufacturer links. Verify catalog integrity, cadence/time behavior, preset/custom/reset interactions, accessibility and mobile layout.
 4. Build, update documentation, deploy and verify only the separate preview, then push the update to the existing unmerged PR.
+
+## Elevation / Energy chart — 16 October 2026
+
+Baseline: production is the approved `d01d147` application, documented by `27c64e2`; 102 unit checks and 26 production browser checks passed. The chart currently exposes elevation, grade and speed with one distance slider. Work and moving time are already calculated per section.
+
+1. Carry cumulative moving time and crank work through the independent model, using actual modeled power (including coasting and speed-cap reductions). Check partial sections, endpoints, track breaks and zero-work rides against independent calculations.
+2. Reuse the existing chart for Elevation / Energy views, preserving one cursor and adding moving time to both. Explain pedal work in kJ; defer fueling recommendations and new calorie estimates. Localize controls and accessibility text.
+3. Exercise switching, keyboard/pointer input, changed inputs, large/short routes, coasting, Czech/English and narrow screens. Build and verify the preview, keeping production unchanged pending owner review.

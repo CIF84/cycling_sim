@@ -13,22 +13,24 @@ pnpm install --frozen-lockfile
 pnpm check
 pnpm exec playwright install chromium
 pnpm test:e2e
-pnpm exec wrangler login
+pnpm exec wrangler login --scopes account:read user:read workers:write workers_scripts:write
 pnpm exec wrangler whoami
 pnpm deploy:preview
 ```
 
-Complete Cloudflare OAuth yourself and verify that `whoami` identifies the intended account. If the account has multiple account IDs, supply the correct `CLOUDFLARE_ACCOUNT_ID` in the environment or add that ID to the local configuration. Do not borrow Spořilov credentials/configuration or place tokens in source files.
+Complete Cloudflare OAuth in your signed-in browser and verify that `whoami` identifies the intended account. These scopes are sufficient for this static-assets Worker; Wrangler may list other optional feature scopes as missing. If the sign-in has expired, renew it before deploying. If the account has multiple account IDs, supply the correct `CLOUDFLARE_ACCOUNT_ID` in the environment or add that ID to the local configuration. Do not borrow Spořilov credentials/configuration or place tokens in source files.
 
 The preview command deploys **bike-science-pro-preview**, a separate worker, and returns its `https://bike-science-pro-preview.<account-subdomain>.workers.dev` URL. That is a shareable public beta preview, not a custom-domain production release. Inspect the actual returned URL, not the placeholder above. `preview_urls` are disabled; the preview uses its own isolated worker and deployment history.
 
-On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes and on 16 October with English/Czech localization and groupset presets:
+On 14 October 2026, the owner completed Cloudflare OAuth and the separate preview was deployed. It was updated on 15 October with the PR review fixes, on 16 October with English/Czech localization, groupset presets and the Elevation / Energy chart, and on **19 November 2026** with opt-in local setup preferences:
 
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `4e381995-5515-4717-824a-6d9a2c9d9b8f` (25 manufacturer-sourced groupset presets)
-- The groupset release passed all 102 unit checks, strict TypeScript, the production build and all 26 hosted desktop/mobile browser checks. Security headers and all five public asset hashes were verified. Preset/manual editing, source links, unchanged ride estimates, Czech/English switching and 320 px overflow are covered.
+- Version: `a3928998-5ad1-4a2c-8e44-4d1c2c07589b` (remembered setup and Elevation / Energy chart; awaiting owner review)
+- The release passes 130 unit checks, strict TypeScript, the production build and all 42 desktop/mobile browser cases locally (23.9 s) and on the hosted preview (29.7 s), without retries. Security headers and all five public asset bytes match the tested build.
+- Preview source: `codex/energy-chart`, deployed from `e37f544894b62ebec01cf9483c7ad78d38e4cc33`. Storage opt-in/refresh/removal/reset, invalid/blocked storage, custom/preset gearing, GPX/condition exclusion and two-tab forgetting are covered alongside chart/model/import regression checks. The hosted Czech saved setup was manually checked through refresh and removal, and test inputs were cleared. [PR #2](https://github.com/CIF84/cycling_sim/pull/2) remains draft and unmerged.
+- The production deployment history was checked before and after preview deployment and remains on version `64b18568-b3d0-47a0-a292-4c5ed8bedfe1`. No production deployment or Spořilov change was made.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 
@@ -38,7 +40,7 @@ The first immediate test run encountered transient Cloudflare 404 responses for 
 BETA_URL='https://bike-science-pro-preview.roman-christov.workers.dev' pnpm test:e2e
 ```
 
-The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, groupset selection, manual chainring/cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Switch English/Čeština with a GPX loaded, enter decimal commas, check translated warnings and download the Czech briefing. Only the language preference should survive a refresh. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
+The tests should allow that origin in their outbound-request assertion (the test already derives the page origin dynamically). Use the returned real URL. Check the Elevation / Energy switch and shared slider/time, demo, changed watts/wind, GPX with and without elevations, quality notes, profile slider, groupset selection, manual chainring/cassette editing, reset and downloaded briefing. Inspect at desktop and phone widths. Switch English/Čeština with a GPX loaded, enter decimal commas, check translated warnings and download the Czech briefing. Language survives refresh; rider/bike/power/model preferences should survive only after enabling Remember my setup. GPX, wind, temperature and altitude must reset. Turn remembering off and reload to verify removal. Preview and production have separate browser storage. Confirm network traffic contains only static-asset requests, with no GPX uploads or external fonts/analytics. Browser-specific download handling may differ on phones.
 
 Keep the local model limitations visible. For a broad launch, calibrate a few representative outdoor rides with known power, route elevation and conditions; beta estimates are not finish-time promises.
 

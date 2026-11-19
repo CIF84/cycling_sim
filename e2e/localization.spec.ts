@@ -159,7 +159,10 @@ test("Czech GPX warnings, filenames, profile, download and errors stay local and
   const slider = page.getByLabel("Prozkoumat místo na trase");
   await slider.focus();
   await slider.press("ArrowRight");
-  await expect(slider).toHaveAttribute("aria-valuetext", /km, nadmořská výška/);
+  await expect(slider).toHaveAttribute(
+    "aria-valuetext",
+    /km, .* v pohybu, nadmořská výška/,
+  );
   await page.getByLabel("Jazyk", { exact: true }).selectOption("en");
   await expect(page.locator(".quality")).toContainText(
     "1 duplicate or near-identical points removed.",

@@ -3,6 +3,7 @@ import { cs, type MessageKey } from "./cs";
 import {
   decimalText,
   formatNumber,
+  formatElapsedTime,
   parseDecimal,
   selectLocale,
   translate,
@@ -10,6 +11,22 @@ import {
 import { ModelError, message } from "../model/messages";
 import { validateInputs } from "../model/physics";
 import { DEFAULT_INPUTS } from "../model/types";
+
+it.each([
+  [0, "0 min"],
+  [0.01, "<1 min"],
+  [59, "<1 min"],
+  [60, "1 min"],
+  [90, "2 min"],
+  [3599, "1 h 0 min"],
+  [5160, "1 h 26 min"],
+])(
+  "formats chart progress at %s seconds without a false one-minute start",
+  (seconds, expected) => {
+    expect(formatElapsedTime("en", Number(seconds))).toBe(expected);
+    expect(formatElapsedTime("cs", Number(seconds))).toBe(expected);
+  },
+);
 
 describe("language selection", () => {
   it("uses explicit links, then saved choice, then the browser's primary language", () => {

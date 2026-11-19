@@ -190,6 +190,12 @@ test("larger import keeps inputs responsive and superseded jobs do not win", asy
   ).toBeVisible();
   await expect(page.getByText("230 → 253 W", { exact: true })).toBeVisible();
   await expect(page.getByText(/Source points: 20,000/)).toBeVisible();
+  await page.getByRole("button", { name: "Energy", exact: true }).click();
+  await page.getByLabel("Inspect route distance").press("End");
+  await expect(page.getByTestId("profile-time")).toHaveText(
+    await page.getByTestId("moving-time").innerText(),
+  );
+  await expect(page.getByTestId("profile-work-remaining")).toHaveText("0 kJ");
 });
 
 test("profile grade stays on the section under the cursor", async ({

@@ -35,6 +35,7 @@ import { cadence } from "./model/physics";
 import { Profile } from "./components/Profile";
 import { GroupsetSelect } from "./components/GroupsetSelect";
 import { DEFAULT_GROUPSET_ID, applyGroupset, sameTeeth } from "./model/gearing";
+import { useRememberedSetup } from "./settings/useRememberedSetup";
 import "./style.css";
 function NumberField({
   label,
@@ -172,8 +173,15 @@ function climbs(route: Route, ride: Ride) {
 export default function App() {
   const { locale, setLocale, t, number, formatMessage, time, savings } =
     useI18n();
-  const [groupsetId, setGroupsetId] = useState(DEFAULT_GROUPSET_ID);
-  const [inputs, setInputs] = useState<Inputs>({ ...DEFAULT_INPUTS });
+  const {
+    inputs,
+    setInputs,
+    groupsetId,
+    setGroupsetId,
+    remember,
+    changeRemember,
+    status: setupStatus,
+  } = useRememberedSetup();
   const [source, setSource] = useState<{ xml: string; name: string } | null>(
       null,
     ),
@@ -444,6 +452,69 @@ export default function App() {
             <div className="setup-heading">
               <SlidersHorizontal size={18} />
               <h2>{t("Your ride setup")}</h2>
+            </div>
+            <div className="setup-memory">
+              <label className="check-field">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => changeRemember(e.target.checked)}
+                  aria-describedby="remember-help remember-status"
+                />
+                <span>{t("Remember my setup on this device")}</span>
+              </label>
+              <p id="remember-help">
+                {t(
+                  "Saves rider, bike, power and model preferences in this browser. GPX files, wind, temperature and altitude aren’t saved.",
+                )}
+              </p>
+              <p
+                id="remember-status"
+                aria-live="polite"
+                className={
+                  [
+                    "invalid",
+                    "unavailable",
+                    "remove-error",
+                    "discarded",
+                  ].includes(setupStatus)
+                    ? "setup-storage-warning"
+                    : undefined
+                }
+              >
+                {setupStatus === "saved" &&
+                  t(
+                    "Saved here · changes save automatically. Review power and conditions for each ride.",
+                  )}
+                {setupStatus === "invalid" &&
+                  t(
+                    "These changes aren’t saved yet. Correct the setup inputs; any previously saved setup is kept.",
+                  )}
+                {setupStatus === "unavailable" &&
+                  t(
+                    "Browser storage is unavailable. Your changes work for this visit, but can’t be saved here.",
+                  )}
+                {setupStatus === "discarded" &&
+                  t(
+                    "The saved setup couldn’t be read. Default inputs are shown; enable this option to save a new setup.",
+                  )}
+                {setupStatus === "forgotten" &&
+                  t(
+                    "Saved setup removed. Your current inputs stay until you leave this page.",
+                  )}
+                {setupStatus === "remove-error" &&
+                  t(
+                    "Saving is off, but the previous setup couldn’t be removed. It may return next visit. Try removing it again, or clear this site’s data in your browser.",
+                  )}
+              </p>
+              {setupStatus === "remove-error" && (
+                <button
+                  className="text-button"
+                  onClick={() => changeRemember(false)}
+                >
+                  {t("Remove saved setup")}
+                </button>
+              )}
             </div>
             <section className="route-input">
               <span className="field-label">{t("01 / THE ROUTE")}</span>
@@ -903,18 +974,6 @@ export default function App() {
                   </div>
                 </section>
                 <section className="card profile-card">
-                  <div className="card-heading">
-                    <div>
-                      <span className="step-label">
-                        {" "}
-                        {t("01 / HOW HARD IS THIS RIDE?")}{" "}
-                      </span>
-                      <h3>{t("The shape of your ride")}</h3>
-                    </div>
-                    <span className="chart-legend">
-                      <span /> {t("Elevation")}{" "}
-                    </span>
-                  </div>
                   <Profile
                     key={route.name + route.smoothingM}
                     route={route}
@@ -1378,7 +1437,7 @@ export default function App() {
                   </p>
                   <p>
                     {t(
-                      "Only your language preference is saved in this browser; your route and ride settings are not stored.",
+                      "Your language preference is saved in this browser. If you enable “Remember my setup”, rider, bike, power and model preferences are also saved here and updated automatically. Turning it off removes that saved setup. GPX files, wind, temperature and altitude are never saved. Preview and production keep separate preferences; clearing site data removes them.",
                     )}
                   </p>
                   <p>

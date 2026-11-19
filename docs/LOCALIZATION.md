@@ -8,9 +8,11 @@ Open [the Czech preview](https://bike-science-pro-preview.roman-christov.workers
 
 Language selection order is the explicit `?lang=cs` or `?lang=en` link, the saved language, then the browser’s primary language. Czech browser settings choose Czech; unsupported languages fall back to English. Switching updates the URL without navigating. If local storage is blocked, the selector and explicit URL still work. The document language, page title and description update for accessibility and browser tools.
 
-Only `bike-science-language` is saved in browser local storage. GPX data and ride settings remain in memory. The privacy disclosure states this. No translation service, extra network request, cookie or account is introduced.
+`bike-science-language` is saved in browser local storage. The preview also supports an opt-in `bike-science-setup` record for rider/bike/power/model preferences, with English and Czech saved/error/removal messages. GPX data and visit conditions are not persisted. Language changes neither enable nor disable setup storage. See [local setup behavior](LOCAL_SETUP.md). No translation service, extra network request, cookie or account is introduced.
 
 Review terminology in particular: **udržitelný výkon** (sustainable power), **valivý odpor** (rolling resistance), **kadence** (cadence, displayed as ot/min), and **rychlostní limit modelu** (model speed ceiling, explicitly not a safe-speed recommendation). “Energetický výdej” remains separate from suggested food intake. Czech text preserves the English model’s limitations and uncertainty.
+
+The preview chart's **Výška / Energie** controls preserve the cursor and selected view when switching languages. Moving time, work so far/remaining, axis labels, slider announcements and the coasting explanation are localized. Energy is described as **práce na pedálech**, distinct from metabolic energy expenditure or suggested food intake. Seven additional formatting cases cover zero, sub-minute and rounded elapsed times.
 
 ## Implementation
 

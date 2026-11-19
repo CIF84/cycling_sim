@@ -24,7 +24,7 @@ At a speed ceiling we assume braking/reduced pedaling. Effective crank power is 
 
 ## Elevation / Energy chart
 
-The preview chart uses one distance cursor for both views. The worker records cumulative moving time and crank work at the start of every section. For a cursor fraction `f` within that section, the inspector adds `f × section_time` and `f × section_power × section_time / 1000` kJ. The section power is the actual modeled crank power, including zero-power coasting and any speed-ceiling reduction. Binary search finds the containing section; moving the cursor or switching views does not rerun the simulation. Rendered lines are sampled for display, while readouts use the full section data.
+The chart uses one distance cursor for both views. The worker records cumulative moving time and crank work at the start of every section. For a cursor fraction `f` within that section, the inspector adds `f × section_time` and `f × section_power × section_time / 1000` kJ. The section power is the actual modeled crank power, including zero-power coasting and any speed-ceiling reduction. Binary search finds the containing section; moving the cursor or switching views does not rerun the simulation. Rendered lines are sampled for display, while readouts use the full section data.
 
 Both views show estimated moving time from the start, excluding stops and missing travel between GPX tracks. Zero is displayed as `0 min`; positive durations below one minute use `<1 min`. Energy shows accumulated pedal work in kJ and work remaining. The curve is nondecreasing, stays flat during coasting, and ends at the existing briefing's crank-work total. Separate tracks remain separate drawing paths; their missing connections contribute neither time nor work.
 

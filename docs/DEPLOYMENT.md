@@ -27,10 +27,10 @@ On 14 October 2026, the owner completed Cloudflare OAuth and the separate previe
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `a3928998-5ad1-4a2c-8e44-4d1c2c07589b` (remembered setup and Elevation / Energy chart; awaiting owner review)
+- Version: `a3928998-5ad1-4a2c-8e44-4d1c2c07589b` (remembered setup and Elevation / Energy chart; owner approved, also published to production below)
 - The release passes 130 unit checks, strict TypeScript, the production build and all 42 desktop/mobile browser cases locally (23.9 s) and on the hosted preview (29.7 s), without retries. Security headers and all five public asset bytes match the tested build.
-- Preview source: `codex/energy-chart`, deployed from `e37f544894b62ebec01cf9483c7ad78d38e4cc33`. Storage opt-in/refresh/removal/reset, invalid/blocked storage, custom/preset gearing, GPX/condition exclusion and two-tab forgetting are covered alongside chart/model/import regression checks. The hosted Czech saved setup was manually checked through refresh and removal, and test inputs were cleared. [PR #2](https://github.com/CIF84/cycling_sim/pull/2) remains draft and unmerged.
-- The production deployment history was checked before and after preview deployment and remains on version `64b18568-b3d0-47a0-a292-4c5ed8bedfe1`. No production deployment or Spořilov change was made.
+- Preview source: `codex/energy-chart`, deployed from `e37f544894b62ebec01cf9483c7ad78d38e4cc33`. Storage opt-in/refresh/removal/reset, invalid/blocked storage, custom/preset gearing, GPX/condition exclusion and two-tab forgetting are covered alongside chart/model/import regression checks. The hosted Czech saved setup was manually checked through refresh and removal, and test inputs were cleared. [PR #2](https://github.com/CIF84/cycling_sim/pull/2) was subsequently approved and merged on 19 November 2026.
+- The preview deployment initially left production on version `64b18568-b3d0-47a0-a292-4c5ed8bedfe1`. The later owner-approved production update is recorded below. No Spořilov change was made.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 
@@ -46,12 +46,13 @@ Keep the local model limitations visible. For a broad launch, calibrate a few re
 
 ## Production public beta
 
-The owner approved publication on **16 October 2026**. [PR #1](https://github.com/CIF84/cycling_sim/pull/1) was merged into `main` as `d01d1470fb4765979a3fd0bb81cf7cb72b40a3ad`, preserving the reviewed beta commits. The verified build from that revision was published to the top-level production Worker with `pnpm exec wrangler deploy --env ''`.
+The initial owner-approved beta launched on **16 October 2026** through [PR #1](https://github.com/CIF84/cycling_sim/pull/1). On **19 November 2026**, the owner approved [PR #2](https://github.com/CIF84/cycling_sim/pull/2), which merged into `main` as `a44e3df157119b4a0febc094fe7f7be531b002dc`. Its tree exactly matches reviewed head `cb93776`. The verified build was published with `pnpm exec wrangler deploy --env ''`, adding the Elevation / Energy chart, GPX remainder fix and local setup preferences.
 
 - Production: [Bike Science Pro](https://bike-science-pro.roman-christov.workers.dev) · [Čeština](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) · [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en)
 - Worker: `bike-science-pro`
-- Version: `64b18568-b3d0-47a0-a292-4c5ed8bedfe1`
-- Verification: 102 unit checks, strict TypeScript and production build pass; all 26 production desktop/mobile browser checks pass without retries. HTTPS/security headers and all five public asset bytes match the verified build.
+- Version: `cca515d5-bfb5-40f6-929c-9acfedff1f87`
+- Previous production version: `64b18568-b3d0-47a0-a292-4c5ed8bedfe1` (initial beta, retained in deployment history for rollback).
+- Verification: 130 unit checks, strict TypeScript and production build pass; all 42 production desktop/mobile browser checks pass without retries (28.2 s). HTTPS/security headers and all five public asset bytes match the verified build. The live Czech demo shows both new controls.
 - The preview Worker remains separate and unchanged. No custom domain or Spořilov resource was configured or changed.
 
 For subsequent approved releases, use the intended `main` revision, run the checks above, then:

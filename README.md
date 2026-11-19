@@ -8,15 +8,15 @@ A browser-based cycling ride briefing: **How hard is this ride? How should I pre
 
 English and Czech are available from the header language selector. [Open in Czech](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) or [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en). Explicit links override the saved choice; otherwise the app uses the saved language, then the browser’s primary language (Czech or English fallback).
 
-Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Language is saved locally; the preview can also remember ride preferences when explicitly enabled. See [localization maintenance and review](docs/LOCALIZATION.md).
+Switching languages keeps the imported GPX, inputs and calculated results. It also updates errors, route-quality warnings, chart accessibility text and downloaded briefings. Decimal input accepts either comma or point; displayed numbers follow the selected language. Language is saved locally; ride preferences can also be remembered when explicitly enabled. See [localization maintenance and review](docs/LOCALIZATION.md).
 
-## Chart preview
+## Elevation / Energy chart
 
-The [separate review preview](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs) adds an **Elevation / Energy** switch within the existing chart. Both views keep the same distance slider and show estimated moving time to the selected point. Energy shows cumulative pedal work and work remaining in kJ; it does not prescribe food intake. English and Czech are supported. This change is on `codex/energy-chart` pending owner review; production remains on the approved launch version.
+The **Elevation / Energy** switch uses one chart area. Both views keep the same distance slider and show estimated moving time to the selected point. Energy shows cumulative pedal work and work remaining in kJ; it does not prescribe food intake. English and Czech are supported. Published with owner approval on 19 November 2026 through [PR #2](https://github.com/CIF84/cycling_sim/pull/2).
 
-## Remembered setup preview
+## Remembered setup
 
-The preview adds **Remember my setup on this device** / **Zapamatovat nastavení v tomto zařízení**, off by default. Enable it to save rider/bike/kit weights, sustainable power, riding position/drag, rolling resistance, drivetrain efficiency, speed ceiling, coasting preference, groupset or custom gearing, wheel circumference and preferred cadence. Valid edits save automatically; refresh restores them. Review power and conditions for each ride.
+**Remember my setup on this device** / **Zapamatovat nastavení v tomto zařízení** is off by default. Enable it to save rider/bike/kit weights, sustainable power, riding position/drag, rolling resistance, drivetrain efficiency, speed ceiling, coasting preference, groupset or custom gearing, wheel circumference and preferred cadence. Valid edits save automatically; refresh restores them. Review power and conditions for each ride.
 
 GPX content, filenames, routes, smoothing, chart position, wind, temperature and air-density altitude are not saved. Every visit starts with the demo and default conditions. Turning the option off removes the saved setup without changing current inputs or language. **Reset ride inputs** restores defaults and, if remembering is enabled, saves those defaults.
 
@@ -67,7 +67,7 @@ Sustainable power is absolute crank power, not automatically derived from FTP or
 
 ## Cloudflare
 
-[Production public beta](https://bike-science-pro.roman-christov.workers.dev) launched on 16 October 2026 after owner approval and the merge of PR #1 into `main`. All 102 unit checks and 26 desktop/mobile browser checks against production pass. The [separate preview](https://bike-science-pro-preview.roman-christov.workers.dev) remains available for future review.
+[Production public beta](https://bike-science-pro.roman-christov.workers.dev) launched on 16 October 2026 and was updated on **19 November 2026** after owner approval and the merge of PR #2 into `main`. The release includes the Elevation / Energy chart and opt-in local setup preferences. All **130 unit checks** and **42 production desktop/mobile browser checks** pass. The [separate preview](https://bike-science-pro-preview.roman-christov.workers.dev) remains available for future review.
 
 [Deployment instructions](docs/DEPLOYMENT.md) cover an isolated `bike-science-pro-preview` Worker, the production Worker, verification and rollback. Workers static assets serve `dist`; no custom domain is configured. The Spořilov repository and deployment were left untouched. Its existing project uses Pages; this project uses Workers static assets as explicitly requested.
 

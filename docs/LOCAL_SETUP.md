@@ -1,6 +1,6 @@
 # Remember my setup
 
-Preview feature, 19 November 2026. Production publication requires owner review.
+Published to production on 19 November 2026 after owner approval and the merge of [PR #2](https://github.com/CIF84/cycling_sim/pull/2).
 
 ## Behavior
 

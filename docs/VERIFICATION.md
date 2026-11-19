@@ -2,7 +2,7 @@
 
 ## Final result
 
-The local fuel/water planner is being verified for preview on `codex/fuel-water-plan`. It adds an optional plan with separate expenditure/intake, time-based food windows and manual bottle refills. Production remains on the approved PR #3 release below.
+The local fuel/water planner is verified and deployed to the separate preview from `codex/fuel-water-plan`, held in [draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) for owner review. It adds an optional plan with separate expenditure/intake, time-based food windows and manual bottle refills. Production remains on the approved PR #3 release below.
 
 The owner approved [PR #3](https://github.com/CIF84/cycling_sim/pull/3) on 19 November 2026. Its chart-linked climbs are merged into `main` and published to production as version `000bf4d7-8d28-41ce-bc5c-f4f482decdff`. The dated entries below retain preview and earlier release history.
 
@@ -139,6 +139,8 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - Bottle count/volume and reserve are checked for every leg between manual full-refill stops. Late refills do not hide earlier shortages. Both chart views share fuel-window/refill markers, cursor intake/water readouts, and climb work-per-kilometre context. The briefing export includes quantities, timing, stops, warnings and sources in English/Czech.
 - **156 unit checks**, strict TypeScript and production build pass. Twenty new independent checks cover time/distance inversion, intake and fluid arithmetic, partial windows, coasting, reserve/exhaustion boundaries, late/unsorted stops, invalid inputs, 24 h bounds and translated export content.
 - **62 desktop/mobile browser cases pass** locally without retries (30.3 s). Coverage includes the planner, both chart views, shortages, chart/manual stops, duplicates, downloads, updates, errors, refresh exclusion, same-name imports, smoothing, zero-work routes, localization and 320 px accessibility. Axe reports zero detected violations with planner details expanded. Desktop/mobile screenshots and the local Czech refill flow were inspected. A final small focus fix is also checked in the targeted planner suite.
+- All **62 browser cases also pass on the hosted preview** after the final focus fix. All five public assets match the local build byte for byte; configured security headers are present. The live Czech plan, manual 15 km refill, post-refill bottle reading and Energy markers were also inspected in the app browser.
+- Preview version **`4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`** was deployed from `ddb30a3`. [Draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) remains unmerged. Production deployment history still shows **`000bf4d7-8d28-41ce-bc5c-f4f482decdff`**; no production deployment was performed.
 - The GPX/model worker bundle remains unchanged. All plan state stays in memory; Remember my setup does not persist it. The planner's detailed assumptions and primary references are in [FUELING.md](FUELING.md).
 
 ## Remaining limitations

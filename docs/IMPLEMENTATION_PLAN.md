@@ -45,3 +45,5 @@ Baseline: approved PR #3 production, 136 unit checks and 50 production browser c
 2. Add pure local planning calculations for intake totals, 20-minute fuel windows, distance/time mapping and bottle coverage between manual full-refill stops. No food catalog, glycogen prediction, weather service or persistence of routes/stops.
 3. Connect optional planning markers/readouts to both chart views, preserve climb inspection, add accessible English/Czech controls and include the plan in the downloaded briefing.
 4. Verify independent arithmetic, boundaries, coasting, invalid inputs, track breaks, update/reset behavior, desktop/mobile accessibility and local-only operation. Deploy and verify preview; leave production unchanged.
+
+Completed: 156 unit checks, strict TypeScript, production build and all 62 desktop/mobile browser cases pass locally and on the hosted preview. The live Czech plan/refill/chart flow was also inspected manually. Preview version `4260a839-3b02-4b8e-81e9-0baf4dfeeeeb` is held in [draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) for owner review; production remains on the approved PR #3 release.

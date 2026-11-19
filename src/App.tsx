@@ -1,7 +1,7 @@
 import { useI18n } from "./i18n/context";
-import { decimalText, isLocale, parseDecimal } from "./i18n/format";
+import { isLocale } from "./i18n/format";
 import { message, type Message } from "./model/messages";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bike,
   ArrowUpRight,
@@ -37,60 +37,16 @@ import { findClimbs } from "./model/climbs";
 import { GroupsetSelect } from "./components/GroupsetSelect";
 import { DEFAULT_GROUPSET_ID, applyGroupset, sameTeeth } from "./model/gearing";
 import { useRememberedSetup } from "./settings/useRememberedSetup";
+import { NumberField } from "./components/NumberField";
+import { FuelPlanner } from "./components/FuelPlanner";
+import {
+  buildFuelPlan,
+  fuelError,
+  DEFAULT_FUEL_SETTINGS,
+  type RefillStop,
+} from "./model/fueling";
+import { fuelBrief } from "./i18n/fuelBrief";
 import "./style.css";
-function NumberField({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  unit,
-  help,
-}: {
-  label: string;
-  value: number;
-  onChange: (n: number) => void;
-  min: number;
-  max: number;
-  unit: string;
-  help?: string;
-}) {
-  const id = useId();
-  const { locale } = useI18n();
-  const [text, setText] = useState(() => decimalText(locale, value));
-  const previousLocale = useRef(locale);
-  useEffect(() => {
-    const changed = previousLocale.current !== locale;
-    setText((current) =>
-      (changed && Number.isFinite(value)) ||
-      !Object.is(parseDecimal(current), value)
-        ? decimalText(locale, value)
-        : current,
-    );
-    previousLocale.current = locale;
-  }, [value, locale]);
-  return (
-    <div className="field">
-      <label htmlFor={id}>{label}</label>
-      <div className="number-wrap">
-        <input
-          id={id}
-          type="text"
-          inputMode={min < 0 ? "text" : "decimal"}
-          value={text}
-          aria-invalid={!Number.isFinite(value) || value < min || value > max}
-          onChange={(e) => {
-            setText(e.target.value);
-            onChange(parseDecimal(e.target.value));
-          }}
-          aria-describedby={help ? `${id}-help` : undefined}
-        />
-        <span>{unit}</span>
-      </div>
-      {help && <small id={`${id}-help`}>{help}</small>}
-    </div>
-  );
-}
 function TeethField({
   label,
   value,
@@ -149,6 +105,17 @@ export default function App() {
     ),
     [smoothingM, setSmoothingM] = useState(100);
   const [routeRevision, setRouteRevision] = useState(0);
+  const [chartFraction, setChartFraction] = useState(0.32);
+  const [fuelEnabled, setFuelEnabled] = useState(false);
+  const [fuelSettings, setFuelSettings] = useState({
+    ...DEFAULT_FUEL_SETTINGS,
+  });
+  const [refillStops, setRefillStops] = useState<RefillStop[]>([]);
+  const refillId = useRef(0);
+  useEffect(() => {
+    setChartFraction(0.32);
+    setRefillStops([]);
+  }, [routeRevision, smoothingM]);
   const [selectedClimbId, setSelectedClimbId] = useState<string | null>(null);
   const chartRef = useRef<HTMLElement>(null);
   const [route, setRoute] = useState<Route>(demoRoute),
@@ -235,6 +202,41 @@ export default function App() {
     () => (ride ? findClimbs(route, ride) : []),
     [route, ride],
   );
+  const planError = ride
+    ? fuelError(route, ride, fuelSettings, refillStops)
+    : null;
+  const fuelPlan = useMemo(
+    () =>
+      ride && fuelEnabled && !planError
+        ? buildFuelPlan(route, ride, fuelSettings, refillStops)
+        : null,
+    [route, ride, fuelEnabled, fuelSettings, refillStops, planError],
+  );
+  function addRefill(distanceM: number) {
+    if (
+      !Number.isFinite(distanceM) ||
+      distanceM <= 0 ||
+      distanceM >= route.distanceM ||
+      refillStops.length >= 8 ||
+      refillStops.some((s) => Math.abs(s.distanceM - distanceM) < 10)
+    )
+      return false;
+    setRefillStops((stops) => [
+      ...stops,
+      { id: ++refillId.current, distanceM },
+    ]);
+    return true;
+  }
+  function inspectPlan(distanceM: number) {
+    setChartFraction(distanceM / route.distanceM);
+    chartRef.current?.focus({ preventScroll: true });
+    chartRef.current?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+      block: "start",
+    });
+  }
   const worst = demanding[0];
   const selectedClimb = demanding.find((g) => g.id === selectedClimbId) ?? null;
   useEffect(() => {
@@ -312,6 +314,7 @@ export default function App() {
       `${t("Crank work")}: ${number(Math.round(ride.workKj))} kJ`,
       "",
       ...route.warnings.map(formatMessage),
+      ...fuelBrief(locale, ride, fuelPlan, fuelEnabled),
       "",
       t(
         "Steady-state planning estimate, not a finish-time promise. No stops, traffic, corners, acceleration, crosswind or fatigue model. Descent ceiling is a modelling assumption, not a recommended speed.",
@@ -971,6 +974,10 @@ export default function App() {
                   aria-label={t("Ride chart")}
                 >
                   <Profile
+                    fraction={chartFraction}
+                    onFractionChange={setChartFraction}
+                    plan={fuelPlan}
+                    onAddRefill={addRefill}
                     key={`${routeRevision}:${route.smoothingM}`}
                     route={route}
                     ride={ride}
@@ -1137,17 +1144,30 @@ export default function App() {
                     </p>
                   )}
                 </section>
+                <FuelPlanner
+                  key={`plan:${routeRevision}:${route.smoothingM}`}
+                  route={route}
+                  ride={ride}
+                  enabled={fuelEnabled}
+                  onEnable={setFuelEnabled}
+                  settings={fuelSettings}
+                  onSettings={setFuelSettings}
+                  stops={refillStops}
+                  plan={fuelPlan}
+                  error={planError}
+                  onAddStop={addRefill}
+                  onRemoveStop={(id) =>
+                    setRefillStops((stops) => stops.filter((s) => s.id !== id))
+                  }
+                  onInspect={inspectPlan}
+                />
                 <section id="prepare" className="prepare-section">
                   <div className="card-heading">
                     <div>
-                      <span className="step-label">
-                        {" "}
-                        {t("02 / HOW SHOULD I PREPARE?")}{" "}
-                      </span>
-                      <h3>{t("A few things to get right")}</h3>
+                      <h3>{t("Gearing & cadence")}</h3>
                     </div>
                   </div>
-                  <div className="prep-grid">
+                  <div className="prep-grid prep-gearing-only">
                     <article className="prep-card">
                       <span className="prep-icon">
                         <Bike size={22} />
@@ -1184,44 +1204,6 @@ export default function App() {
                             ),
                           },
                         )}
-                      </div>
-                    </article>
-                    <article className="prep-card">
-                      <span className="prep-icon">
-                        <Gauge size={22} />
-                      </span>
-                      <h4>{t("Budget effort, not just distance")}</h4>
-                      <p>
-                        {t(
-                          "{work} kJ of modeled crank work. At an illustrative 18–25% gross efficiency, that corresponds to roughly {low}–{high} kcal during pedaling.",
-                          {
-                            work: Math.round(ride.workKj),
-                            low: Math.round(ride.kcalLow / 50) * 50,
-                            high: Math.round(ride.kcalHigh / 50) * 50,
-                          },
-                        )}
-                      </p>
-                      <div className="prep-foot">
-                        {" "}
-                        {t("Energy expenditure ≠ suggested food intake")}{" "}
-                      </div>
-                    </article>
-                    <article className="prep-card">
-                      <span className="prep-icon">
-                        <Clock3 size={22} />
-                      </span>
-                      <h4>{t("Make a practical ride plan")}</h4>
-                      <p>
-                        {t(
-                          "Plan food, water and refill stops around {time} of moving time. Bring familiar snacks and check water access. Heat, sweat rate and gut tolerance need your own experience.",
-                          { time: time(ride.timeS) },
-                        )}
-                      </p>
-                      <div className="prep-foot">
-                        {" "}
-                        {t(
-                          "No personalized fuel or hydration prescription",
-                        )}{" "}
                       </div>
                     </article>
                   </div>
@@ -1408,7 +1390,7 @@ export default function App() {
                   <p>
                     <strong>{t("Energy.")}</strong>{" "}
                     {t(
-                      "The displayed range converts modeled crank work using an illustrative 18–25% gross efficiency. It omits off-bike and coasting metabolism and is particularly uncertain at very low power. It is not a calorie intake target. Sweat, sodium and carbohydrate prescriptions are deferred because they need individual evidence.",
+                      "The expenditure range converts crank work using an illustrative 18–25% gross efficiency. It omits resting and coasting metabolism and is uncertain at low power. Intake is a separate, editable carbohydrate plan based on duration guidance; sweat, sodium and glycogen are not modeled.",
                     )}{" "}
                   </p>
                   <p>

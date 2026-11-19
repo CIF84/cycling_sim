@@ -36,3 +36,12 @@ Baseline: PR #2 is published on production; 130 unit checks and 42 production br
 3. Verify keyboard/touch, numeric updates, clearing, GPX replacement (including identical filenames), boundaries, both languages and narrow layouts. Deploy only the separate preview; production requires a later owner decision.
 
 Completed: 136 unit checks, strict TypeScript, production build and all 50 desktop/mobile cases pass locally and on the hosted preview. Climb selection was also checked manually in the Czech preview. The owner subsequently approved PR #3, which is merged and published to production. All 50 production browser cases pass; see the deployment and verification records.
+
+## Local fuel and water plan — 19 November 2026
+
+Baseline: approved PR #3 production, 136 unit checks and 50 production browser cases passing. Food/water preparation is explanatory only.
+
+1. Keep expenditure, mechanical work and carbohydrate intake distinct. Use AIS duration guidance with editable targets; fluid rate is an explicit planning assumption, never inferred from watts or temperature. Document primary sources and practical timing choices.
+2. Add pure local planning calculations for intake totals, 20-minute fuel windows, distance/time mapping and bottle coverage between manual full-refill stops. No food catalog, glycogen prediction, weather service or persistence of routes/stops.
+3. Connect optional planning markers/readouts to both chart views, preserve climb inspection, add accessible English/Czech controls and include the plan in the downloaded briefing.
+4. Verify independent arithmetic, boundaries, coasting, invalid inputs, track breaks, update/reset behavior, desktop/mobile accessibility and local-only operation. Deploy and verify preview; leave production unchanged.

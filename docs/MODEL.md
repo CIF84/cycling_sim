@@ -38,6 +38,12 @@ Selecting a card highlights its full distance interval in both chart views witho
 
 Selection uses a route-geometry identifier so re-ranking after power changes does not select another climb. It clears when the selected section disappears, a new route is imported (even with the same filename), smoothing changes, inputs reset or simulation fails. Selection is never stored on the device. No additional metabolic or fueling recommendation is inferred from climb work.
 
+## Fuel and water planning · preview
+
+A separate optional planning module converts a chosen carbohydrate rate and fluid-rate assumption into quantities over modeled moving time. It does not convert energy expenditure into required intake, predict absorption or glycogen, or infer sweat from watts/temperature. It checks bottle capacity and reserve separately for each leg between user-entered full-refill stops. Twenty-minute food windows and all refill/shortage times are mapped onto the existing chart using section travel time. Selected climbs explain work concentration per kilometre, not physiological power or hunger peaks.
+
+See [FUELING.md](FUELING.md) for dated AIS/NATA/FDA sources, precise defaults, assumptions, equations, local-only state, export behavior and limitations. Simulation equations and the worker bundle are unchanged. This addition is pending owner review on preview.
+
 ## Sources and their scope
 
 - [Martin, Milliken, Cobb, McFadden & Coggan (1998), Validation of a Mathematical Model for Road Cycling Power](https://pubmed.ncbi.nlm.nih.gov/28121252/): experimentally evaluated power-demand framework; includes effects omitted here, so its reported error is not this app’s accuracy.

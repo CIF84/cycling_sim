@@ -1,5 +1,7 @@
 // English source messages are stable catalog keys. Keep placeholders in both languages.
+import { fuelCs } from "./fuelCs";
 export const cs = {
+  ...fuelCs,
   Language: "Jazyk",
   "Ride with a plan": "Na kolo s plánem",
   "Plan your ride with local GPX analysis, cycling physics, gearing insights and controlled comparisons.":

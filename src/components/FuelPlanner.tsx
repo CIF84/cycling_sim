@@ -9,6 +9,7 @@ import type {
   RefillStop,
 } from "../model/fueling";
 import { NumberField } from "./NumberField";
+import { ChevronDown, Download, ChartNoAxesCombined, Plus } from "lucide-react";
 
 export function FuelPlanner({
   route,
@@ -23,6 +24,7 @@ export function FuelPlanner({
   onAddStop,
   onRemoveStop,
   onInspect,
+  onExport,
 }: {
   route: Route;
   ride: Ride;
@@ -36,6 +38,7 @@ export function FuelPlanner({
   onAddStop: (distanceM: number) => boolean;
   onRemoveStop: (id: number) => void;
   onInspect: (distanceM: number) => void;
+  onExport: () => void;
 }) {
   const { t, number, locale } = useI18n();
   const [stopKm, setStopKm] = useState(NaN);
@@ -51,6 +54,7 @@ export function FuelPlanner({
     <section
       className="card fuel-planner"
       id="fuel-plan"
+      tabIndex={-1}
       aria-labelledby="fuel-title"
     >
       <div className="card-heading fuel-heading">
@@ -60,7 +64,7 @@ export function FuelPlanner({
         </div>
         <button
           type="button"
-          className="fuel-toggle"
+          className={`fuel-toggle button ${enabled ? "button-secondary" : "button-primary"}`}
           aria-expanded={enabled}
           aria-controls={enabled ? "fuel-details" : undefined}
           onClick={() => onEnable(!enabled)}
@@ -77,7 +81,7 @@ export function FuelPlanner({
           </p>
         )}
         <div className="fuel-totals" aria-label={t("Energy and supplies")}>
-          <div>
+          <div className="supply-expenditure">
             <span>{t("Estimated expenditure")}</span>
             <strong data-testid="fuel-expenditure">
               {number(Math.round(ride.kcalLow / 50) * 50)}–
@@ -87,7 +91,7 @@ export function FuelPlanner({
           </div>
           {enabled && plan && (
             <>
-              <div>
+              <div className="supply-fuel">
                 <span>{t("Planned carbohydrate intake")}</span>
                 <strong data-testid="fuel-carbs">
                   {number(Math.round(plan.carbsG))} <small>g</small>
@@ -97,7 +101,7 @@ export function FuelPlanner({
                   {number(plan.carbGph)} g/h
                 </p>
               </div>
-              <div>
+              <div className="supply-water">
                 <span>{t("Planned fluid")}</span>
                 <strong data-testid="fuel-fluid">
                   {number(plan.fluidMl / 1000, 1)} <small>l</small>
@@ -268,6 +272,7 @@ export function FuelPlanner({
                 />
                 <button
                   ref={addButton}
+                  className="button button-water"
                   type="button"
                   onClick={() => {
                     const added = onAddStop(stopKm * 1000);
@@ -275,6 +280,7 @@ export function FuelPlanner({
                     if (added) setStopKm(NaN);
                   }}
                 >
+                  <Plus size={17} aria-hidden="true" />
                   {t("Add refill stop")}
                 </button>
               </div>
@@ -337,7 +343,12 @@ export function FuelPlanner({
             {plan && plan.windows.length > 0 && (
               <details className="fuel-timing">
                 <summary>
-                  {t("Fuel timing along the route")} <span>+</span>
+                  {t("Fuel timing along the route")}{" "}
+                  <ChevronDown
+                    className="disclosure-chevron"
+                    size={17}
+                    aria-hidden="true"
+                  />
                 </summary>
                 <p className="caption">
                   {t(
@@ -366,7 +377,12 @@ export function FuelPlanner({
             )}
             <details className="fuel-assumptions">
               <summary>
-                {t("Reserve, guidance & assumptions")} <span>+</span>
+                {t("Reserve, guidance & assumptions")}{" "}
+                <ChevronDown
+                  className="disclosure-chevron"
+                  size={17}
+                  aria-hidden="true"
+                />
               </summary>
               <NumberField
                 label={t("Water reserve")}
@@ -411,6 +427,33 @@ export function FuelPlanner({
                 </a>
               </p>
             </details>
+            <div className="plan-actions">
+              <p>
+                {t(
+                  "Take the plan with you. Your briefing includes quantities, timing and refill stops.",
+                )}
+              </p>
+              <div>
+                <button
+                  className="button button-primary"
+                  type="button"
+                  onClick={onExport}
+                  disabled={!plan}
+                >
+                  <Download size={18} aria-hidden="true" />
+                  {t("Save plan & briefing")}
+                </button>
+                <button
+                  className="button button-secondary"
+                  type="button"
+                  disabled={!plan}
+                  onClick={() => onInspect(plan?.windows[0]?.distanceM ?? 0)}
+                >
+                  <ChartNoAxesCombined size={18} aria-hidden="true" />
+                  {t("View timing on chart")}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

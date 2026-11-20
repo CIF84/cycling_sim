@@ -47,3 +47,12 @@ Baseline: approved PR #3 production, 136 unit checks and 50 production browser c
 4. Verify independent arithmetic, boundaries, coasting, invalid inputs, track breaks, update/reset behavior, desktop/mobile accessibility and local-only operation. Deploy and verify preview; leave production unchanged.
 
 Completed: 156 unit checks, strict TypeScript, production build and all 62 desktop/mobile browser cases pass locally and on the hosted preview. The live Czech plan/refill/chart flow was also inspected manually. Preview version `4260a839-3b02-4b8e-81e9-0baf4dfeeeeb` was reviewed by the owner, who approved [PR #4](https://github.com/CIF84/cycling_sim/pull/4) for merge and publication on 20 November 2026. Production version `e398b6db-22e8-489c-82c8-4127610d5c7a` passes all 62 browser cases; see the deployment and verification records.
+
+## UX hierarchy review — 20 November 2026
+
+Baseline: approved PR #4 production. Review and implementation decisions are in [UX_REVIEW.md](UX_REVIEW.md).
+
+1. Audit the desktop/mobile route → setup → chart → preparation → download journey in English/Czech.
+2. Add a clear action hierarchy, a broader semantic palette, preparation navigation and touch-sized labeled controls. Keep the model and privacy behavior unchanged.
+3. Exercise new navigation and export paths, error recovery, narrow layouts and keyboard/accessibility behavior alongside the existing suite.
+4. Deploy only the separate preview for owner review; keep production on PR #4.

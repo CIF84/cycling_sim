@@ -1,0 +1,29 @@
+# UX review · 20 November 2026
+
+Baseline: production PR #4 (`b840250` documentation head), 156 unit checks and 62 desktop/mobile browser cases passing. This is a heuristic/task review of the existing app, not a user study. Scope: demo and GPX entry, setup, chart/climb inspection, food/water planning, comparison, export and error recovery in English/Czech.
+
+## Findings and implementation
+
+| Finding                                                                                                          | Impact                                                                                    | Implemented correction                                                                                                                                            |
+| ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Food/water planning is absent from the main navigation; mobile has no section navigation.                        | New capability is easy to miss and requires a long scroll past setup.                     | Add a preparation link on desktop and compact sticky setup/ride/food/comparison shortcuts on small screens. Preserve native anchor navigation and keyboard focus. |
+| Upload, hide plan, build plan and add water all use the same dark fill.                                          | Routine actions compete with the next useful step.                                        | Explicit primary, secondary and quiet action styles. Warm primary actions; blue water actions; subdued reset/remove/hide controls.                                |
+| Save briefing is small and loses its visible label on phones; there is no export action after building the plan. | The main takeaway is hard to discover when it is most useful.                             | Keep labeled, touch-sized export controls and add a plan-inclusive download at the end of planning.                                                               |
+| Nearly all surfaces and chart modes are green.                                                                   | Content types and chart modes look interchangeable.                                       | Neutral paper/ink foundation, green elevation, amber work/food, blue water. Retain labels, units, shapes and selected-state indicators so color is supplementary. |
+| Save-setup preference precedes route and rider inputs; automatic recalculation is implicit.                      | First-time visitors see housekeeping before the task and may look for a calculate button. | Move the opt-in after setup fields and explain automatic updates near the setup heading.                                                                          |
+| Disclosure plus signs remain unchanged when open; some controls have small targets and weak hover feedback.      | Controls do not consistently communicate state or affordance.                             | State-aware chevrons, visible focus/hover, larger input/button/slider targets and unchanged reduced-motion behavior.                                              |
+
+## Verification plan
+
+Keep the simulation, sources, storage contract and plan arithmetic unchanged. Check keyboard navigation and anchor focus, unavailable-result shortcuts, plan export, both languages, 320/390 px phones and desktop layouts. Run existing numerical/browser checks, accessibility checks and the production build. Inspect screenshots and the live app, then deploy only the separate preview and leave production for owner approval.
+
+## Local results
+
+- All 156 unit checks, strict TypeScript and the production build pass. All 68 desktop/mobile browser cases pass without retries (35.9 s), including six new cases for keyboard/anchor focus, unavailable results, plan export, invalid plans and responsive navigation.
+- Both languages pass automated accessibility checks in the exercised states, including 320 px width. New primary/secondary actions, inputs and the chart slider have at least 44 px target height. The plan download stays unavailable for invalid plan inputs; the existing general briefing download still explains unavailable planning.
+- Inspected desktop, 390 px phone and 320 px screenshots. Narrow metric labels and navigation icons retain alignment when text wraps. The local Czech navigation → build plan → timing chart flow was also checked manually.
+- No new dependencies or external requests. The simulation worker remains `worker-Dx0otFHa.js`; the palette does not change equations, quantities, persistence or source assumptions.
+
+## Review limits and next evidence
+
+This review improves discoverability and interaction consistency; it does not establish that new riders understand every model assumption. Watch a few independent riders import a route, adjust power, inspect a climb, make a plan and download it. Pay particular attention to expenditure versus intake and whether manual refills are understood as known stops. Actual Safari/phone review remains useful beyond Chromium device emulation. No accounts, analytics or remote route storage were added for this work.

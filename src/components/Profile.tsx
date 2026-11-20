@@ -3,6 +3,7 @@ import { formatElapsedTime } from "../i18n/format";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Route, Ride } from "../model/types";
 import { energyProfile, inspectProfile } from "../model/profile";
+import { inspectFuelPlan, type FuelPlan } from "../model/fueling";
 import type { Climb } from "../model/climbs";
 
 export function Profile({
@@ -11,7 +12,15 @@ export function Profile({
   selectedClimb,
   climbNumber,
   onClearClimb,
+  fraction,
+  onFractionChange: setFraction,
+  plan,
+  onAddRefill,
 }: {
+  fraction: number;
+  onFractionChange: (fraction: number) => void;
+  plan: FuelPlan | null;
+  onAddRefill: (distanceM: number) => boolean;
   route: Route;
   ride: Ride;
   selectedClimb: Climb | null;
@@ -23,7 +32,8 @@ export function Profile({
   const id = useId();
   const [width, setWidth] = useState(900);
   const [view, setView] = useState<"elevation" | "energy">("elevation");
-  const [fraction, setFraction] = useState(0.32);
+  const [refillError, setRefillError] = useState(false);
+  useEffect(() => setRefillError(false), [fraction]);
   useEffect(() => {
     if (selectedClimb) setFraction(selectedClimb.start / route.distanceM);
   }, [selectedClimb?.id, selectedClimb?.start, route.distanceM]);
@@ -37,6 +47,10 @@ export function Profile({
 
   const point = inspectProfile(route, ride, fraction);
   const elapsed = formatElapsedTime(locale, point.movingTimeS);
+  const planned = plan ? inspectFuelPlan(plan, point.movingTimeS) : null;
+  const fuelWindow = plan?.windows.find(
+    (w) => point.movingTimeS >= w.startS && point.movingTimeS < w.endS,
+  );
   const energy = view === "energy";
   const series = useMemo(() => {
     const elevation = Array.from({ length: route.trackCount }, (_, track) =>
@@ -165,6 +179,27 @@ export function Profile({
                 </dd>
               </div>
             </dl>
+            {plan && (
+              <p className="climb-fuel-context">
+                {t(
+                  "Work concentration: {work} kJ/km. Planned intake by this climb’s start: {grams} g from the ride’s start. Keep intake spread over time.",
+                  {
+                    work: Math.round(
+                      selectedClimb.workKj / (selectedClimb.distance / 1000),
+                    ),
+                    grams: Math.round(
+                      (plan.carbGph *
+                        inspectProfile(
+                          route,
+                          ride,
+                          selectedClimb.start / route.distanceM,
+                        ).movingTimeS) /
+                        3600,
+                    ),
+                  },
+                )}
+              </p>
+            )}
             <p>
               {t(
                 "Climb totals at your current settings. Cadence uses the closest available gear while pedaling; work is not a food intake target.",
@@ -324,6 +359,39 @@ export function Profile({
               ))}
             </g>
           )}
+          {plan && (
+            <g aria-hidden="true" data-testid="plan-markers">
+              {plan.windows.map((w, i) => (
+                <g
+                  key={w.startS}
+                  onClick={() => setFraction(w.distanceM / route.distanceM)}
+                >
+                  <circle cx={x(w.distanceM)} cy="22" r="5" fill="#9a5417" />
+                  <title>{t("Fuel window {number}", { number: i + 1 })}</title>
+                </g>
+              ))}
+              {plan.stops.map((stop, i) => (
+                <g
+                  key={stop.id}
+                  onClick={() => setFraction(stop.distanceM / route.distanceM)}
+                >
+                  <line
+                    x1={x(stop.distanceM)}
+                    x2={x(stop.distanceM)}
+                    y1="34"
+                    y2="200"
+                    stroke="#286b86"
+                    strokeDasharray="2 5"
+                  />
+                  <path
+                    d={`M ${x(stop.distanceM)} 27 l 6 7 l -6 7 l -6 -7 Z`}
+                    fill="#286b86"
+                  />
+                  <title>{t("Refill {number}", { number: i + 1 })}</title>
+                </g>
+              ))}
+            </g>
+          )}
           {[0, 0.25, 0.5, 0.75, 1].map((tick) => (
             <text
               key={tick}
@@ -391,6 +459,87 @@ export function Profile({
               )
             : t("Moving time excludes stops.")}
         </p>
+        {plan && planned && (
+          <div className="profile-plan" data-testid="profile-plan">
+            <div className="plan-legend">
+              <span>
+                <i className="fuel-dot" />
+                {t("Fuel windows")}
+              </span>
+              <span>
+                <i className="water-diamond" />
+                {t("Water refills")}
+              </span>
+              <a href="#fuel-plan">{t("Edit plan")}</a>
+            </div>
+            <div className="profile-plan-stats">
+              <span>
+                {t("Expenditure to here")}
+                <strong>
+                  {number(Math.round(point.workKj / (4.184 * 0.25) / 10) * 10)}–
+                  {number(Math.round(point.workKj / (4.184 * 0.18) / 10) * 10)}{" "}
+                  kcal
+                </strong>
+              </span>
+              <span>
+                {t("Carb target by here")}
+                <strong data-testid="profile-carbs">
+                  {number(Math.round(planned.carbsG))} g · ≈{" "}
+                  {number(Math.round((planned.carbsG * 4) / 10) * 10)} kcal
+                </strong>
+              </span>
+              <span>
+                {t("Water in bottles")}
+                <strong data-testid="profile-water">
+                  {number(planned.waterMl / 1000, 1)} l
+                </strong>
+              </span>
+            </div>
+            {planned.shortfallMl > 0 && (
+              <p className="fuel-warning">
+                {t(
+                  "This point is beyond your planned bottle coverage. Add an earlier refill or more capacity.",
+                )}
+              </p>
+            )}
+            {fuelWindow && (
+              <p className="caption">
+                {t(
+                  "Current fuel window: {start}–{end} · spread about {grams} g through this interval.",
+                  {
+                    start: formatElapsedTime(locale, fuelWindow.startS),
+                    end: formatElapsedTime(locale, fuelWindow.endS),
+                    grams: Math.round(fuelWindow.carbsG),
+                  },
+                )}
+              </p>
+            )}
+            <p className="caption">
+              {t(
+                "Climbs concentrate work per kilometre. The model holds pedaling power steady, so a steeper Energy curve is not a power spike or a cue to eat a large dose. Keep intake spread over time.",
+              )}
+            </p>
+            <button
+              type="button"
+              className="chart-refill"
+              onClick={() => setRefillError(!onAddRefill(point.distanceM))}
+            >
+              {t("Add water refill here")}
+            </button>
+            {refillError && (
+              <p className="fuel-warning" role="alert">
+                {t(
+                  "Choose a point inside the route, at least 10 m from another stop. Maximum eight stops.",
+                )}
+              </p>
+            )}
+            <p className="caption">
+              {t(
+                "At a refill, bottles show the level after filling. All timing uses moving time; allow extra for stops and delays.",
+              )}
+            </p>
+          </div>
+        )}
         {energy ? (
           <p className="caption energy-explanation">
             {t(

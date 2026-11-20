@@ -2,6 +2,8 @@
 
 ## Final result
 
+The local fuel/water planner is verified and deployed to the separate preview from `codex/fuel-water-plan`, held in [draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) for owner review. It adds an optional plan with separate expenditure/intake, time-based food windows and manual bottle refills. Production remains on the approved PR #3 release below.
+
 The owner approved [PR #3](https://github.com/CIF84/cycling_sim/pull/3) on 19 November 2026. Its chart-linked climbs are merged into `main` and published to production as version `000bf4d7-8d28-41ce-bc5c-f4f482decdff`. The dated entries below retain preview and earlier release history.
 
 The owner approved PR #2 on 19 November 2026. Its Elevation / Energy chart, GPX remainder correction and opt-in remembered setup are merged into `main` and published to production as version `cca515d5-bfb5-40f6-929c-9acfedff1f87`. The dated entries below retain the earlier preview/launch history.
@@ -131,10 +133,20 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - All five production assets match the tested build byte for byte; configured security headers are present. Preview remains independently on `8e4248ed-0c6e-42dc-8d56-df817470d775`. No custom domain, backend or Spořilov change.
 - Release documentation commits after publication do not alter the deployed assets.
 
+## Local fuel and water plan · 19 November 2026
+
+- Added opt-in local carbohydrate quantities (grams and approximate food kcal), displayed separately from pedaling expenditure. Rates and 20-minute windows are disclosed planning choices, grounded in AIS guidance rather than derived from simulated calories. Fluid rate is explicitly an assumption, not a sweat estimate. No grocery list, glycogen model, prescribed calorie replacement or new physics was introduced.
+- Bottle count/volume and reserve are checked for every leg between manual full-refill stops. Late refills do not hide earlier shortages. Both chart views share fuel-window/refill markers, cursor intake/water readouts, and climb work-per-kilometre context. The briefing export includes quantities, timing, stops, warnings and sources in English/Czech.
+- **156 unit checks**, strict TypeScript and production build pass. Twenty new independent checks cover time/distance inversion, intake and fluid arithmetic, partial windows, coasting, reserve/exhaustion boundaries, late/unsorted stops, invalid inputs, 24 h bounds and translated export content.
+- **62 desktop/mobile browser cases pass** locally without retries (30.3 s). Coverage includes the planner, both chart views, shortages, chart/manual stops, duplicates, downloads, updates, errors, refresh exclusion, same-name imports, smoothing, zero-work routes, localization and 320 px accessibility. Axe reports zero detected violations with planner details expanded. Desktop/mobile screenshots and the local Czech refill flow were inspected. A final small focus fix is also checked in the targeted planner suite.
+- All **62 browser cases also pass on the hosted preview** after the final focus fix. All five public assets match the local build byte for byte; configured security headers are present. The live Czech plan, manual 15 km refill, post-refill bottle reading and Energy markers were also inspected in the app browser.
+- Preview version **`4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`** was deployed from `ddb30a3`. [Draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) remains unmerged. Production deployment history still shows **`000bf4d7-8d28-41ce-bc5c-f4f482decdff`**; no production deployment was performed.
+- The GPX/model worker bundle remains unchanged. All plan state stays in memory; Remember my setup does not persist it. The planner's detailed assumptions and primary references are in [FUELING.md](FUELING.md).
+
 ## Remaining limitations
 
 No known failing local checks remain. This is published as an owner-approved **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.
 
-Fuel/sweat/sodium prescriptions, manual routes inferred from totals, accounts, cloud route storage, integrations and AI were deferred for reliability and launch focus. Opt-in browser setup preferences are separate from route storage. A bounded inverse-power utility is numerically checked but not shown publicly because mathematical reachability does not prove a rider can sustain the required power.
+Individual sweat/sodium prescriptions, manual routes inferred from totals, accounts, cloud route storage, integrations and AI remain deferred. The preview now offers a separate editable carbohydrate/fluid plan with explicit assumptions, rather than physiological need or depletion predictions. Opt-in browser setup preferences are separate from route storage. A bounded inverse-power utility is numerically checked but not shown publicly because mathematical reachability does not prove a rider can sustain the required power.
 
 The initial beta, PR #2 and PR #3 owner reviews, merges and production publications are complete. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.

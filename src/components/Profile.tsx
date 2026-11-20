@@ -5,6 +5,7 @@ import type { Route, Ride } from "../model/types";
 import { energyProfile, inspectProfile } from "../model/profile";
 import { inspectFuelPlan, type FuelPlan } from "../model/fueling";
 import type { Climb } from "../model/climbs";
+import { Droplets, Mountain, Zap } from "lucide-react";
 
 export function Profile({
   route,
@@ -116,21 +117,25 @@ export function Profile({
         <div className="chart-switch" role="group" aria-label={t("Chart view")}>
           <button
             type="button"
+            className="view-elevation"
             aria-pressed={!energy}
             onClick={() => setView("elevation")}
           >
+            <Mountain size={16} aria-hidden="true" />
             {t("Elevation")}
           </button>
           <button
             type="button"
+            className="view-energy"
             aria-pressed={energy}
             onClick={() => setView("energy")}
           >
+            <Zap size={16} aria-hidden="true" />
             {t("Energy")}
           </button>
         </div>
       </div>
-      <div className="profile" ref={container}>
+      <div className="profile" data-view={view} ref={container}>
         {selectedClimb && (
           <div
             className="climb-selection"
@@ -288,8 +293,16 @@ export function Profile({
         >
           <defs>
             <linearGradient id={id + "-fill"} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#acc789" stopOpacity=".7" />
-              <stop offset="1" stopColor="#acc789" stopOpacity=".06" />
+              <stop
+                offset="0"
+                stopColor="var(--chart-fill)"
+                stopOpacity=".65"
+              />
+              <stop
+                offset="1"
+                stopColor="var(--chart-fill)"
+                stopOpacity=".06"
+              />
             </linearGradient>
           </defs>
           {ticks.map((tick) => (
@@ -322,7 +335,7 @@ export function Profile({
               <polyline
                 points={path.line}
                 fill="none"
-                stroke="#476b45"
+                stroke="var(--chart-line)"
                 strokeWidth="2.5"
                 strokeLinejoin="round"
               />
@@ -418,7 +431,7 @@ export function Profile({
             cx={x(point.distanceM)}
             cy={y(energy ? point.workKj : point.elevationM)}
             r="5"
-            fill="#183e36"
+            fill="var(--chart-line)"
             stroke="white"
             strokeWidth="2"
           />
@@ -521,9 +534,10 @@ export function Profile({
             </p>
             <button
               type="button"
-              className="chart-refill"
+              className="chart-refill button button-water"
               onClick={() => setRefillError(!onAddRefill(point.distanceM))}
             >
+              <Droplets size={17} aria-hidden="true" />
               {t("Add water refill here")}
             </button>
             {refillError && (

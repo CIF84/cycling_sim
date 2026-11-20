@@ -2,6 +2,8 @@
 
 ## Final result
 
+The UX hierarchy update is verified on the separate preview in [draft PR #5](https://github.com/CIF84/cycling_sim/pull/5). All 68 desktop/mobile cases pass there. It adds navigation, action hierarchy, a semantic palette and clearer plan/export controls; no model equations or storage behavior changed. Production remains on the approved PR #4 release below.
+
 The owner approved [PR #4](https://github.com/CIF84/cycling_sim/pull/4) on 20 November 2026. The local fuel/water planner is merged into `main` and published to production as version `e398b6db-22e8-489c-82c8-4127610d5c7a`. It adds an optional plan with separate expenditure/intake, time-based food windows and manual bottle refills. All 156 unit checks and 62 production browser cases pass.
 
 The owner approved [PR #3](https://github.com/CIF84/cycling_sim/pull/3) on 19 November 2026. Its chart-linked climbs are merged into `main` and published to production as version `000bf4d7-8d28-41ce-bc5c-f4f482decdff`. The dated entries below retain preview and earlier release history.
@@ -151,6 +153,13 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - All **62 production desktop/mobile browser checks pass** without retries (48.7 s), including the food/water plan, chart interactions, English/Czech downloads, GPX, comparisons, groupsets, storage, errors and accessibility. The live Czech plan, a manual 15 km refill and its Energy-chart readings were also inspected manually.
 - All five production assets match the tested build byte for byte; configured security headers are present. Preview remains independently on `4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`. No custom domain, backend or Spořilov change.
 - Release documentation commits after publication do not alter the deployed assets.
+
+## UX hierarchy preview · 20 November 2026
+
+- Audited the desktop/mobile setup, route, chart, preparation, comparison and export journeys. [UX_REVIEW.md](UX_REVIEW.md) documents the heuristic findings and remaining user-review limits.
+- Added preparation navigation, sticky phone section shortcuts, a warm primary/outlined secondary button hierarchy, amber Energy and blue water styling, labeled touch-sized export controls, a plan-inclusive download and chart shortcut, automatic-update copy and state-aware disclosure icons. Setup remembering follows the setup fields. English and Czech remain complete.
+- All **156 unit checks**, strict TypeScript and production build pass. All **68 desktop/mobile browser cases pass** locally (35.9 s) and on preview (46.9 s), without retries. Six new cases cover keyboard/anchor focus, invalid-result navigation, plan exports and responsive labels/targets. Automated accessibility reports no detected violations in the exercised states, including 320 px layouts. Desktop/mobile screenshots and the live Czech planning flow were inspected.
+- Preview version **`1cb9ff36-2a72-4861-bdee-f082751f7728`**, deployed from `8a250f4`, matches all five local asset files. Security headers are present. The simulation worker bundle is unchanged. [Draft PR #5](https://github.com/CIF84/cycling_sim/pull/5) remains unmerged; production history remains on **`e398b6db-22e8-489c-82c8-4127610d5c7a`**.
 
 ## Remaining limitations
 

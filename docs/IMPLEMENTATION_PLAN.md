@@ -56,3 +56,5 @@ Baseline: approved PR #4 production. Review and implementation decisions are in 
 2. Add a clear action hierarchy, a broader semantic palette, preparation navigation and touch-sized labeled controls. Keep the model and privacy behavior unchanged.
 3. Exercise new navigation and export paths, error recovery, narrow layouts and keyboard/accessibility behavior alongside the existing suite.
 4. Deploy only the separate preview for owner review; keep production on PR #4.
+
+Completed: 156 unit checks, strict TypeScript, build and all 68 desktop/mobile browser cases pass locally and on the hosted preview. Desktop/mobile screenshots and the live Czech planning flow were inspected. Preview version `1cb9ff36-2a72-4861-bdee-f082751f7728` is held in [draft PR #5](https://github.com/CIF84/cycling_sim/pull/5); production is unchanged.

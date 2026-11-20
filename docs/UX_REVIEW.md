@@ -24,6 +24,10 @@ Keep the simulation, sources, storage contract and plan arithmetic unchanged. Ch
 - Inspected desktop, 390 px phone and 320 px screenshots. Narrow metric labels and navigation icons retain alignment when text wraps. The local Czech navigation → build plan → timing chart flow was also checked manually.
 - No new dependencies or external requests. The simulation worker remains `worker-Dx0otFHa.js`; the palette does not change equations, quantities, persistence or source assumptions.
 
+## Hosted preview
+
+All 68 browser cases pass on the separate preview without retries (46.9 s). All five public asset files match the tested build, and configured security headers are present. The live Czech preparation navigation, build-plan action and chart-timing shortcut were manually checked. Preview version `1cb9ff36-2a72-4861-bdee-f082751f7728` was deployed from `8a250f4` and is held in [draft PR #5](https://github.com/CIF84/cycling_sim/pull/5) for owner review. Production deployment history still shows the approved PR #4 version `e398b6db-22e8-489c-82c8-4127610d5c7a`.
+
 ## Review limits and next evidence
 
 This review improves discoverability and interaction consistency; it does not establish that new riders understand every model assumption. Watch a few independent riders import a route, adjust power, inspect a climb, make a plan and download it. Pay particular attention to expenditure versus intake and whether manual refills are understood as known stops. Actual Safari/phone review remains useful beyond Chromium device emulation. No accounts, analytics or remote route storage were added for this work.

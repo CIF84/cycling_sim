@@ -28,10 +28,10 @@ The separate preview was first deployed on 14 October 2026. Earlier localization
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
 - Version: `4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`
-- Source: `codex/fuel-water-plan`, deployed from `ddb30a32ea4717110b4acff3cd236249f0ad331c`. [Draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) remains unmerged for owner review. Later documentation commits do not change its assets.
+- Source: `codex/fuel-water-plan`, deployed from `ddb30a32ea4717110b4acff3cd236249f0ad331c`. [PR #4](https://github.com/CIF84/cycling_sim/pull/4) was subsequently approved and merged on 20 November 2026; its production release is recorded below. Later documentation commits do not change its assets.
 - Verification: 156 unit checks, strict TypeScript and production build pass. All 62 desktop/mobile browser cases pass locally and on the hosted preview. All five public assets match the tested build byte for byte, and security headers are present. The live Czech refill flow and chart view switch were manually checked.
 - Open **Build my plan** (Czech: **Sestavit plán**) to compare estimated expenditure with planned carbohydrate intake, check bottle coverage and add known water refills. Both chart views show timed food windows and refills; selected climbs show work concentration and planned intake by their start. The briefing includes the plan. No simulation equations changed; planning assumptions and sources are documented in [FUELING.md](FUELING.md).
-- Production remains on the approved PR #3 version `000bf4d7-8d28-41ce-bc5c-f4f482decdff`, confirmed against its deployment history after this preview update. No custom domain or Spořilov change was made.
+- This preview update initially left production on the approved PR #3 version `000bf4d7-8d28-41ce-bc5c-f4f482decdff`. The later owner-approved production release is recorded below. No custom domain or Spořilov change was made.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.
 
@@ -51,12 +51,14 @@ The initial owner-approved beta launched on **16 October 2026** through [PR #1](
 
 Later on **19 November 2026**, the owner approved [PR #3](https://github.com/CIF84/cycling_sim/pull/3). It merged as `4fd758615f67d6f33766c8c5ca7a987a0d491cad`, whose tree exactly matches reviewed head `23eb58d`. The checked build was published with `pnpm exec wrangler deploy --env ''`, adding linked climb cards, chart highlighting and section summaries.
 
+On **20 November 2026**, the owner approved [PR #4](https://github.com/CIF84/cycling_sim/pull/4). It merged as `26371bc2d412c877fbfa39eded238c35fe58f3a2`, whose tree exactly matches reviewed head `31c572e`. The checked build was published with `pnpm exec wrangler deploy --env ''`, adding local carbohydrate/fluid planning, chart timing markers, manual water refills and the extended briefing download.
+
 - Production: [Bike Science Pro](https://bike-science-pro.roman-christov.workers.dev) · [Čeština](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) · [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en)
 - Worker: `bike-science-pro`
-- Version: `000bf4d7-8d28-41ce-bc5c-f4f482decdff`
-- Previous production version: `cca515d5-bfb5-40f6-929c-9acfedff1f87` (PR #2, retained in deployment history for rollback).
-- Verification: 136 unit checks, strict TypeScript and production build pass; all 50 production desktop/mobile browser checks pass without retries (30.1 s). HTTPS/security headers and all five public asset bytes match the verified build. The live Czech climb selection and Energy view were manually inspected.
-- At this production release, the preview Worker was independently on `8e4248ed-0c6e-42dc-8d56-df817470d775`; its subsequent fuel-plan update is recorded above. No custom domain or Spořilov resource was configured or changed.
+- Version: `e398b6db-22e8-489c-82c8-4127610d5c7a`
+- Previous production version: `000bf4d7-8d28-41ce-bc5c-f4f482decdff` (PR #3, retained in deployment history for rollback).
+- Verification: 156 unit checks, strict TypeScript and production build pass; all 62 production desktop/mobile browser checks pass without retries (48.7 s). HTTPS/security headers and all five public asset bytes match the verified build. The live Czech plan, manual refill, chart timing and post-refill bottle reading were manually inspected.
+- The preview Worker remains independently on `4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`. No custom domain or Spořilov resource was configured or changed.
 
 For subsequent approved releases, use the intended `main` revision, run the checks above, then:
 

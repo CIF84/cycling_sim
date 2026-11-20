@@ -1,6 +1,6 @@
-# Local fuel and water plan · preview
+# Local fuel and water plan
 
-This addition is under owner review on the separate preview. It supports planning for adults' recreational endurance rides, not medical nutrition treatment or an individually validated intake prescription. The plan is optional; opening it adds controls and chart markers without changing the ride simulation. No food catalog or grocery list is used.
+Published with owner approval through [PR #4](https://github.com/CIF84/cycling_sim/pull/4) on 20 November 2026. It supports planning for adults' recreational endurance rides, not medical nutrition treatment or an individually validated intake prescription. The plan is optional; opening it adds controls and chart markers without changing the ride simulation. No food catalog or grocery list is used.
 
 ## Three different quantities
 

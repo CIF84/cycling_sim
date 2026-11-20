@@ -1,8 +1,8 @@
-# Public beta verification · updated 19 November 2026
+# Public beta verification · updated 20 November 2026
 
 ## Final result
 
-The local fuel/water planner is verified and deployed to the separate preview from `codex/fuel-water-plan`, held in [draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) for owner review. It adds an optional plan with separate expenditure/intake, time-based food windows and manual bottle refills. Production remains on the approved PR #3 release below.
+The owner approved [PR #4](https://github.com/CIF84/cycling_sim/pull/4) on 20 November 2026. The local fuel/water planner is merged into `main` and published to production as version `e398b6db-22e8-489c-82c8-4127610d5c7a`. It adds an optional plan with separate expenditure/intake, time-based food windows and manual bottle refills. All 156 unit checks and 62 production browser cases pass.
 
 The owner approved [PR #3](https://github.com/CIF84/cycling_sim/pull/3) on 19 November 2026. Its chart-linked climbs are merged into `main` and published to production as version `000bf4d7-8d28-41ce-bc5c-f4f482decdff`. The dated entries below retain preview and earlier release history.
 
@@ -16,19 +16,20 @@ The fictional demo is 38.0 km, 400 m climbing and 400 m descending. Default inpu
 
 - System Python baseline could not import the historical tests because pandas/gpxpy were absent. Those tests use pytest-style functions; `unittest` discovery was only a dependency/import check, not proof of baseline correctness.
 - The legacy pure solver was extracted with Python AST and executed independently of its pandas import. It reproduced **0.36 km/h** at 0 W, −5%, 90 kg, and also at zero-power flat riding in −30 km/h tailwind.
-- **136 TypeScript unit checks pass** (`pnpm test`): 64 numerical/GPX/profile/climb, 29 localization/formatting, 31 groupset and 12 storage checks. Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
+- **156 TypeScript unit checks pass** (`pnpm test`): 64 numerical/GPX/profile/climb, 20 fuel/water planning, 29 localization/formatting, 31 groupset and 12 storage checks. Representative flat/climbing/descending/windy calculations match an independently written Newton reference, using algebraic slope geometry rather than production force or solver functions. Flat 36 km/h recovers a hand-computed 266.4999226804124 W at 90 kg, density 1.225, CdA .35, Crr .005 and efficiency .97.
 - Zero-power −5% descent matches its closed-form terminal speed (about 49 km/h); flat/uphill zero-power sections explicitly fail route completion. Strong-tailwind coasting matches its separate analytical solution.
 - Checks include invalid inputs, exact slope geometry, air-density trends, speed ceilings and reduced work under braking, route totals, time-weighted cadence flags, gearing invariance, independent one-field scenarios, negative weight savings on a descent, unchanged zero-power scenario omission, and inverse reachability including a 30% climb.
 - GPX checks cover independent great-circle distance, sparse-point distance preservation, final remainders, net elevation, route points/namespaces, track separation, duplicates, partial/no elevation, malicious DTD/malformed XML, excluded jumps, spike rejection, smoothing and demo integrity.
 
 ## Browser and accessibility checks
 
-**50 browser cases pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the local build, [preview](https://bike-science-pro-preview.roman-christov.workers.dev) and [production](https://bike-science-pro.roman-christov.workers.dev). The latest production run on 19 November passed without retries in 30.1 seconds. Earlier localization checks also passed in Cloudflare’s local Workers runtime. Tested interactions:
+**62 browser cases pass** across desktop Chrome (1440×1000) and mobile Chrome emulating iPhone 13 (390×844), against the local build, [preview](https://bike-science-pro-preview.roman-christov.workers.dev) and [production](https://bike-science-pro.roman-christov.workers.dev). The latest production run on 20 November passed without retries in 48.7 seconds. Earlier localization checks also passed in Cloudflare’s local Workers runtime. Tested interactions:
 
 - Immediate demo and moving time; sustainable watts and gravel surface changes.
 - Front chainring edits change cadence while preserving ride time; wind changes route time.
 - Input reset, keyboard profile slider, briefing file download, comparison updates and no page-level horizontal overflow.
 - Shared Elevation / Energy cursor and moving time, zero-work coasting and English/Czech accessible chart controls. Climb selection/highlighting, section time/work/cadence, input updates, clear/focus behavior and same-filename route replacement.
+- Fuel quantities and timing, bottle coverage, late and duplicate water refills, chart/manual stop entry, export consistency, invalid edits, refresh exclusion, route replacement, coasting and narrow-screen accessibility.
 - Local setup opt-in, refresh, valid/invalid edits, preset/custom gearing, reset/removal, two-tab forgetting, blocked storage, and exclusion of GPX data and visit conditions.
 - Synthetic GPX import with 50 m ascent, quality disclosure, smoothing toggle, missing elevations, malformed files, stationary zero-power estimate, invalid mass and recovery to the demo.
 - A 20,000-point synthetic import with rapid power changes; latest inputs win and superseded worker results do not replace them. The test completed in under a second on this machine; no general phone performance guarantee is made.
@@ -143,10 +144,18 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - Preview version **`4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`** was deployed from `ddb30a3`. [Draft PR #4](https://github.com/CIF84/cycling_sim/pull/4) remains unmerged. Production deployment history still shows **`000bf4d7-8d28-41ce-bc5c-f4f482decdff`**; no production deployment was performed.
 - The GPX/model worker bundle remains unchanged. All plan state stays in memory; Remember my setup does not persist it. The planner's detailed assumptions and primary references are in [FUELING.md](FUELING.md).
 
+## Approved fuel and water plan production release · 20 November 2026
+
+- Owner approved merge and publication of PR #4. Merge commit **`26371bc2d412c877fbfa39eded238c35fe58f3a2`** has exactly the reviewed tree from `31c572e`.
+- Re-ran all **156 unit checks**, strict TypeScript and production build before publication. Deployed only **`bike-science-pro`**, version **`e398b6db-22e8-489c-82c8-4127610d5c7a`**.
+- All **62 production desktop/mobile browser checks pass** without retries (48.7 s), including the food/water plan, chart interactions, English/Czech downloads, GPX, comparisons, groupsets, storage, errors and accessibility. The live Czech plan, a manual 15 km refill and its Energy-chart readings were also inspected manually.
+- All five production assets match the tested build byte for byte; configured security headers are present. Preview remains independently on `4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`. No custom domain, backend or Spořilov change.
+- Release documentation commits after publication do not alter the deployed assets.
+
 ## Remaining limitations
 
 No known failing local checks remain. This is published as an owner-approved **planning-estimate public beta**, with assumptions visible. Route-time accuracy has not been validated on real outdoor rides. GPS elevation/sparse recordings, unknown CdA/Crr, steady-state transitions, braking/turns, stops, constant wind and fatigue can produce material errors. No claimed confidence interval or physiological sustainability predictor exists.
 
-Individual sweat/sodium prescriptions, manual routes inferred from totals, accounts, cloud route storage, integrations and AI remain deferred. The preview now offers a separate editable carbohydrate/fluid plan with explicit assumptions, rather than physiological need or depletion predictions. Opt-in browser setup preferences are separate from route storage. A bounded inverse-power utility is numerically checked but not shown publicly because mathematical reachability does not prove a rider can sustain the required power.
+Individual sweat/sodium prescriptions, manual routes inferred from totals, accounts, cloud route storage, integrations and AI remain deferred. The app now offers a separate editable carbohydrate/fluid plan with explicit assumptions, rather than physiological need or depletion predictions. Opt-in browser setup preferences are separate from route storage. A bounded inverse-power utility is numerically checked but not shown publicly because mathematical reachability does not prove a rider can sustain the required power.
 
-The initial beta, PR #2 and PR #3 owner reviews, merges and production publications are complete. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.
+The initial beta, PR #2, PR #3 and PR #4 owner reviews, merges and production publications are complete. Production uses its dedicated `workers.dev` address; a custom domain remains optional and has not been selected. Recommended next evidence: compare several rides with measured sustainable power and good elevation data; record model residuals rather than tuning against one ride. Expand to actual Safari/phone testing before claiming broad browser support.

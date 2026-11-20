@@ -18,11 +18,11 @@ The **Elevation / Energy** switch uses one chart area. Both views keep the same 
 
 Select a demanding-section card to highlight that climb in either chart view. Its summary shows moving time, actual pedal work and lowest modeled pedaling cadence. The shared slider moves to the climb's start and remains available across the whole route. Clear selection removes the highlight. Power/gearing edits update the summary; a replacement route or smoothing change clears it. Published to production with owner approval on 19 November 2026 through [PR #3](https://github.com/CIF84/cycling_sim/pull/3).
 
-## Fuel and water plan · preview
+## Fuel and water plan
 
-On the [review preview](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs), **Build my plan** adds a simple carbohydrate plan in grams and kcal, displayed separately from estimated expenditure. Choose a familiar intake rate, bottle count/volume and drinking-rate assumption. Add known water refills by distance or from the chart; the app checks each leg and flags reserve use or shortages. Both chart views show fuel windows and refills, and selected climbs show work concentration and planned intake by their start.
+**Build my plan** adds a simple carbohydrate plan in grams and kcal, displayed separately from estimated expenditure. Choose a familiar intake rate, bottle count/volume and drinking-rate assumption. Add known water refills by distance or from the chart; the app checks each leg and flags reserve use or shortages. Both chart views show fuel windows and refills, and selected climbs show work concentration and planned intake by their start.
 
-The downloaded briefing includes the plan and its assumptions. Food quantities cover carbohydrates from food and drinks together; there is no grocery list, absorption/glycogen forecast or instruction to replace every calorie burned. The plan remains in memory only, including when Remember my setup is on. [Evidence, equations and limits](docs/FUELING.md). Production remains on the approved PR #3 release pending review.
+The downloaded briefing includes the plan and its assumptions. Food quantities cover carbohydrates from food and drinks together; there is no grocery list, absorption/glycogen forecast or instruction to replace every calorie burned. The plan remains in memory only, including when Remember my setup is on. [Evidence, equations and limits](docs/FUELING.md). Published to production with owner approval on 20 November 2026 through [PR #4](https://github.com/CIF84/cycling_sim/pull/4).
 
 ## Remembered setup
 
@@ -77,7 +77,7 @@ Sustainable power is absolute crank power, not automatically derived from FTP or
 
 ## Cloudflare
 
-[Production public beta](https://bike-science-pro.roman-christov.workers.dev) launched on 16 October 2026 and was updated on **19 November 2026** after owner approval and the merge of PR #3 into `main`. The release includes the Elevation / Energy chart, opt-in local setup preferences and linked climb cards. Its **136 unit checks** and **50 production desktop/mobile browser checks** pass. The [separate preview](https://bike-science-pro-preview.roman-christov.workers.dev) remains available for future review.
+[Production public beta](https://bike-science-pro.roman-christov.workers.dev) launched on 16 October 2026 and was updated on **20 November 2026** after owner approval and the merge of PR #4 into `main`. The release includes the Elevation / Energy chart, opt-in local setup preferences, linked climb cards and local fuel/water planning. Its **156 unit checks** and **62 production desktop/mobile browser checks** pass. The [separate preview](https://bike-science-pro-preview.roman-christov.workers.dev) remains available for future review.
 
 [Deployment instructions](docs/DEPLOYMENT.md) cover an isolated `bike-science-pro-preview` Worker, the production Worker, verification and rollback. Workers static assets serve `dist`; no custom domain is configured. The Spořilov repository and deployment were left untouched. Its existing project uses Pages; this project uses Workers static assets as explicitly requested.
 

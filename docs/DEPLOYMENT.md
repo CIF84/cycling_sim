@@ -22,15 +22,15 @@ Complete Cloudflare OAuth in your signed-in browser and verify that `whoami` ide
 
 The preview command deploys **bike-science-pro-preview**, a separate worker, and returns its `https://bike-science-pro-preview.<account-subdomain>.workers.dev` URL. That is a shareable public beta preview, not a custom-domain production release. Inspect the actual returned URL, not the placeholder above. `preview_urls` are disabled; the preview uses its own isolated worker and deployment history.
 
-The separate preview was first deployed on 14 October 2026. Earlier feature previews and releases are recorded in [VERIFICATION.md](VERIFICATION.md). The current **20 November 2026** preview updates navigation and visual hierarchy:
+The separate preview was first deployed on 14 October 2026. Earlier feature previews and releases are recorded in [VERIFICATION.md](VERIFICATION.md). The current **25 November 2026** preview updates navigation and visual hierarchy, with a compact introduction following owner review:
 
 - Preview: [Bike Science Pro](https://bike-science-pro-preview.roman-christov.workers.dev)
 - Czech review link: [Čeština](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs)
 - Worker: `bike-science-pro-preview`
-- Version: `1cb9ff36-2a72-4861-bdee-f082751f7728`
-- Source: `codex/ux-hierarchy`, deployed from `8a250f45345e4b830aeb27d8a32afb34375e9f7e`. [Draft PR #5](https://github.com/CIF84/cycling_sim/pull/5) remains unmerged for owner review. Later documentation commits do not change its assets.
-- Verification: 156 unit checks, strict TypeScript and production build pass. All 68 desktop/mobile browser cases pass locally (35.9 s) and on preview (46.9 s), without retries. All five public asset files match the tested build, and security headers are present. The live Czech planning flow was manually checked.
-- Review the warm primary/outlined secondary actions, green Elevation and amber Energy views, blue water controls, preparation navigation and sticky phone shortcuts. The plan ends with download and chart-timing actions. See [UX_REVIEW.md](UX_REVIEW.md) for audit findings and scope.
+- Version: `a3f8dce3-8f64-4643-bc46-2f658f6ee646`
+- Source: `codex/ux-hierarchy`, deployed from `ae7eac1fa2c50afcbe4b1b93c168ff331058ae5b`. [Draft PR #5](https://github.com/CIF84/cycling_sim/pull/5) remains unmerged for owner review. Later documentation commits do not change its assets.
+- Verification: 156 unit checks, strict TypeScript and production build pass. All 68 desktop/mobile browser cases pass locally (34.0 s) and on preview (1.4 min), without retries. All five public asset files match the tested build, and security headers are present. The compact Czech desktop was manually checked, along with desktop/phone screenshots.
+- Review the compact introduction without decorative artwork, warm primary/outlined secondary actions, green Elevation and amber Energy views, blue water controls, preparation navigation and sticky phone shortcuts. “Every route has a story” remains as the introductory line; the briefing and chart start higher on desktop. The plan ends with download and chart-timing actions. See [UX_REVIEW.md](UX_REVIEW.md) for audit findings and scope.
 - Production remains on the approved PR #4 version `e398b6db-22e8-489c-82c8-4127610d5c7a`, confirmed against its deployment history after this preview update. No custom domain or Spořilov change was made.
 
 The first immediate test run encountered transient Cloudflare 404 responses for the new Worker and assets. A complete rerun after propagation passed without retries or application changes. Allow the initial deployment to propagate before sharing its URL. Those preview releases did not publish production; the owner-approved production launch is recorded below. No temporary account was created.

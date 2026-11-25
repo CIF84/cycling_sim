@@ -1,6 +1,8 @@
-# Public beta verification · updated 20 November 2026
+# Public beta verification · updated 25 November 2026
 
 ## Final result
+
+The UX hierarchy update is on the separate preview in [draft PR #5](https://github.com/CIF84/cycling_sim/pull/5), including the owner's compact-introduction follow-up. It adds navigation, action hierarchy, a semantic palette and clearer plan/export controls, while bringing the desktop briefing and chart higher on the page. No model equations or storage behavior changed. Production remains on the approved PR #4 release below.
 
 The owner approved [PR #4](https://github.com/CIF84/cycling_sim/pull/4) on 20 November 2026. The local fuel/water planner is merged into `main` and published to production as version `e398b6db-22e8-489c-82c8-4127610d5c7a`. It adds an optional plan with separate expenditure/intake, time-based food windows and manual bottle refills. All 156 unit checks and 62 production browser cases pass.
 
@@ -151,6 +153,20 @@ Shortened the altitude input label to “Nadmořská výška”, retaining the e
 - All **62 production desktop/mobile browser checks pass** without retries (48.7 s), including the food/water plan, chart interactions, English/Czech downloads, GPX, comparisons, groupsets, storage, errors and accessibility. The live Czech plan, a manual 15 km refill and its Energy-chart readings were also inspected manually.
 - All five production assets match the tested build byte for byte; configured security headers are present. Preview remains independently on `4260a839-3b02-4b8e-81e9-0baf4dfeeeeb`. No custom domain, backend or Spořilov change.
 - Release documentation commits after publication do not alter the deployed assets.
+
+## UX hierarchy preview · 20 November 2026
+
+- Audited the desktop/mobile setup, route, chart, preparation, comparison and export journeys. [UX_REVIEW.md](UX_REVIEW.md) documents the heuristic findings and remaining user-review limits.
+- Added preparation navigation, sticky phone section shortcuts, a warm primary/outlined secondary button hierarchy, amber Energy and blue water styling, labeled touch-sized export controls, a plan-inclusive download and chart shortcut, automatic-update copy and state-aware disclosure icons. Setup remembering follows the setup fields. English and Czech remain complete.
+- All **156 unit checks**, strict TypeScript and production build pass. All **68 desktop/mobile browser cases pass** locally (35.9 s) and on preview (46.9 s), without retries. Six new cases cover keyboard/anchor focus, invalid-result navigation, plan exports and responsive labels/targets. Automated accessibility reports no detected violations in the exercised states, including 320 px layouts. Desktop/mobile screenshots and the live Czech planning flow were inspected.
+- Preview version **`1cb9ff36-2a72-4861-bdee-f082751f7728`**, deployed from `8a250f4`, matches all five local asset files. Security headers are present. The simulation worker bundle is unchanged. [Draft PR #5](https://github.com/CIF84/cycling_sim/pull/5) remains unmerged; production history remains on **`e398b6db-22e8-489c-82c8-4127610d5c7a`**.
+
+## Compact introduction preview · 25 November 2026
+
+- Removed the decorative landscape and oversized headline following owner review. Preserved “Every route has a story” / “Každá trasa má svůj příběh” above a smaller, naturally wrapping headline. The desktop demo action sits beside the text; header and introduction spacing are reduced. Actual controls and charts retain their existing sizes.
+- All **156 unit checks**, strict TypeScript and the production build pass. All **68 local desktop/mobile browser cases pass** without retries (34.0 s), including English/Czech, accessibility and narrow layouts. The local Czech desktop and desktop/phone screenshots were inspected; the 1440 × 1000 overview includes the elevation graph and slider.
+- All **68 hosted desktop/mobile browser cases pass** without retries (1.4 min). Hosted desktop/phone screenshots confirm the updated layout.
+- Preview version **`a3f8dce3-8f64-4643-bc46-2f658f6ee646`** was deployed from `ae7eac1`. All five public asset files match the tested build byte for byte; configured security headers are present. The simulation worker is unchanged. Production deployment history still shows **`e398b6db-22e8-489c-82c8-4127610d5c7a`**. PR #5 remains unmerged.
 
 ## Remaining limitations
 

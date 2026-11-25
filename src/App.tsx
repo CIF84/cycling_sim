@@ -22,6 +22,9 @@ import {
   CircleAlert,
   LoaderCircle,
   Route as RouteIcon,
+  Utensils,
+  ChartNoAxesCombined,
+  ChevronDown,
 } from "lucide-react";
 import {
   DEFAULT_INPUTS,
@@ -355,7 +358,24 @@ export default function App() {
         <span className="beta">{t("PUBLIC BETA")}</span>
         <nav aria-label={t("Main")}>
           <a href="#briefing">{t("Ride briefing")}</a>
-          <a href="#comparisons">{t("Compare changes")}</a>
+          <a
+            href="#fuel-plan"
+            aria-disabled={busy || !ride}
+            onClick={(e) => {
+              if (busy || !ride) e.preventDefault();
+            }}
+          >
+            {t("Food & water")}
+          </a>
+          <a
+            href="#comparisons"
+            aria-disabled={busy || !ride}
+            onClick={(e) => {
+              if (busy || !ride) e.preventDefault();
+            }}
+          >
+            {t("Compare changes")}
+          </a>
           <a href="#model">
             {" "}
             {t("The model")} <ArrowUpRight size={14} />
@@ -387,13 +407,9 @@ export default function App() {
       <main>
         <section className="hero">
           <div>
-            <div className="eyebrow">
-              <span /> {t("LESS GUESSWORK. BETTER RIDES.")}{" "}
-            </div>
+            <div className="eyebrow">{t("EVERY ROUTE HAS A STORY")}</div>
             <h1>
-              {" "}
-              {t("Know the ride.")} <br />
-              <em>{t("Ride with a plan.")}</em>
+              {t("Know the ride.")} <em>{t("Ride with a plan.")}</em>
             </h1>
             <p>
               {" "}
@@ -401,110 +417,61 @@ export default function App() {
                 "Understand the effort, prepare for the climbs, and see which changes matter on your route.",
               )}{" "}
             </p>
-            <div className="hero-links">
-              <a href="#briefing" onClick={reset}>
-                {" "}
-                {t("Explore the demo")} <ArrowDown size={15} />
-              </a>
-              <span>{t("No sign-up. No upload.")}</span>
-            </div>
           </div>
-          <div className="hero-art" aria-hidden="true">
-            <svg viewBox="0 0 520 230">
-              <path
-                d="M0 150 120 95 175 125 280 15 355 100 430 65 520 125V230H0Z"
-                fill="#dae4ce"
-              />
-              <path
-                d="M0 180 105 145 190 160 295 75 340 130 420 115 520 170V230H0Z"
-                fill="#a9bd97"
-              />
-              <path
-                d="M0 213 95 175 180 194 275 155 335 180 430 158 520 207V230H0Z"
-                fill="#597557"
-              />
-              <path
-                d="M0 220C100 212 135 185 205 198S312 228 352 209 397 172 460 186 492 201 520 200"
-                fill="none"
-                stroke="#e5f0ab"
-                strokeWidth="3"
-                strokeDasharray="5 6"
-              />
-              <circle cx="352" cy="209" r="6" fill="#e5f0ab" />
-            </svg>
-            <div className="art-label">
-              <Mountain size={14} /> {t("EVERY ROUTE HAS A STORY")}{" "}
-            </div>
+          <div className="hero-links">
+            <a
+              className="button button-primary"
+              href="#briefing"
+              onClick={reset}
+            >
+              {t("Explore the demo")} <ArrowDown size={15} />
+            </a>
+            <span>{t("No sign-up. No upload.")}</span>
           </div>
         </section>
+        <nav className="ride-navigation" aria-label={t("Ride sections")}>
+          <a href="#ride-setup">
+            <SlidersHorizontal size={18} aria-hidden="true" />
+            {t("Setup")}
+          </a>
+          <a href="#briefing">
+            <RouteIcon size={18} aria-hidden="true" />
+            {t("Ride")}
+          </a>
+          <a
+            href="#fuel-plan"
+            aria-disabled={busy || !ride}
+            onClick={(e) => {
+              if (busy || !ride) e.preventDefault();
+            }}
+          >
+            <Utensils size={18} aria-hidden="true" />
+            {t("Food & water")}
+          </a>
+          <a
+            href="#comparisons"
+            aria-disabled={busy || !ride}
+            onClick={(e) => {
+              if (busy || !ride) e.preventDefault();
+            }}
+          >
+            <ChartNoAxesCombined size={18} aria-hidden="true" />
+            {t("Compare")}
+          </a>
+        </nav>
         <div className="workspace">
-          <aside className="setup">
+          <aside
+            className="setup"
+            id="ride-setup"
+            tabIndex={-1}
+            aria-label={t("Your ride setup")}
+          >
             <div className="setup-heading">
               <SlidersHorizontal size={18} />
-              <h2>{t("Your ride setup")}</h2>
-            </div>
-            <div className="setup-memory">
-              <label className="check-field">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => changeRemember(e.target.checked)}
-                  aria-describedby="remember-help remember-status"
-                />
-                <span>{t("Remember my setup on this device")}</span>
-              </label>
-              <p id="remember-help">
-                {t(
-                  "Saves rider, bike, power and model preferences in this browser. GPX files, wind, temperature and altitude aren’t saved.",
-                )}
-              </p>
-              <p
-                id="remember-status"
-                aria-live="polite"
-                className={
-                  [
-                    "invalid",
-                    "unavailable",
-                    "remove-error",
-                    "discarded",
-                  ].includes(setupStatus)
-                    ? "setup-storage-warning"
-                    : undefined
-                }
-              >
-                {setupStatus === "saved" &&
-                  t(
-                    "Saved here · changes save automatically. Review power and conditions for each ride.",
-                  )}
-                {setupStatus === "invalid" &&
-                  t(
-                    "These changes aren’t saved yet. Correct the setup inputs; any previously saved setup is kept.",
-                  )}
-                {setupStatus === "unavailable" &&
-                  t(
-                    "Browser storage is unavailable. Your changes work for this visit, but can’t be saved here.",
-                  )}
-                {setupStatus === "discarded" &&
-                  t(
-                    "The saved setup couldn’t be read. Default inputs are shown; enable this option to save a new setup.",
-                  )}
-                {setupStatus === "forgotten" &&
-                  t(
-                    "Saved setup removed. Your current inputs stay until you leave this page.",
-                  )}
-                {setupStatus === "remove-error" &&
-                  t(
-                    "Saving is off, but the previous setup couldn’t be removed. It may return next visit. Try removing it again, or clear this site’s data in your browser.",
-                  )}
-              </p>
-              {setupStatus === "remove-error" && (
-                <button
-                  className="text-button"
-                  onClick={() => changeRemember(false)}
-                >
-                  {t("Remove saved setup")}
-                </button>
-              )}
+              <div>
+                <h2>{t("Your ride setup")}</h2>
+                <p>{t("Changes update your briefing automatically.")}</p>
+              </div>
             </div>
             <section className="route-input">
               <span className="field-label">{t("01 / THE ROUTE")}</span>
@@ -536,7 +503,7 @@ export default function App() {
                 }}
               />
               <button
-                className="upload-button"
+                className="upload-button button button-secondary"
                 onClick={() => fileRef.current?.click()}
               >
                 <Upload size={16} /> {t("Import your GPX")}{" "}
@@ -694,7 +661,12 @@ export default function App() {
             </section>
             <details className="advanced">
               <summary>
-                <Wind size={16} /> {t("Conditions & model")} <span>+</span>
+                <Wind size={16} /> {t("Conditions & model")}{" "}
+                <ChevronDown
+                  className="disclosure-chevron"
+                  size={17}
+                  aria-hidden="true"
+                />
               </summary>
               <div className="details-body">
                 <NumberField
@@ -779,7 +751,12 @@ export default function App() {
             </details>
             <details className="advanced">
               <summary>
-                <Bike size={16} /> {t("Gearing & cadence")} <span>+</span>
+                <Bike size={16} /> {t("Gearing & cadence")}{" "}
+                <ChevronDown
+                  className="disclosure-chevron"
+                  size={17}
+                  aria-hidden="true"
+                />
               </summary>
               <div className="details-body">
                 <GroupsetSelect
@@ -834,6 +811,69 @@ export default function App() {
                 </small>
               </div>
             </details>
+            <div className="setup-memory">
+              <label className="check-field">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => changeRemember(e.target.checked)}
+                  aria-describedby="remember-help remember-status"
+                />
+                <span>{t("Remember my setup on this device")}</span>
+              </label>
+              <p id="remember-help">
+                {t(
+                  "Saves rider, bike, power and model preferences in this browser. GPX files, wind, temperature and altitude aren’t saved.",
+                )}
+              </p>
+              <p
+                id="remember-status"
+                aria-live="polite"
+                className={
+                  [
+                    "invalid",
+                    "unavailable",
+                    "remove-error",
+                    "discarded",
+                  ].includes(setupStatus)
+                    ? "setup-storage-warning"
+                    : undefined
+                }
+              >
+                {setupStatus === "saved" &&
+                  t(
+                    "Saved here · changes save automatically. Review power and conditions for each ride.",
+                  )}
+                {setupStatus === "invalid" &&
+                  t(
+                    "These changes aren’t saved yet. Correct the setup inputs; any previously saved setup is kept.",
+                  )}
+                {setupStatus === "unavailable" &&
+                  t(
+                    "Browser storage is unavailable. Your changes work for this visit, but can’t be saved here.",
+                  )}
+                {setupStatus === "discarded" &&
+                  t(
+                    "The saved setup couldn’t be read. Default inputs are shown; enable this option to save a new setup.",
+                  )}
+                {setupStatus === "forgotten" &&
+                  t(
+                    "Saved setup removed. Your current inputs stay until you leave this page.",
+                  )}
+                {setupStatus === "remove-error" &&
+                  t(
+                    "Saving is off, but the previous setup couldn’t be removed. It may return next visit. Try removing it again, or clear this site’s data in your browser.",
+                  )}
+              </p>
+              {setupStatus === "remove-error" && (
+                <button
+                  className="text-button"
+                  onClick={() => changeRemember(false)}
+                >
+                  {t("Remove saved setup")}
+                </button>
+              )}
+            </div>
             <button
               className="reset-button"
               onClick={() => {
@@ -844,7 +884,7 @@ export default function App() {
               <RotateCcw size={14} /> {t("Reset ride inputs")}{" "}
             </button>
           </aside>
-          <div className="results" id="briefing" aria-busy={busy}>
+          <div className="results" id="briefing" aria-busy={busy} tabIndex={-1}>
             <div className="section-heading">
               <div className="eyebrow">{t("YOUR RIDE, EXPLAINED")}</div>
               <div className="result-title">
@@ -855,7 +895,7 @@ export default function App() {
                   {source ? t("LOCAL GPX") : t("DEMO ROUTE")}
                 </span>
                 <button
-                  className="export-button"
+                  className="export-button button button-secondary"
                   disabled={busy || !ride}
                   onClick={exportBrief}
                   aria-label={t("Download ride briefing")}
@@ -1160,6 +1200,7 @@ export default function App() {
                     setRefillStops((stops) => stops.filter((s) => s.id !== id))
                   }
                   onInspect={inspectPlan}
+                  onExport={exportBrief}
                 />
                 <section id="prepare" className="prepare-section">
                   <div className="card-heading">
@@ -1214,7 +1255,12 @@ export default function App() {
                     )}{" "}
                   </p>
                 </section>
-                <section id="comparisons" className="card comparisons">
+                <section
+                  id="comparisons"
+                  className="card comparisons"
+                  tabIndex={-1}
+                  aria-label={t("Compare changes")}
+                >
                   <div className="card-heading">
                     <div>
                       <span className="step-label">
@@ -1354,7 +1400,12 @@ export default function App() {
               <details>
                 <summary>
                   {" "}
-                  {t("Assumptions & limitations")} <span>+</span>
+                  {t("Assumptions & limitations")}{" "}
+                  <ChevronDown
+                    className="disclosure-chevron"
+                    size={17}
+                    aria-hidden="true"
+                  />
                 </summary>
                 <div className="model-copy">
                   <p>
@@ -1433,7 +1484,12 @@ export default function App() {
               <details>
                 <summary>
                   {" "}
-                  {t("Privacy & beta scope")} <span>+</span>
+                  {t("Privacy & beta scope")}{" "}
+                  <ChevronDown
+                    className="disclosure-chevron"
+                    size={17}
+                    aria-hidden="true"
+                  />
                 </summary>
                 <div className="model-copy">
                   <p>

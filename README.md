@@ -4,6 +4,10 @@ A browser-based cycling ride briefing: **How hard is this ride? How should I pre
 
 [Open Bike Science Pro](https://bike-science-pro.roman-christov.workers.dev). Try the fictional Sunday Loop immediately, or import a GPX locally. Estimate moving time, examine the elevation profile and demanding sections, check virtual cadence, and compare power, system mass, aerodynamic drag and rolling resistance independently.
 
+## Interface review · preview
+
+The [review preview](https://bike-science-pro-preview.roman-christov.workers.dev/?lang=cs) adds clearer primary/secondary actions, green Elevation and amber Energy views, blue water controls, food/water navigation and sticky phone shortcuts. A compact introduction preserves “Every route has a story” and brings the briefing and chart higher on desktop, without decorative artwork. Briefing downloads stay labeled on phones, and the food plan ends with download/chart actions. The [UX review](docs/UX_REVIEW.md) records findings, decisions and verification. [Draft PR #5](https://github.com/CIF84/cycling_sim/pull/5) remains unmerged; production stays on the approved PR #4 release.
+
 ## Languages
 
 English and Czech are available from the header language selector. [Open in Czech](https://bike-science-pro.roman-christov.workers.dev/?lang=cs) or [English](https://bike-science-pro.roman-christov.workers.dev/?lang=en). Explicit links override the saved choice; otherwise the app uses the saved language, then the browser’s primary language (Czech or English fallback).

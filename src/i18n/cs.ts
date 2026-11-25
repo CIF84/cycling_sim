@@ -2,6 +2,17 @@
 import { fuelCs } from "./fuelCs";
 export const cs = {
   ...fuelCs,
+  "Ride sections": "Části přehledu",
+  Setup: "Nastavení",
+  Ride: "Jízda",
+  "Food & water": "Jídlo a pití",
+  Compare: "Srovnání",
+  "Changes update your briefing automatically.":
+    "Změny se automaticky promítnou do přehledu.",
+  "Take the plan with you. Your briefing includes quantities, timing and refill stops.":
+    "Vezmi si plán s sebou. Přehled obsahuje množství, načasování i zastávky na doplnění vody.",
+  "Save plan & briefing": "Uložit plán a přehled",
+  "View timing on chart": "Zobrazit načasování v grafu",
   Language: "Jazyk",
   "Ride with a plan": "Na kolo s plánem",
   "Plan your ride with local GPX analysis, cycling physics, gearing insights and controlled comparisons.":

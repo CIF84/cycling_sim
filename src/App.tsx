@@ -407,13 +407,9 @@ export default function App() {
       <main>
         <section className="hero">
           <div>
-            <div className="eyebrow">
-              <span /> {t("LESS GUESSWORK. BETTER RIDES.")}{" "}
-            </div>
+            <div className="eyebrow">{t("EVERY ROUTE HAS A STORY")}</div>
             <h1>
-              {" "}
-              {t("Know the ride.")} <br />
-              <em>{t("Ride with a plan.")}</em>
+              {t("Know the ride.")} <em>{t("Ride with a plan.")}</em>
             </h1>
             <p>
               {" "}
@@ -421,44 +417,16 @@ export default function App() {
                 "Understand the effort, prepare for the climbs, and see which changes matter on your route.",
               )}{" "}
             </p>
-            <div className="hero-links">
-              <a
-                className="button button-primary"
-                href="#briefing"
-                onClick={reset}
-              >
-                {" "}
-                {t("Explore the demo")} <ArrowDown size={15} />
-              </a>
-              <span>{t("No sign-up. No upload.")}</span>
-            </div>
           </div>
-          <div className="hero-art" aria-hidden="true">
-            <svg viewBox="0 0 520 230">
-              <path
-                d="M0 150 120 95 175 125 280 15 355 100 430 65 520 125V230H0Z"
-                fill="#d5e2e8"
-              />
-              <path
-                d="M0 180 105 145 190 160 295 75 340 130 420 115 520 170V230H0Z"
-                fill="#8baeb6"
-              />
-              <path
-                d="M0 213 95 175 180 194 275 155 335 180 430 158 520 207V230H0Z"
-                fill="#3e6d67"
-              />
-              <path
-                d="M0 220C100 212 135 185 205 198S312 228 352 209 397 172 460 186 492 201 520 200"
-                fill="none"
-                stroke="#f9ba72"
-                strokeWidth="3"
-                strokeDasharray="5 6"
-              />
-              <circle cx="352" cy="209" r="6" fill="#f9ba72" />
-            </svg>
-            <div className="art-label">
-              <Mountain size={14} /> {t("EVERY ROUTE HAS A STORY")}{" "}
-            </div>
+          <div className="hero-links">
+            <a
+              className="button button-primary"
+              href="#briefing"
+              onClick={reset}
+            >
+              {t("Explore the demo")} <ArrowDown size={15} />
+            </a>
+            <span>{t("No sign-up. No upload.")}</span>
           </div>
         </section>
         <nav className="ride-navigation" aria-label={t("Ride sections")}>

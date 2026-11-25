@@ -88,7 +88,7 @@ small {
 .header {
   max-width: 1440px;
   margin: auto;
-  padding: 23px 42px;
+  padding: 15px 42px;
   display: flex;
   gap: 17px;
   align-items: center;
@@ -156,12 +156,11 @@ main {
   padding: 0 42px;
 }
 .hero {
-  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
   align-items: center;
-  padding: 49px 0 40px;
+  padding: 22px 0 26px;
 }
 .eyebrow {
   font-size: 12px;
@@ -179,27 +178,30 @@ main {
   background: #718b41;
 }
 .hero h1 {
-  font-size: clamp(36px, 4vw, 53px);
-  letter-spacing: -2.3px;
+  font-size: 28px;
+  letter-spacing: -0.8px;
   font-weight: 680;
-  line-height: 1.08;
-  margin: 17px 0;
+  line-height: 1.25;
+  margin: 7px 0;
 }
 .hero h1 em {
+  display: inline-block;
   font-style: normal;
   color: var(--action);
 }
 .hero p {
-  max-width: 410px;
+  max-width: 76ch;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.6;
 }
 .hero-links {
   display: flex;
-  align-items: center;
-  gap: 17px;
-  margin-top: 20px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 230px;
+  text-align: right;
 }
 .hero-links a {
   font-size: 12px;
@@ -211,29 +213,6 @@ main {
 .hero-links span {
   font-size: 12px;
   color: var(--muted);
-}
-.hero-art {
-  align-self: end;
-  position: relative;
-  max-width: 490px;
-  overflow: hidden;
-  border-bottom: 1px solid #cad6bf;
-  margin-bottom: 10px;
-}
-.hero-art > svg {
-  display: block;
-  width: 100%;
-}
-.art-label {
-  position: absolute;
-  bottom: 15px;
-  left: 18px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 10px;
-  letter-spacing: 1.9px;
-  color: #f0f5e3;
 }
 .workspace {
   display: grid;
@@ -1361,14 +1340,15 @@ footer .brand {
     display: none;
   }
   .hero {
-    gap: 15px;
-    padding: 35px 0;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 22px 0;
   }
-  .hero h1 {
-    font-size: 38px;
-  }
-  .hero p {
-    font-size: 12px;
+  .hero-links {
+    flex-direction: row;
+    align-items: center;
+    max-width: none;
+    text-align: left;
   }
   .workspace {
     grid-template-columns: 1fr;
@@ -1412,9 +1392,6 @@ footer .brand {
   .comparison-row {
     grid-template-columns: 1.7fr 1fr 60px;
   }
-  .hero-art {
-    margin-bottom: 34px;
-  }
   footer {
     padding: 24px 26px;
   }
@@ -1448,33 +1425,8 @@ footer .brand {
   main {
     padding: 0 18px;
   }
-  .hero {
-    display: block;
-    padding: 30px 0 22px;
-  }
   .hero h1 {
-    font-size: 41px;
-    letter-spacing: -1.8px;
-    margin: 13px 0;
-  }
-  .hero p {
-    font-size: 13px;
-    max-width: 330px;
-  }
-  .hero-art {
-    position: absolute;
-    right: 0;
-    bottom: 26px;
-    width: 43%;
-    opacity: 0.2;
-    margin: 0;
-    z-index: -1;
-  }
-  .art-label {
-    display: none;
-  }
-  .hero-links {
-    margin-top: 16px;
+    font-size: 26px;
   }
   .hero-links span {
     font-size: 12px;
@@ -1758,9 +1710,6 @@ footer .brand {
 }
 .main-metric > small {
   color: #c1d3bf;
-}
-.art-label {
-  white-space: nowrap;
 }
 .slower strong,
 .slower small {

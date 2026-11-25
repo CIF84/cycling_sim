@@ -31,3 +31,11 @@ All 68 browser cases pass on the separate preview without retries (46.9 s). All 
 ## Review limits and next evidence
 
 This review improves discoverability and interaction consistency; it does not establish that new riders understand every model assumption. Watch a few independent riders import a route, adjust power, inspect a climb, make a plan and download it. Pay particular attention to expenditure versus intake and whether manual refills are understood as known stops. Actual Safari/phone review remains useful beyond Chromium device emulation. No accounts, analytics or remote route storage were added for this work.
+
+## Owner review: compact introduction · 25 November 2026
+
+The owner found that the desktop headline and decorative landscape displaced useful ride information. Remove the landscape entirely, preserve “Every route has a story” as the introductory text, use a smaller headline without a forced line break and move the demo action beside the copy on desktop. Tighten header/intro spacing while retaining readable controls and the existing app layout. Check both languages on desktop and phones, then update only PR #5 and preview.
+
+Implemented the compact introduction in both languages. The landscape and its unused styles are removed; “Každá trasa má svůj příběh” remains above the Czech headline. The headline is 28 px on desktop and 26 px on phones, with natural wrapping. The demo action sits beside the copy on desktop and below it on phones. Controls and ride content retain their existing sizes.
+
+All 156 unit checks, strict TypeScript and the production build pass. All 68 local desktop/mobile browser cases pass without retries (34.0 s). Inspected the live Czech desktop and desktop/phone screenshots: the 1440 × 1000 overview now includes the elevation graph and its slider. This is a presentation-only change; the simulation worker bundle remains unchanged.
